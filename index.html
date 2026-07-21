@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>GCC Cable — ព័ត៌មានខ្សែភ្លើង</title>
+ <script src="https://cdn.tailwindcss.com">
+ // Modal Controller Logic
+ async function openPostModal(id) {
+ const modal = document.getElementById('post-modal');
+ const titleEl = document.getElementById('modal-title');
+ const dateEl = document.getElementById('modal-date');
+ const bodyEl = document.getElementById('modal-body');
+
+ modal.classList.remove('hidden');
+ modal.classList.add('flex');
+ titleEl.innerText = 'កំពុងទាញយក... (加载中)';
+ dateEl.innerText = '';
+ bodyEl.innerHTML = '<div class="text-center py-12 text-slate-500"><i class="fa-solid fa-circle-notch fa-spin text-amber-500 text-3xl mb-3"></i><br>កំពុងទាញយកអត្ថបទ...</div>';
+
+ try {
+ const res = await fetch(`/wp-json/wp/v2/posts/${id}`);
+ const post = await res.json();
+
+ titleEl.innerHTML = post.title.rendered;
+ dateEl.innerHTML = '<i class="fa-regular fa-clock mr-1"></i> ' + new Date(post.date).toLocaleDateString('km-KH', { year: 'numeric', month: 'short', day: 'numeric' });
+ bodyEl.innerHTML = post.content.rendered;
+ } catch(err) {
+ console.error(err);
+ bodyEl.innerHTML = '<div class="text-rose-400 text-center py-6">បរាជ័យក្នុងការទាញយកអត្ថបទ (无法加载文章内容)</div>';
+ }
+ }function closeModal() {
+ const modal = document.getElementById('post-modal');
+ modal.classList.add('hidden');
+ modal.classList.remove('flex');
+ }
+
+</script>
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+ <style>
+ body { font-family: 'Kantumruy Pro', sans-serif; }
+ </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+ <!-- Navbar -->
+ <nav class="border-b border-amber-500/30 bg-slate-950/80 sticky top-0 z-40 backdrop-blur-md">
+ <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+ <div class="flex items-center space-x-3">
+ <i class="fa-solid fa-bolt text-amber-500 text-2xl"></i>
+ <span class="font-bold text-xl tracking-wide text-white">GCC Cable <span class="text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded border border-amber-500/40">INDUSTRIAL</span></span>
+ </div>
+ <div class="text-sm text-slate-400 hidden md:block">
+ វេទិកាយល់ដឹង និងតម្លៃទីផ្សារខ្សែភ្លើងកម្ពុជា
+ </div>
+ </div>
+ </nav>
+
+ <!-- Electrician Quick Tool Card -->
+ <section class="max-w-7xl mx-auto px-4 mt-8">
+ <div class="bg-gradient-to-r from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 shadow-xl">
+ <h2 class="text-lg font-bold text-amber-400 mb-4 flex items-center gap-2">
+ <i class="fa-solid fa-screwdriver-wrench"></i> តារាងប្រៀបធៀបបន្ទុកខ្សែភ្លើង (电工速查)
+ </h2>
+ <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+ <div class="bg-slate-950/60 p-4 rounded-lg border border-slate-800">
+ <div class="text-slate-400">1.5 mm²</div>
+ <div class="text-white font-semibold mt-1">ម៉ាស៊ីនត្រជាក់ 1.5 HP</div>
+ <div class="text-xs text-amber-500/80 mt-1">បន្ទុកអតិបរមា 15A</div>
+ </div>
+ <div class="bg-slate-950/60 p-4 rounded-lg border border-slate-800">
+ <div class="text-slate-400">2.5 mm²</div>
+ <div class="text-white font-semibold mt-1">ម៉ាស៊ីនត្រជាក់ 2.5 HP</div>
+ <div class="text-xs text-amber-500/80 mt-1">បន្ទុកអតិបរមា 21A</div>
+ </div>
+ <div class="bg-slate-950/60 p-4 rounded-lg border border-slate-800">
+ <div class="text-slate-400">4.0 mm²</div>
+ <div class="text-white font-semibold mt-1">ខ្សែមេបន្ទប់ / 5.0 HP</div>
+ <div class="text-xs text-amber-500/80 mt-1">បន្ទុកអតិបរមា 28A</div>
+ </div>
+ </div>
+ </div>
+ </section>
+
+ <!-- Category Tabs -->
+ <section class="max-w-7xl mx-auto px-4 mt-8">
+ <div class="flex space-x-2 border-b border-slate-800 pb-2 overflow-x-auto">
+ <button class="px-4 py-2 bg-amber-500 text-slate-950 font-bold rounded-lg text-sm">ទាំងអស់ (全部)</button>
+ <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm">📈 ទីផ្សារ (行情)</button>
+ <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm">⚠️ ការស្វែងយល់ (避坑)</button>
+ <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm">💡 ចំណេះដឹង (知识)</button>
+ </div>
+ <div id="posts-container" class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+ <div class="text-slate-500 col-span-3 text-center py-12">កំពុងទាញយកទិន្នន័យ... (加载中)</div>
+ </div>
+ </section>
+ <footer class="mt-16 border-t border-slate-800 py-8 text-center text-xs text-slate-500">
+ © 2026 GCC Cable Cambodia. ព័ត៌មានខ្សែភ្លើងឯករាជ្យ.
+ </footer>
+
+ <script>
+ const API_URL = '/wp-json/wp/v2/posts?_embed&per_page=9';
+ // 高质感工业电线铜材占位图
+ const FALLBACK_IMG = 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?q=80&w=800&auto=format&fit=crop';
+
+ async function loadPosts(catId = '') {
+ const container = document.getElementById('posts-container');
+ container.innerHTML = '<div class="text-slate-500 col-span-3 text-center py-12"><i class="fa-solid fa-circle-notch fa-spin text-amber-500 mr-2"></i>កំពុងទាញយកទិន្នន័យ... (加载中)</div>';
+
+ try {
+ let url = API_URL;
+ if (catId) url += `&categories=${catId}`;
+ const res = await fetch(url);
+ const posts = await res.json();
+
+ if (!posts || posts.length === 0) {
+ container.innerHTML = '<div class="text-slate-400 col-span-3 text-center py-12 border border-slate-800 rounded-xl bg-slate-950/40">មិនទាន់មានអត្ថបទនៅក្នុងផ្នែកនេះ (该分类下暂无文章)</div>';
+ return;
+ }
+
+ container.innerHTML = posts.map(post => {
+ const title = post.title.rendered;
+ const date = new Date(post.date).toLocaleDateString('km-KH', { year: 'numeric', month: 'short', day: 'numeric' });
+ // 过滤 HTML 标签并截取摘要
+ const rawExcerpt = post.excerpt ? post.excerpt.rendered : (post.content ? post.content.rendered : '');
+ const excerpt = rawExcerpt.replace(/<[^>]+>/g, '').slice(0, 95) + '...';
+
+ // 图片处理逻辑
+ let imgSrc = FALLBACK_IMG;
+ if (post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0] && post._embedded['wp:featuredmedia'][0].source_url) {
+ imgSrc = post._embedded['wp:featuredmedia'][0].source_url;
+ }
+ return `
+ <div class="bg-slate-950/80 border border-slate-800/80 rounded-xl overflow-hidden hover:border-amber-500/50 transition duration-300 flex flex-col group shadow-lg cursor-pointer" onclick="openPostModal(${post.id})">
+ <div class="h-44 overflow-hidden relative bg-slate-900">
+ <img src="${imgSrc}" alt="${title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-90 group-hover:opacity-100">
+ <div class="absolute top-3 left-3 bg-slate-950/80 text-amber-400 border border-amber-500/30 text-xs px-2.5 py-1 rounded-full backdrop-blur-md flex items-center gap-1.5">
+ <i class="fa-solid fa-bolt text-[10px]"></i> GCC Cable
+ </div>
+ </div>
+ <div class="p-5 flex-1 flex flex-col justify-between">
+ <div>
+ <div class="text-xs text-slate-500 mb-2 flex items-center gap-2">
+ <i class="fa-regular fa-clock"></i> ${date}
+ </div>
+ <h3 class="font-bold text-base text-slate-100 group-hover:text-amber-400 transition mb-2 line-clamp-2 leading-snug">
+ ${title}
+ </h3>
+ <p class="text-slate-400 text-xs line-clamp-3 leading-relaxed">
+ ${excerpt}
+ </p>
+ </div>
+ <div class="mt-4 pt-3 border-t border-slate-800/80 flex justify-between items-center">
+ <span class="text-xs text-amber-400 font-semibold flex items-center gap-1 group-hover:translate-x-1 transition">
+ អានបន្ត (阅读) <i class="fa-solid fa-arrow-right text-[10px]"></i>
+ </span>
+ </div>
+ </div>
+ </div>
+ `;
+ }).join('');
+ } catch (err) {
+ console.error(err);
+ container.innerHTML = '<div class="text-rose-400 col-span-3 text-center py-12 border border-rose-900/30 rounded-xl bg-rose-950/10">បរាជ័យក្នុងការទាញយកទិន្នន័យ (API 关联失败)</div>';
+ }
+ }
+
+ document.addEventListener('DOMContentLoaded', () => loadPosts());
+ 
+ // Modal Controller Logic
+ async function openPostModal(id) {
+ const modal = document.getElementById('post-modal');
+ const titleEl = document.getElementById('modal-title');
+ const dateEl = document.getElementById('modal-date');
+ const bodyEl = document.getElementById('modal-body');
+
+ modal.classList.remove('hidden');
+ modal.classList.add('flex');
+ titleEl.innerText = 'កំពុងទាញយក... (加载中)';
+ dateEl.innerText = '';
+ bodyEl.innerHTML = '<div class="text-center py-12 text-slate-500"><i class="fa-solid fa-circle-notch fa-spin text-amber-500 text-3xl mb-3"></i><br>កំពុងទាញយកអត្ថបទ...</div>';
+
+ try {
+ const res = await fetch(`/wp-json/wp/v2/posts/${id}`);
+ const post = await res.json();
+
+ titleEl.innerHTML = post.title.rendered;
+ dateEl.innerHTML = '<i class="fa-regular fa-clock mr-1"></i> ' + new Date(post.date).toLocaleDateString('km-KH', { year: 'numeric', month: 'short', day: 'numeric' });
+ bodyEl.innerHTML = post.content.rendered;
+ } catch(err) {
+ console.error(err);
+ bodyEl.innerHTML = '<div class="text-rose-400 text-center py-6">បរាជ័យក្នុងការទាញយកអត្ថបទ (无法加载文章内容)</div>';
+ }
+ }function closeModal() {
+ const modal = document.getElementById('post-modal');
+ modal.classList.add('hidden');
+ modal.classList.remove('flex');
+ }
+
+</script>
+
+
+ <!-- Article Reader Modal -->
+ <div id="post-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4 transition-all duration-300">
+ <div class="bg-slate-900 border border-slate-700/80 rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden relative text-slate-200">
+ <!-- Modal Header -->
+ <div class="p-6 border-b border-slate-800 flex justify-between items-start bg-slate-950/50">
+ <div>
+ <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider flex items-center gap-1">
+ <i class="fa-solid fa-bolt"></i> GCC CABLE REPORT
+ </span>
+ <h2 id="modal-title" class="text-xl md:text-2xl font-bold text-white mt-1 leading-snug"></h2>
+ <div id="modal-date" class="text-xs text-slate-400 mt-2"></div>
+ </div>
+ <button onclick="closeModal()" class="text-slate-400 hover:text-white p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition ml-4">
+ <i class="fa-solid fa-xmark text-lg"></i>
+ </button>
+ </div>
+ <!-- Modal Content Body -->
+ <div id="modal-body" class="p-6 md:p-8 overflow-y-auto leading-relaxed space-y-4 text-slate-300 text-sm md:text-base border-t border-slate-800/40">
+ <!-- Content will load here dynamically -->
+ </div>
+ <!-- Modal Footer -->
+ <div class="p-4 border-t border-slate-800 bg-slate-950/50 flex justify-end">
+ <button onclick="closeModal()" class="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm rounded-lg transition">
+ បិទ (关闭)
+ </button>
+ </div>
+ </div>
+ </div>
+
+</body>
+</html>
