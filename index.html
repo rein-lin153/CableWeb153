@@ -1,422 +1,788 @@
 <!DOCTYPE html>
 <html lang="km">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>GCC Cable — ព័ត៌មានខ្សែភ្លើង</title>
- <script src="https://cdn.tailwindcss.com">
- // Modal Controller Logic
- async function openPostModal(id) {
- const modal = document.getElementById('post-modal');
- const titleEl = document.getElementById('modal-title');
- const dateEl = document.getElementById('modal-date');
- const bodyEl = document.getElementById('modal-body');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCC Cable — ព័ត៌មានខ្សែភ្លើង</title>
 
- modal.classList.remove('hidden');
- modal.classList.add('flex');
- titleEl.innerText = 'កំពុងទាញយក... (加载中)';
- dateEl.innerText = '';
- bodyEl.innerHTML = '<div class="text-center py-12 text-slate-500"><i class="fa-solid fa-circle-notch fa-spin text-amber-500 text-3xl mb-3"></i><br>កំពុងទាញយកអត្ថបទ...</div>';
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
- try {
- const res = await fetch(`/wp-json/wp/v2/posts/${id}`);
- const post = await res.json();
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
- titleEl.innerHTML = post.title.rendered;
- dateEl.innerHTML = '<i class="fa-regular fa-clock mr-1"></i> ' + new Date(post.date).toLocaleDateString('km-KH', { year: 'numeric', month: 'short', day: 'numeric' });
- bodyEl.innerHTML = post.content.rendered;
- } catch(err) {
- console.error(err);
- bodyEl.innerHTML = '<div class="text-rose-400 text-center py-6">បរាជ័យក្នុងការទាញយកអត្ថបទ (无法加载文章内容)</div>';
- }
- }function closeModal() {
- const modal = document.getElementById('post-modal');
- modal.classList.add('hidden');
- modal.classList.remove('flex');
- }
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-</script>
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
- <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700&display=swap" rel="stylesheet">
- <style>
- body { font-family: 'Kantumruy Pro', sans-serif; }
- </style>
+    <style>
+        body {
+            font-family: 'Kantumruy Pro', sans-serif;
+            background-image:
+                radial-gradient(at 0% 0%, rgba(245, 158, 11, 0.03) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.03) 0px, transparent 50%);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+
+        /* Smooth transitions */
+        .calc-panel {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Glass morphism effect */
+        .glass-effect {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        /* Input focus glow */
+        .input-glow:focus {
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+
+        /* Button ripple effect */
+        .btn-ripple {
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-ripple::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        .btn-ripple:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Card hover lift */
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Loading shimmer */
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        .shimmer {
+            background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite linear;
+        }
+
+        /* Tab active indicator */
+        .calc-tab.active-tab {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+            color: #0f172a !important;
+            font-weight: 700;
+            box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.3);
+        }
+
+        /* Result animation */
+        .result-animate {
+            animation: slideIn 0.4s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Modal backdrop */
+        .modal-backdrop {
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(8px);
+        }
+
+        /* Progress bar animation */
+        .progress-bar {
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen">
- <!-- Navbar -->
- <nav class="border-b border-amber-500/30 bg-slate-950/80 sticky top-0 z-40 backdrop-blur-md">
- <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
- <div class="flex items-center space-x-3">
- <i class="fa-solid fa-bolt text-amber-500 text-2xl"></i>
- <span class="font-bold text-xl tracking-wide text-white">GCC Cable <span class="text-xs bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded border border-amber-500/40">INDUSTRIAL</span></span>
- </div>
- <div class="text-sm text-slate-400 hidden md:block">
- វេទិកាយល់ដឹង និងតម្លៃទីផ្សារខ្សែភ្លើងកម្ពុជា
- </div>
- </div>
- </nav>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased">
 
-  <!-- 9合1 电工计算器套件 -->
-  <section class="max-w-7xl mx-auto px-4 mt-8">
-    <div class="bg-gradient-to-r from-slate-800 to-slate-900 border border-slate-700 rounded-xl p-6 shadow-xl">
-      <h2 class="text-lg font-bold text-amber-400 mb-2 flex items-center gap-2">
-        <i class="fa-solid fa-calculator"></i> គណនាករអ្នកដំបងអគ្គិសនី 9 合 1 (电工计算器套件)
-      </h2>
-      <p class="text-xs text-slate-400 mb-6">វិធីសាស្ត្រគណនាខ្សែភ្លើងពិសេស — រចនាសម្ព័ន្ធ បំបែក logic / UI</p>
-
-      <!-- Tab Navigation -->
-      <div id="calc-tabs" class="flex flex-wrap gap-1.5 mb-5 border-b border-slate-700 pb-3">
-        <button class="calc-tab active-tab px-3 py-1.5 bg-amber-500 text-slate-950 font-bold rounded-lg text-xs transition" data-tab="tab-cable">① ខ្សែបន្ទុក</button>
-        <button class="calc-tab px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition" data-tab="tab-copper">② ទម្ងន់ស័ង្កសី</button>
-        <button class="calc-tab px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition" data-tab="tab-dist">③ បែងចែក</button>
-        <button class="calc-tab px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition" data-tab="tab-pconv">④ បំលែង</button>
-        <button class="calc-tab px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition" data-tab="tab-xfmr">⑤ ត្រង់ស្វ័យ</button>
-        <button class="calc-tab px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition" data-tab="tab-acdc">⑥ AC/DC</button>
-        <button class="calc-tab px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition" data-tab="tab-edc">⑦ គិតលុយ</button>
-        <button class="calc-tab px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition" data-tab="tab-light">⑧ ពន្លឺ</button>
-        <button class="calc-tab px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs transition" data-tab="tab-conduit">⑨ បំពង់</button>
-      </div>
-
-      <!-- 1. Cable Size & Voltage Drop -->
-      <div id="tab-cable" class="calc-panel">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
-            <h3 class="text-amber-400 font-bold text-sm"><i class="fa-solid fa-plug"></i> 1. ទំហំខ្សែភ្លើងនិងការធ្លាក់វ៉ុល (Cable Size & Voltage Drop)</h3>
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="text-xs text-slate-400">ប្រព័ន្ធ (Phase)</label><select id="cable-phase" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white focus:border-amber-500 outline-none"><option value="single">មួយដំណាក់កាល Single</option><option value="three">បីដំណាក់កាល Three</option></select></div>
-              <div><label class="text-xs text-slate-400">សម្ភារៈ (Material)</label><select id="cable-material" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white focus:border-amber-500 outline-none"><option value="copper">ស័ង្កសី Copper</option><option value="aluminum">អាល្យុយមីញ៉ូម Aluminum</option></select></div>
+    <!-- Navbar -->
+    <nav class="border-b border-amber-500/20 bg-slate-950/90 sticky top-0 z-40 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="relative">
+                    <i class="fa-solid fa-bolt text-amber-500 text-2xl"></i>
+                    <div class="absolute inset-0 blur-lg bg-amber-500/30 rounded-full"></div>
+                </div>
+                <div>
+                    <span class="font-bold text-xl tracking-wide text-white">GCC Cable</span>
+                    <span class="text-xs bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/20 ml-2">INDUSTRIAL</span>
+                </div>
             </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="text-xs text-slate-400">ថាមពល (kW)</label><input type="number" id="cable-power" placeholder="ឧ. 15" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
-              <div><label class="text-xs text-slate-400">ចម្ងាយ (m)</label><input type="number" id="cable-length" placeholder="ឧ. 80" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
+            <div class="text-sm text-slate-400 hidden md:block">
+                វេទិកាយល់ដឹង និងតម្លៃទីផ្សារខ្សែភ្លើងកម្ពុជា
             </div>
-            <button id="btn-cable-size" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-lg text-sm transition">គណនា (计算)</button>
-            <div id="cable-result" class="mt-3 p-3 rounded-lg border bg-slate-800 border-slate-700 text-sm font-semibold text-slate-200"></div>
-          </div>
-          <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-4 flex items-center justify-center">
-            <div class="text-center text-slate-500 text-xs leading-relaxed"><i class="fa-solid fa-circle-info text-2xl mb-2 text-amber-500/60"></i><br>IEC 标准：电压降 <3% 为安全<br>附 amber/emerald/rose 安全进度条</div>
-          </div>
         </div>
-      </div>
+    </nav>
 
-      <!-- 2. Copper Weight & Cost -->
-      <div id="tab-copper" class="calc-panel hidden">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
-            <h3 class="text-amber-400 font-bold text-sm"><i class="fa-solid fa-coins"></i> 2. ទម្ងន់ស័ង្កសីនិងការប៉ាន់ស្មាន (Copper Weight & Cost)</h3>
-            <div class="grid grid-cols-3 gap-3">
-              <div><label class="text-xs text-slate-400">ផ្ទៃកាត់ mm²</label><input type="number" id="cu-area" placeholder="ឧ. 25" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
-              <div><label class="text-xs text-slate-400">ចំនួនខ្សែ (1-4)</label><select id="cu-cores" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white focus:border-amber-500 outline-none"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div>
-              <div><label class="text-xs text-slate-400">ប្រវែងសរុប (m)</label><input type="number" id="cu-length" placeholder="ឧ. 100" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
+    <!-- 9合1 电工计算器套件 -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/50 rounded-2xl p-6 sm:p-8 shadow-2xl">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="p-2 bg-amber-500/10 rounded-lg">
+                    <i class="fa-solid fa-calculator text-amber-400 text-lg"></i>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold text-white">
+                    គណនាករអ្នកដំបងអគ្គិសនី 9 合 1
+                </h2>
             </div>
-            <button id="btn-copper-weight" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-sm transition">គណនា (计算)</button>
-            <div id="copper-result" class="mt-3 p-3 rounded-lg border bg-slate-800 border-slate-700 text-sm font-semibold text-slate-200"></div>
-          </div>
-          <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-4 flex items-center justify-center">
-            <div class="text-center text-slate-500 text-xs leading-relaxed"><i class="fa-solid fa-scale-balanced text-2xl mb-2 text-emerald-500/60"></i><br>密度: 0.00889 kg/m·mm²<br>LME 铜价 ~$9.8/kg</div>
-          </div>
-        </div>
-      </div>
+            <p class="text-sm text-slate-400 mb-8 ml-1">
+                វិធីសាស្ត្រគណនាខ្សែភ្លើងពិសេស — រចនាសម្ព័ន្ធ បំបែក logic / UI
+            </p>
 
-      <!-- 3. Distribution System Design -->
-      <div id="tab-dist" class="calc-panel hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
-            <h3 class="text-amber-400 font-bold text-sm"><i class="fa-solid fa-server"></i> 3. ការរចនាការបែងចែកថាមពល (Distribution System Design)</h3>
-          <div id="device-list"></div>
-          <div class="flex gap-2">
-            <button id="btn-add-device" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition">+ បន្ថែមឧបករណ៍ (Add)</button>
-            <button id="btn-distribution" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-sm transition">គណនា (计算总负荷)</button>
-          </div>
-          <div id="distribution-result" class="mt-3 p-3 rounded-lg border bg-slate-800 border-slate-700 text-sm font-semibold text-slate-200"></div>
-        </div>
-      </div>
-
-      <!-- 4. P/I/V/PF Converter -->
-      <div id="tab-pconv" class="calc-panel hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
-            <h3 class="text-amber-400 font-bold text-sm"><i class="fa-solid fa-right-left"></i> 4. ការបំលែង P/I/V/PF (P/I/V/PF Converter)</h3>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div><label class="text-xs text-slate-400">ប្រព័ន្ធ</label><select id="pc-phase" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white focus:border-amber-500 outline-none"><option value="single">មួយដំណាក់កាល</option><option value="three">បីដំណាក់កាល</option></select></div>
-            <div><label class="text-xs text-slate-400">ត្រូវរក (Unknown)</label><select id="pc-unknown" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white focus:border-amber-500 outline-none"><option value="p">ថាមពល P</option><option value="i">ចរន្ត I</option><option value="v">វ៉ុល V</option><option value="pf">កត្តាថាមពល PF</option></select></div>
-            <div><label class="text-xs text-slate-400">P (W)</label><input type="number" id="pc-p" placeholder="ថាមពល" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
-            <div><label class="text-xs text-slate-400">V (V)</label><input type="number" id="pc-v" placeholder="វ៉ុល" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
-            <div><label class="text-xs text-slate-400">I (A)</label><input type="number" id="pc-i" placeholder="ចរន្ត" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
-            <div><label class="text-xs text-slate-400">PF</label><input type="number" id="pc-pf" step="0.01" placeholder="0.85" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
-          </div>
-          <button id="btn-power-conv" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-sm transition">គណនា (计算)</button>
-          <div id="power-conv-result" class="mt-3 p-3 rounded-lg border bg-slate-800 border-slate-700 text-sm font-semibold text-slate-200"></div>
-        </div>
-      </div>
-
-      <!-- 5. Transformer Current -->
-      <div id="tab-xfmr" class="calc-panel hidden">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
-            <h3 class="text-amber-400 font-bold text-sm"><i class="fa-solid fa-bolt"></i> 5. ចរន្តខ្សែភ្លើងត្រង់ស្វ័យ (Transformer Current)</h3>
-            <div><label class="text-xs text-slate-400">សមត្ថភាព kVA (ឧ. 250 / 630 / 1000)</label><input type="number" id="xfmr-kva" placeholder="ឧ. 250" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
-            <button id="btn-transformer" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-lg text-sm transition">គណនា (计算)</button>
-            <div id="transformer-result" class="mt-3 p-3 rounded-lg border bg-slate-800 border-slate-700 text-sm font-semibold text-slate-200"></div>
-          </div>
-          <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-4 flex items-center justify-center">
-            <div class="text-center text-slate-500 text-xs leading-relaxed"><i class="fa-solid fa-arrow-up-arrow-down text-2xl mb-2 text-amber-500/60"></i><br>高压侧: 22 kV<br>低压侧: 400 V<br>公式: I = S / (√3 × V)</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 6. AC vs DC -->
-      <div id="tab-acdc" class="calc-panel hidden">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
-            <h3 class="text-amber-400 font-bold text-sm"><i class="fa-solid fa-arrows-left-right"></i> 6. ប្រៀបធៀប AC vs DC (AC/DC Current)</h3>
-            <div class="grid grid-cols-3 gap-3">
-              <div><label class="text-xs text-slate-400">ថាមពល kW</label><input type="number" id="acdc-power" placeholder="ឧ. 50" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
-              <div><label class="text-xs text-slate-400">វ៉ុល V</label><input type="number" id="acdc-voltage" placeholder="ឧ. 380" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
-              <div><label class="text-xs text-slate-400">PF</label><input type="number" id="acdc-pf" step="0.01" value="0.85" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
+            <!-- Tab Navigation -->
+            <div id="calc-tabs" class="flex flex-wrap gap-2 mb-8 border-b border-slate-700/50 pb-4 overflow-x-auto">
+                <button class="calc-tab active-tab px-3 py-2 bg-amber-500 text-slate-950 font-bold rounded-xl text-xs transition-all duration-300 whitespace-nowrap btn-ripple" data-tab="tab-cable">① ខ្សែបន្ទុក</button>
+                <button class="calc-tab px-3 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition-all duration-300 whitespace-nowrap btn-ripple" data-tab="tab-copper">② ទម្ងន់ស័ង្កសី</button>
+                <button class="calc-tab px-3 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition-all duration-300 whitespace-nowrap btn-ripple" data-tab="tab-dist">③ បែងចែក</button>
+                <button class="calc-tab px-3 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition-all duration-300 whitespace-nowrap btn-ripple" data-tab="tab-pconv">④ បំលែង</button>
+                <button class="calc-tab px-3 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition-all duration-300 whitespace-nowrap btn-ripple" data-tab="tab-xfmr">⑤ ត្រង់ស្វ័យ</button>
+                <button class="calc-tab px-3 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition-all duration-300 whitespace-nowrap btn-ripple" data-tab="tab-acdc">⑥ AC/DC</button>
+                <button class="calc-tab px-3 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition-all duration-300 whitespace-nowrap btn-ripple" data-tab="tab-edc">⑦ គិតលុយ</button>
+                <button class="calc-tab px-3 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition-all duration-300 whitespace-nowrap btn-ripple" data-tab="tab-light">⑧ ពន្លឺ</button>
+                <button class="calc-tab px-3 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition-all duration-300 whitespace-nowrap btn-ripple" data-tab="tab-conduit">⑨ បំពង់</button>
             </div>
-            <button id="btn-acdc" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-sm transition">គណនា (计算对比)</button>
-            <div id="acdc-result" class="mt-3 p-3 rounded-lg border bg-slate-800 border-slate-700 text-sm font-semibold text-slate-200"></div>
-          </div>
-          <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-4 flex items-center justify-center">
-            <div class="text-center text-slate-500 text-xs leading-relaxed"><i class="fa-solid fa-circle-nodes text-2xl mb-2 text-emerald-500/60"></i><br>AC: I = P / (√3 × V × PF)<br>DC: I = P / V</div>
-          </div>
-        </div>
-      </div>
 
-      <!-- 7. EDC Electricity Bill -->
-      <div id="tab-edc" class="calc-panel hidden">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
-            <h3 class="text-amber-400 font-bold text-sm"><i class="fa-solid fa-file-invoice-dollar"></i> 7. ការប៉ាន់ស្មានគុណិយ៍អគ្គិសនី EDC (EDC Bill)</h3>
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="text-xs text-slate-400">ប្រភេទ</label><select id="edc-type" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white focus:border-amber-500 outline-none"><option value="residential">គ្រួសារ Residential</option><option value="commercial">អាជីវកម្ម Commercial</option></select></div>
-              <div><label class="text-xs text-slate-400">ប្រើប្រាស់ក្នុងមួយខែ kWh</label><input type="number" id="edc-kwh" placeholder="ឧ. 500" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
+            <!-- 1. Cable Size & Voltage Drop -->
+            <div id="tab-cable" class="calc-panel">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
+                            <i class="fa-solid fa-plug"></i>
+                            ទំហំខ្សែភ្លើងនិងការធ្លាក់វ៉ុល
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រព័ន្ធ (Phase)</label>
+                                <select id="cable-phase" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
+                                    <option value="single">មួយដំណាក់កាល Single</option>
+                                    <option value="three">បីដំណាក់កាល Three</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">សម្ភារៈ (Material)</label>
+                                <select id="cable-material" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
+                                    <option value="copper">ស័ង្កសី Copper</option>
+                                    <option value="aluminum">អាល្យុយមីញ៉ូម Aluminum</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ថាមពល (kW)</label>
+                                <input type="number" id="cable-power" placeholder="ឧ. 15" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ចម្ងាយ (m)</label>
+                                <input type="number" id="cable-length" placeholder="ឧ. 80" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
+                            </div>
+                        </div>
+                        <button id="btn-cable-size" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
+                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
+                        </button>
+                        <div id="cable-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
+                    </div>
+                    <div class="bg-slate-900/40 border border-slate-700/30 rounded-xl p-6 flex items-center justify-center">
+                        <div class="text-center text-slate-400 text-xs leading-relaxed space-y-3">
+                            <div class="p-4 bg-amber-500/5 rounded-full w-fit mx-auto">
+                                <i class="fa-solid fa-circle-info text-2xl text-amber-500/70"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-300 mb-1">IEC 标准</p>
+                                <p>电压降 &lt;3% 为安全</p>
+                                <p class="mt-2">附 amber/emerald/rose 安全进度条</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <button id="btn-edc" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-lg text-sm transition">គណនា (计算电费)</button>
-            <div id="edc-result" class="mt-3 p-3 rounded-lg border bg-slate-800 border-slate-700 text-sm font-semibold text-slate-200"></div>
-          </div>
-          <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-4 flex items-center justify-center">
-            <div class="text-center text-slate-500 text-xs leading-relaxed"><i class="fa-solid fa-money-bill-wave text-2xl mb-2 text-amber-500/60"></i><br>阶梯电价 (Tier Pricing):<br>450 / 610 / 790 / 900 KHR/kWh<br>KHR ÷ 25,700 ≈ USD</div>
-          </div>
-        </div>
-      </div>
 
-      <!-- 8. Lighting Lux -->
-      <div id="tab-light" class="calc-panel hidden">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
-            <h3 class="text-amber-400 font-bold text-sm"><i class="fa-solid fa-lightbulb"></i> 8. ការគណនាលោកស្រី Lux និងចំនួនភ្លើង (Lighting Lux)</h3>
-            <div class="grid grid-cols-3 gap-3">
-              <div><label class="text-xs text-slate-400">ប្រវែង (m)</label><input type="number" id="light-room-l" placeholder="10" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
-              <div><label class="text-xs text-slate-400">ទទឹង (m)</label><input type="number" id="light-room-w" placeholder="8" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
-              <div><label class="text-xs text-slate-400">កម្ពស់ (m)</label><input type="number" id="light-room-h" placeholder="3.5" step="0.1" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
+            <!-- 2. Copper Weight & Cost -->
+            <div id="tab-copper" class="calc-panel hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
+                            <i class="fa-solid fa-coins"></i>
+                            ទម្ងន់ស័ង្កសីនិងការប៉ាន់ស្មាន
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ផ្ទៃកាត់ mm²</label>
+                                <input type="number" id="cu-area" placeholder="ឧ. 25" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ចំនួនខ្សែ (1-4)</label>
+                                <select id="cu-cores" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-emerald-500 outline-none input-glow transition-all">
+                                    <option>1</option>
+                                    <option selected>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រវែងសរុប (m)</label>
+                                <input type="number" id="cu-length" placeholder="ឧ. 100" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all">
+                            </div>
+                        </div>
+                        <button id="btn-copper-weight" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
+                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
+                        </button>
+                        <div id="copper-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
+                    </div>
+                    <div class="bg-slate-900/40 border border-slate-700/30 rounded-xl p-6 flex items-center justify-center">
+                        <div class="text-center text-slate-400 text-xs leading-relaxed space-y-3">
+                            <div class="p-4 bg-emerald-500/5 rounded-full w-fit mx-auto">
+                                <i class="fa-solid fa-scale-balanced text-2xl text-emerald-500/70"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-300 mb-1">密度</p>
+                                <p>0.00889 kg/m·mm²</p>
+                                <p class="mt-2">LME 铜价 ~$9.8/kg</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="text-xs text-slate-400">ការប្រើប្រាស់ / Lux</label><select id="light-lux" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white focus:border-amber-500 outline-none"><option value="150">ឃ្លាំង Warehouse 150</option><option value="300" selected">ការិយាល័យ Office 300</option><option value="500">រោងចក្រ Workshop 500</option><option value="750">រោងចក្រ Factory 750</option></select></div>
-              <div><label class="text-xs text-slate-400">ថាមពល LED W</label><input type="number" id="light-led-w" value="40" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white focus:border-amber-500 outline-none"></div>
-            </div>
-            <button id="btn-lighting" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-sm transition">គណនា (计算灯具数)</button>
-            <div id="lighting-result" class="mt-3 p-3 rounded-lg border bg-slate-800 border-slate-700 text-sm font-semibold text-slate-200"></div>
-          </div>
-          <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-4 flex items-center justify-center">
-            <div class="text-center text-slate-500 text-xs leading-relaxed"><i class="fa-solid fa-lamp text-2xl mb-2 text-amber-500/60"></i><br>公式: N = (Lux × Area) / (Lumens × UF × MF)<br>利用系数 0.6 · 维护系数 0.8</div>
-          </div>
-        </div>
-      </div>
 
-      <!-- 9. Conduit & Bending Radius -->
-      <div id="tab-conduit" class="calc-panel hidden">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="bg-slate-900 border border-slate-800 rounded-lg p-4 space-y-3">
-            <h3 class="text-amber-400 font-bold text-sm"><i class="fa-solid fa-ring"></i> 9. កាំបត់ខ្សែភ្លើង និងទំហំបំពង់ (Bending Radius & Conduit)</h3>
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="text-xs text-slate-400">អង្កត់ផ្ចិតខាងក្រៅ mm</label><input type="number" id="conduit-d" step="0.1" placeholder="ឧ. 10" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none"></div>
-              <div><label class="text-xs text-slate-400">ចំនួនខ្សែ</label><input type="number" id="conduit-count" value="1" min="1" class="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white focus:border-amber-500 outline-none"></div>
+            <!-- 3. Distribution System Design -->
+            <div id="tab-dist" class="calc-panel hidden">
+                <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
+                    <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
+                        <i class="fa-solid fa-server"></i>
+                        ការរចនាការបែងចែកថាមពល
+                    </h3>
+                    <div id="device-list" class="space-y-3"></div>
+                    <div class="flex flex-wrap gap-3">
+                        <button id="btn-add-device" class="px-5 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
+                            <i class="fa-solid fa-plus mr-2"></i>បន្ថែមឧបករណ៍ (Add)
+                        </button>
+                        <button id="btn-distribution" class="px-5 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
+                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算总负荷)
+                        </button>
+                    </div>
+                    <div id="distribution-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
+                </div>
             </div>
-            <button id="btn-conduit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-lg text-sm transition">គណនា (计算)</button>
-            <div id="conduit-result" class="mt-3 p-3 rounded-lg border bg-slate-800 border-slate-700 text-sm font-semibold text-slate-200"></div>
-          </div>
-          <div class="bg-slate-950/60 border border-slate-800 rounded-lg p-4 flex items-center justify-center">
-            <div class="text-center text-slate-500 text-xs leading-relaxed"><i class="fa-solid fa-drafting-compass text-2xl mb-2 text-amber-500/60"></i><br>弯曲半径: ≥6× 外径<br>填充率 ≤40% (IEC 61386)<br>推荐 PVC/GI 管径</div>
-          </div>
-        </div>
-      </div>
 
+            <!-- 4. P/I/V/PF Converter -->
+            <div id="tab-pconv" class="calc-panel hidden">
+                <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
+                    <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
+                        <i class="fa-solid fa-right-left"></i>
+                        ការបំលែង P/I/V/PF
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                            <label class="text-xs text-slate-400 mb-1.5 block">ប្រព័ន្ធ</label>
+                            <select id="pc-phase" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
+                                <option value="single">មួយដំណាក់កាល</option>
+                                <option value="three">បីដំណាក់កាល</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 mb-1.5 block">ត្រូវរក (Unknown)</label>
+                            <select id="pc-unknown" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
+                                <option value="p">ថាមពល P</option>
+                                <option value="i">ចរន្ត I</option>
+                                <option value="v">វ៉ុល V</option>
+                                <option value="pf">កត្តាថាមពល PF</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 mb-1.5 block">P (kW)</label>
+                            <input type="number" id="pc-p" placeholder="ថាមពល kW" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 mb-1.5 block">V (V)</label>
+                            <input type="number" id="pc-v" placeholder="វ៉ុល" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 mb-1.5 block">I (A)</label>
+                            <input type="number" id="pc-i" placeholder="ចរន្ត" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 mb-1.5 block">PF</label>
+                            <input type="number" id="pc-pf" step="0.01" placeholder="0.85" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
+                        </div>
+                    </div>
+                    <button id="btn-power-conv" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
+                        <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
+                    </button>
+                    <div id="power-conv-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
+                </div>
+            </div>
+
+            <!-- 5. Transformer Current -->
+            <div id="tab-xfmr" class="calc-panel hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
+                            <i class="fa-solid fa-bolt"></i>
+                            ចរន្តខ្សែភ្លើងត្រង់ស្វ័យ
+                        </h3>
+                        <div>
+                            <label class="text-xs text-slate-400 mb-1.5 block">សមត្ថភាព kVA (ឧ. 250 / 630 / 1000)</label>
+                            <input type="number" id="xfmr-kva" placeholder="ឧ. 250" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
+                        </div>
+                        <button id="btn-transformer" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
+                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
+                        </button>
+                        <div id="transformer-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
+                    </div>
+                    <div class="bg-slate-900/40 border border-slate-700/30 rounded-xl p-6 flex items-center justify-center">
+                        <div class="text-center text-slate-400 text-xs leading-relaxed space-y-3">
+                            <div class="p-4 bg-amber-500/5 rounded-full w-fit mx-auto">
+                                <i class="fa-solid fa-arrow-up-arrow-down text-2xl text-amber-500/70"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-300 mb-1">高压侧: 22 kV</p>
+                                <p class="font-medium text-slate-300 mb-1">低压侧: 400 V</p>
+                                <p class="mt-2">公式: I = S / (√3 × V)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. AC vs DC -->
+            <div id="tab-acdc" class="calc-panel hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
+                            <i class="fa-solid fa-arrows-left-right"></i>
+                            ប្រៀបធៀប AC vs DC
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ថាមពល kW</label>
+                                <input type="number" id="acdc-power" placeholder="ឧ. 50" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">វ៉ុល V</label>
+                                <input type="number" id="acdc-voltage" placeholder="ឧ. 380" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">PF</label>
+                                <input type="number" id="acdc-pf" step="0.01" value="0.85" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all">
+                            </div>
+                        </div>
+                        <button id="btn-acdc" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
+                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算对比)
+                        </button>
+                        <div id="acdc-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
+                    </div>
+                    <div class="bg-slate-900/40 border border-slate-700/30 rounded-xl p-6 flex items-center justify-center">
+                        <div class="text-center text-slate-400 text-xs leading-relaxed space-y-3">
+                            <div class="p-4 bg-emerald-500/5 rounded-full w-fit mx-auto">
+                                <i class="fa-solid fa-circle-nodes text-2xl text-emerald-500/70"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-300 mb-1">AC: I = P / (√3 × V × PF)</p>
+                                <p class="mt-1">DC: I = P / V</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. EDC Electricity Bill -->
+            <div id="tab-edc" class="calc-panel hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                            ការប៉ាន់ស្មានគុណិយ៍អគ្គិសនី EDC
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រភេទ</label>
+                                <select id="edc-type" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
+                                    <option value="residential">គ្រួសារ Residential</option>
+                                    <option value="commercial">អាជីវកម្ម Commercial</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រើប្រាស់ក្នុងមួយខែ kWh</label>
+                                <input type="number" id="edc-kwh" placeholder="ឧ. 500" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
+                            </div>
+                        </div>
+                        <button id="btn-edc" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
+                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算电费)
+                        </button>
+                        <div id="edc-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
+                    </div>
+                    <div class="bg-slate-900/40 border border-slate-700/30 rounded-xl p-6 flex items-center justify-center">
+                        <div class="text-center text-slate-400 text-xs leading-relaxed space-y-3">
+                            <div class="p-4 bg-amber-500/5 rounded-full w-fit mx-auto">
+                                <i class="fa-solid fa-money-bill-wave text-2xl text-amber-500/70"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-300 mb-1">阶梯电价 (Tier Pricing):</p>
+                                <p>450 / 610 / 790 / 900 KHR/kWh</p>
+                                <p class="mt-2">KHR ÷ 25,700 ≈ USD</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. Lighting Lux -->
+            <div id="tab-light" class="calc-panel hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb"></i>
+                            ការគណនាលោកស្រី Lux និងចំនួនភ្លើង
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រវែង (m)</label>
+                                <input type="number" id="light-room-l" placeholder="10" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ទទឹង (m)</label>
+                                <input type="number" id="light-room-w" placeholder="8" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">កម្ពស់ (m)</label>
+                                <input type="number" id="light-room-h" placeholder="3.5" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ការប្រើប្រាស់ / Lux</label>
+                                <select id="light-lux" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
+                                    <option value="150">ឃ្លាំង Warehouse 150</option>
+                                    <option value="300" selected>ការិយាល័យ Office 300</option>
+                                    <option value="500">រោងចក្រ Workshop 500</option>
+                                    <option value="750">រោងចក្រ Factory 750</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ថាមពល LED W</label>
+                                <input type="number" id="light-led-w" value="40" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
+                            </div>
+                        </div>
+                        <button id="btn-lighting" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
+                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算灯具数)
+                        </button>
+                        <div id="lighting-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
+                    </div>
+                    <div class="bg-slate-900/40 border border-slate-700/30 rounded-xl p-6 flex items-center justify-center">
+                        <div class="text-center text-slate-400 text-xs leading-relaxed space-y-3">
+                            <div class="p-4 bg-amber-500/5 rounded-full w-fit mx-auto">
+                                <i class="fa-solid fa-lamp text-2xl text-amber-500/70"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-300 mb-1">公式:</p>
+                                <p>N = (Lux × Area) / (Lumens × UF × MF)</p>
+                                <p class="mt-2">利用系数 0.6 · 维护系数 0.8</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. Conduit & Bending Radius -->
+            <div id="tab-conduit" class="calc-panel hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
+                            <i class="fa-solid fa-ring"></i>
+                            កាំបត់ខ្សែភ្លើង និងទំហំបំពង់
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">អង្កត់ផ្ចិតខាងក្រៅ mm</label>
+                                <input type="number" id="conduit-d" step="0.1" placeholder="ឧ. 10" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ចំនួនខ្សែ</label>
+                                <input type="number" id="conduit-count" value="1" min="1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រភេទខ្សែ</label>
+                                <select id="conduit-type" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
+                                    <option value="general">ទូទៅ General (4×)</option>
+                                    <option value="armored">铠装 Armored (6×)</option>
+                                </select>
+                            </div>
+                            <div class="flex items-end">
+                                <div class="text-xs text-slate-500">弯曲半径标准见右侧说明</div>
+                            </div>
+                        </div>
+                        <button id="btn-conduit" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
+                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
+                        </button>
+                        <div id="conduit-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
+                    </div>
+                    <div class="bg-slate-900/40 border border-slate-700/30 rounded-xl p-6 flex items-center justify-center">
+                        <div class="text-center text-slate-400 text-xs leading-relaxed space-y-3">
+                            <div class="p-4 bg-amber-500/5 rounded-full w-fit mx-auto">
+                                <i class="fa-solid fa-drafting-compass text-2xl text-amber-500/70"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate-300 mb-1">普通电缆: ≥4× 外径</p>
+                                <p class="font-medium text-slate-300 mb-1">铠装电缆: ≥6× 外径</p>
+                                <p class="mt-2">填充率 ≤40% (IEC 61386)</p>
+                                <p>推荐 PVC/GI 管径</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Category Tabs -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <div class="flex space-x-2 border-b border-slate-700/50 pb-3 overflow-x-auto">
+            <button class="px-5 py-2.5 bg-amber-500 text-slate-950 font-bold rounded-xl text-sm transition-all duration-300 whitespace-nowrap hover:scale-105">ទាំងអស់ (全部)</button>
+            <button class="px-5 py-2.5 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition-all duration-300 whitespace-nowrap hover:scale-105">📈 ទីផ្សារ (行情)</button>
+            <button class="px-5 py-2.5 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition-all duration-300 whitespace-nowrap hover:scale-105">⚠️ ការស្វែងយល់ (避坑)</button>
+            <button class="px-5 py-2.5 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition-all duration-300 whitespace-nowrap hover:scale-105">💡 ចំណេះដឹង (知识)</button>
+        </div>
+        <div id="posts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            <div class="text-slate-500 col-span-3 text-center py-12">
+                <div class="inline-flex items-center gap-3">
+                    <i class="fa-solid fa-circle-notch fa-spin text-amber-500"></i>
+                    <span>កំពុងទាញយកទិន្នន័យ... (加载中)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="mt-16 border-t border-slate-800/50 py-8 text-center text-xs text-slate-500">
+        © 2026 GCC Cable Cambodia. ព័ត៌មានខ្សែភ្លើងឯករាជ្យ.
+    </footer>
+
+    <!-- Article Reader Modal -->
+    <div id="post-modal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-4 transition-all duration-300">
+        <div class="bg-slate-900 border border-slate-700/80 rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden relative text-slate-200 transform transition-all duration-300 scale-95 opacity-0" id="modal-content">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-slate-800 flex justify-between items-start bg-slate-950/50">
+                <div class="flex-1">
+                    <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider flex items-center gap-1">
+                        <i class="fa-solid fa-bolt"></i> GCC CABLE REPORT
+                    </span>
+                    <h2 id="modal-title" class="text-xl md:text-2xl font-bold text-white mt-1 leading-snug"></h2>
+                    <div id="modal-date" class="text-xs text-slate-400 mt-2"></div>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition ml-4 min-w-[44px] min-h-[44px] flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <!-- Modal Content Body -->
+            <div id="modal-body" class="p-6 md:p-8 overflow-y-auto leading-relaxed space-y-4 text-slate-300 text-sm md:text-base border-t border-slate-800/40">
+                <!-- Content will load here dynamically -->
+            </div>
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-slate-800 bg-slate-950/50 flex justify-end">
+                <button onclick="closeModal()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm rounded-xl transition-all duration-300 min-h-[44px]">
+                    បិទ (关闭)
+                </button>
+            </div>
+        </div>
     </div>
-  </section>
 
- <!-- Category Tabs -->
- <section class="max-w-7xl mx-auto px-4 mt-8">
- <div class="flex space-x-2 border-b border-slate-800 pb-2 overflow-x-auto">
- <button class="px-4 py-2 bg-amber-500 text-slate-950 font-bold rounded-lg text-sm">ទាំងអស់ (全部)</button>
- <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm">📈 ទីផ្សារ (行情)</button>
- <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm">⚠️ ការស្វែងយល់ (避坑)</button>
- <button class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm">💡 ចំណេះដឹង (知识)</button>
- </div>
- <div id="posts-container" class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
- <div class="text-slate-500 col-span-3 text-center py-12">កំពុងទាញយកទិន្នន័យ... (加载中)</div>
- </div>
- </section>
- <footer class="mt-16 border-t border-slate-800 py-8 text-center text-xs text-slate-500">
- © 2026 GCC Cable Cambodia. ព័ត៌មានខ្សែភ្លើងឯករាជ្យ.
- </footer>
+    <!-- Tab Switching Logic -->
+    <script>
+        document.querySelectorAll('.calc-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.calc-tab').forEach(t => {
+                    t.classList.remove('active-tab');
+                    t.classList.add('bg-slate-800/80', 'hover:bg-slate-700', 'text-slate-300');
+                    t.classList.remove('bg-amber-500', 'text-slate-950');
+                });
+                tab.classList.add('active-tab');
+                tab.classList.remove('bg-slate-800/80', 'hover:bg-slate-700', 'text-slate-300');
+                tab.classList.add('bg-amber-500', 'text-slate-950');
 
- <script>
- const API_URL = '/wp-json/wp/v2/posts?_embed&per_page=9';
- // 高质感工业电线铜材占位图
- const FALLBACK_IMG = 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?q=80&w=800&auto=format&fit=crop';
+                document.querySelectorAll('.calc-panel').forEach(p => p.classList.add('hidden'));
+                const target = document.getElementById(tab.dataset.tab);
+                if (target) target.classList.remove('hidden');
+            });
+        });
+    </script>
 
- async function loadPosts(catId = '') {
- const container = document.getElementById('posts-container');
- container.innerHTML = '<div class="text-slate-500 col-span-3 text-center py-12"><i class="fa-solid fa-circle-notch fa-spin text-amber-500 mr-2"></i>កំពុងទាញយកទិន្នន័យ... (加载中)</div>';
+    <script>
+        const API_URL = '/wp-json/wp/v2/posts?_embed&per_page=9';
+        // 高质感工业电线铜材占位图
+        const FALLBACK_IMG = 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?q=80&w=800&auto=format&fit=crop';
 
- try {
- let url = API_URL;
- if (catId) url += `&categories=${catId}`;
- const res = await fetch(url);
- const posts = await res.json();
+        // 安全地提取 WordPress 嵌入资源
+        function getFeaturedImage(post) {
+            if (!post._embedded || !post._embedded['wp:featuredmedia']) return FALLBACK_IMG;
+            const media = post._embedded['wp:featuredmedia'][0];
+            return media && media.source_url ? media.source_url : FALLBACK_IMG;
+        }
 
- if (!posts || posts.length === 0) {
- container.innerHTML = '<div class="text-slate-400 col-span-3 text-center py-12 border border-slate-800 rounded-xl bg-slate-950/40">មិនទាន់មានអត្ថបទនៅក្នុងផ្នែកនេះ (该分类下暂无文章)</div>';
- return;
- }
+        async function loadPosts(catId = '') {
+            const container = document.getElementById('posts-container');
+            container.innerHTML = '<div class="text-slate-500 col-span-3 text-center py-12"><div class="inline-flex items-center gap-3"><i class="fa-solid fa-circle-notch fa-spin text-amber-500"></i><span>កំពុងទាញយកទិន្នន័យ... (加载中)</span></div></div>';
 
- container.innerHTML = posts.map(post => {
- const title = post.title.rendered;
- const date = new Date(post.date).toLocaleDateString('km-KH', { year: 'numeric', month: 'short', day: 'numeric' });
- // 过滤 HTML 标签并截取摘要
- const rawExcerpt = post.excerpt ? post.excerpt.rendered : (post.content ? post.content.rendered : '');
- const excerpt = rawExcerpt.replace(/<[^>]+>/g, '').slice(0, 95) + '...';
+            try {
+                let url = API_URL;
+                if (catId) url += `&categories=${catId}`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const posts = await res.json();
 
- // 图片处理逻辑
- let imgSrc = FALLBACK_IMG;
- if (post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0] && post._embedded['wp:featuredmedia'][0].source_url) {
- imgSrc = post._embedded['wp:featuredmedia'][0].source_url;
- }
- return `
- <div class="bg-slate-950/80 border border-slate-800/80 rounded-xl overflow-hidden hover:border-amber-500/50 transition duration-300 flex flex-col group shadow-lg cursor-pointer" onclick="openPostModal(${post.id})">
- <div class="h-44 overflow-hidden relative bg-slate-900">
- <img src="${imgSrc}" alt="${title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-90 group-hover:opacity-100">
- <div class="absolute top-3 left-3 bg-slate-950/80 text-amber-400 border border-amber-500/30 text-xs px-2.5 py-1 rounded-full backdrop-blur-md flex items-center gap-1.5">
- <i class="fa-solid fa-bolt text-[10px]"></i> GCC Cable
- </div>
- </div>
- <div class="p-5 flex-1 flex flex-col justify-between">
- <div>
- <div class="text-xs text-slate-500 mb-2 flex items-center gap-2">
- <i class="fa-regular fa-clock"></i> ${date}
- </div>
- <h3 class="font-bold text-base text-slate-100 group-hover:text-amber-400 transition mb-2 line-clamp-2 leading-snug">
- ${title}
- </h3>
- <p class="text-slate-400 text-xs line-clamp-3 leading-relaxed">
- ${excerpt}
- </p>
- </div>
- <div class="mt-4 pt-3 border-t border-slate-800/80 flex justify-between items-center">
- <span class="text-xs text-amber-400 font-semibold flex items-center gap-1 group-hover:translate-x-1 transition">
- អានបន្ត (阅读) <i class="fa-solid fa-arrow-right text-[10px]"></i>
- </span>
- </div>
- </div>
- </div>
- `;
- }).join('');
- } catch (err) {
- console.error(err);
- container.innerHTML = '<div class="text-rose-400 col-span-3 text-center py-12 border border-rose-900/30 rounded-xl bg-rose-950/10">បរាជ័យក្នុងការទាញយកទិន្នន័យ (API 关联失败)</div>';
- }
- }
+                if (!posts || posts.length === 0) {
+                    container.innerHTML = '<div class="text-slate-400 col-span-3 text-center py-12 border border-slate-700/50 rounded-xl bg-slate-900/40">មិនទាន់មានអត្ថបទនៅក្នុងផ្នែកនេះ (该分类下暂无文章)</div>';
+                    return;
+                }
 
- document.addEventListener('DOMContentLoaded', () => loadPosts());
- 
- // Modal Controller Logic
- async function openPostModal(id) {
- const modal = document.getElementById('post-modal');
- const titleEl = document.getElementById('modal-title');
- const dateEl = document.getElementById('modal-date');
- const bodyEl = document.getElementById('modal-body');
+                container.innerHTML = posts.map(post => {
+                    const title = post.title.rendered;
+                    const date = new Date(post.date).toLocaleDateString('km-KH', { year: 'numeric', month: 'short', day: 'numeric' });
+                    const rawExcerpt = post.excerpt ? post.excerpt.rendered : (post.content ? post.content.rendered : '');
+                    const excerpt = rawExcerpt.replace(/<[^>]+>/g, '').slice(0, 95) + '...';
+                    const imgSrc = getFeaturedImage(post);
 
- modal.classList.remove('hidden');
- modal.classList.add('flex');
- titleEl.innerText = 'កំពុងទាញយក... (加载中)';
- dateEl.innerText = '';
- bodyEl.innerHTML = '<div class="text-center py-12 text-slate-500"><i class="fa-solid fa-circle-notch fa-spin text-amber-500 text-3xl mb-3"></i><br>កំពុងទាញយកអត្ថបទ...</div>';
+                    return `
+                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl overflow-hidden hover:border-amber-500/30 transition-all duration-300 flex flex-col group shadow-lg cursor-pointer card-hover" onclick="openPostModal(${post.id})">
+                        <div class="h-48 overflow-hidden relative bg-slate-800">
+                            <img src="${imgSrc}" alt="" class="w-full h-full object-cover group-hover:scale-105 transition duration-700 opacity-90 group-hover:opacity-100">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent"></div>
+                            <div class="absolute bottom-3 left-3 bg-slate-950/80 text-amber-400 border border-amber-500/20 text-xs px-3 py-1.5 rounded-full backdrop-blur-md flex items-center gap-2">
+                                <i class="fa-solid fa-bolt text-[10px]"></i> GCC Cable
+                            </div>
+                        </div>
+                        <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+                            <div>
+                                <div class="text-xs text-slate-500 mb-2 flex items-center gap-2">
+                                    <i class="fa-regular fa-clock"></i> ${date}
+                                </div>
+                                <h3 class="font-bold text-base text-slate-100 group-hover:text-amber-400 transition mb-2 line-clamp-2 leading-snug">${title}</h3>
+                                <p class="text-slate-400 text-xs line-clamp-3 leading-relaxed">${excerpt}</p>
+                            </div>
+                            <div class="pt-3 border-t border-slate-700/50 flex justify-between items-center">
+                                <span class="text-xs text-amber-400 font-semibold flex items-center gap-1.5 group-hover:translate-x-1 transition-transform duration-300">
+                                    អានបន្ត (阅读) <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<div class="text-rose-400 col-span-3 text-center py-12 border border-rose-900/30 rounded-xl bg-rose-950/10">បរាជ័យក្នុងការទាញយកទិន្នន័យ (API 关联失败)</div>';
+            }
+        }
 
- try {
- const res = await fetch(`/wp-json/wp/v2/posts/${id}`);
- const post = await res.json();
+        document.addEventListener('DOMContentLoaded', () => loadPosts());
 
- titleEl.innerHTML = post.title.rendered;
- dateEl.innerHTML = '<i class="fa-regular fa-clock mr-1"></i> ' + new Date(post.date).toLocaleDateString('km-KH', { year: 'numeric', month: 'short', day: 'numeric' });
- bodyEl.innerHTML = post.content.rendered;
- } catch(err) {
- console.error(err);
- bodyEl.innerHTML = '<div class="text-rose-400 text-center py-6">បរាជ័យក្នុងការទាញយកអត្ថបទ (无法加载文章内容)</div>';
- }
- }function closeModal() {
- const modal = document.getElementById('post-modal');
- modal.classList.add('hidden');
- modal.classList.remove('flex');
- }
+        // Modal Controller Logic
+        async function openPostModal(id) {
+            const modal = document.getElementById('post-modal');
+            const modalContent = document.getElementById('modal-content');
+            const titleEl = document.getElementById('modal-title');
+            const dateEl = document.getElementById('modal-date');
+            const bodyEl = document.getElementById('modal-body');
 
-</script>
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
 
+            // Trigger animation
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
 
- <!-- Article Reader Modal -->
- <div id="post-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden items-center justify-center p-4 transition-all duration-300">
- <div class="bg-slate-900 border border-slate-700/80 rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden relative text-slate-200">
- <!-- Modal Header -->
- <div class="p-6 border-b border-slate-800 flex justify-between items-start bg-slate-950/50">
- <div>
- <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider flex items-center gap-1">
- <i class="fa-solid fa-bolt"></i> GCC CABLE REPORT
- </span>
- <h2 id="modal-title" class="text-xl md:text-2xl font-bold text-white mt-1 leading-snug"></h2>
- <div id="modal-date" class="text-xs text-slate-400 mt-2"></div>
- </div>
- <button onclick="closeModal()" class="text-slate-400 hover:text-white p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition ml-4">
- <i class="fa-solid fa-xmark text-lg"></i>
- </button>
- </div>
- <!-- Modal Content Body -->
- <div id="modal-body" class="p-6 md:p-8 overflow-y-auto leading-relaxed space-y-4 text-slate-300 text-sm md:text-base border-t border-slate-800/40">
- <!-- Content will load here dynamically -->
- </div>
- <!-- Modal Footer -->
- <div class="p-4 border-t border-slate-800 bg-slate-950/50 flex justify-end">
- <button onclick="closeModal()" class="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm rounded-lg transition">
- បិទ (关闭)
- </button>
- </div>
- </div>
- </div>
+            titleEl.textContent = 'កំពុងទាញយក... (加载中)';
+            dateEl.textContent = '';
+            bodyEl.innerHTML = '<div class="text-center py-12 text-slate-500"><i class="fa-solid fa-circle-notch fa-spin text-amber-500 text-3xl mb-3"></i><br>កំពុងទាញយកអត្ថបទ...</div>';
 
- <style>
- .calc-tab.active-tab { background: #f59e0b !important; color: #0f172a !important; font-weight: 700; }
- .calc-panel { transition: opacity 0.2s ease; }
- </style>
+            try {
+                const res = await fetch(`/wp-json/wp/v2/posts/${id}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const post = await res.json();
 
- <!-- Tab Switching Logic -->
- <script>
- document.querySelectorAll('.calc-tab').forEach(tab => {
-   tab.addEventListener('click', () => {
-     document.querySelectorAll('.calc-tab').forEach(t => {
-       t.classList.remove('active-tab');
-       t.classList.add('bg-slate-800', 'hover:bg-slate-700', 'text-slate-300');
-       t.classList.remove('bg-amber-500', 'text-slate-950');
-     });
-     tab.classList.add('active-tab');
-     tab.classList.remove('bg-slate-800', 'hover:bg-slate-700', 'text-slate-300');
-     tab.classList.add('bg-amber-500', 'text-slate-950');
+                titleEl.textContent = post.title.rendered;
+                dateEl.innerHTML = '<i class="fa-regular fa-clock mr-1"></i> ' + new Date(post.date).toLocaleDateString('km-KH', { year: 'numeric', month: 'short', day: 'numeric' });
+                bodyEl.innerHTML = sanitizePostContent(post.content.rendered);
+            } catch(err) {
+                console.error(err);
+                bodyEl.innerHTML = '<div class="text-rose-400 text-center py-6">បរាជ័យក្នុងការទាញយកអត្ថបទ (无法加载文章内容)</div>';
+            }
+        }
 
-     document.querySelectorAll('.calc-panel').forEach(p => p.classList.add('hidden'));
-     const target = document.getElementById(tab.dataset.tab);
-     if (target) target.classList.remove('hidden');
-   });
- });
- </script>
+        function closeModal() {
+            const modal = document.getElementById('post-modal');
+            const modalContent = document.getElementById('modal-content');
 
- <script src="js/calculators.js"></script>
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        // 简单清理 WordPress 内容：移除 script/style/iframe/object/embed 等危险标签
+        function sanitizePostContent(html) {
+            if (!html) return '';
+            return html
+                .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
+                .replace(/<iframe\b[^>]*\/?>/gi, '')
+                .replace(/<object\b[^>]*>/gi, '')
+                .replace(/<embed\b[^>]*\/?>/gi, '')
+                .replace(/\son\w+\s*=\s*"[^"]*"/gi, '')
+                .replace(/\son\w+\s*=\s*'[^']*'/gi, '')
+                .replace(/\bon\w+\s*=\s*[^\s>]*/gi, '');
+        }
+
+        // ESC 键关闭 modal
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // 点击背景关闭 modal
+        document.getElementById('post-modal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'post-modal') closeModal();
+        });
+    </script>
+
+    <script src="js/calculators.js"></script>
 
 </body>
 </html>

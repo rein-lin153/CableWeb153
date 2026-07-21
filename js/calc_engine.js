@@ -62,7 +62,8 @@ function calculateAmpacity() {
 
   const wireS = pickWireSize(currentA, material);
 
-  /* Voltage drop: V_drop% = (k * I * L * ρ) / S / V * 100 */
+  /* Voltage drop: V_drop% = (k * I * L * ρ) / S / V * 100
+   * k=2 [1φ round-trip], k=√3 [3φ line-to-line] */
   let vDropPct = null;
   if (wireS !== null) {
     const k = phase === '1' ? 2 : sqrt3;
