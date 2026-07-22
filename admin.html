@@ -124,6 +124,28 @@
                 </div>
             </div>
 
+            <!-- Search & Filter Bar -->
+            <div class="flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+                    <input type="text" id="admin-search" placeholder="搜索文章标题..."
+                           class="w-full bg-slate-800 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none transition-all">
+                </div>
+                <select id="admin-filter-category" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 outline-none transition-all min-w-[160px]">
+                    <option value="all">全部分类</option>
+                    <option value="អគ្គិសនី">⚡ 电力</option>
+                    <option value="សំណង់">🧱 土木工程</option>
+                    <option value="តុបតែង">🎨 装饰</option>
+                    <option value="វ៉ាយតម្លៃ">🏠 造价</option>
+                    <option value="សុវត្ថិភាព">⚠️ 安全</option>
+                </select>
+                <select id="admin-filter-status" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 outline-none transition-all min-w-[130px]">
+                    <option value="all">全部状态</option>
+                    <option value="published">已发布</option>
+                    <option value="draft">草稿</option>
+                </select>
+            </div>
+
             <!-- Articles Table -->
             <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
                 <div class="overflow-x-auto">
@@ -283,17 +305,32 @@
         document.getElementById('stat-published').textContent = articles.filter(a => a.status === 'published').length;
         document.getElementById('stat-drafts').textContent = articles.filter(a => a.status === 'draft').length;
 
+        // Get filter values
+        const searchTerm = (document.getElementById('admin-search')?.value || '').toLowerCase().trim();
+        const catFilter = document.getElementById('admin-filter-category')?.value || 'all';
+        const statusFilter = document.getElementById('admin-filter-status')?.value || 'all';
+
+        // Apply filters
+        let filtered = articles.filter(a => {
+            if (catFilter !== 'all' && a.category !== catFilter) return false;
+            if (statusFilter !== 'all' && a.status !== statusFilter) return false;
+            if (searchTerm && !(a.title || '').toLowerCase().includes(searchTerm) && !(a.excerpt || '').toLowerCase().includes(searchTerm)) return false;
+            return true;
+        });
+
         const tbody = document.getElementById('articles-table-body');
         const emptyState = document.getElementById('empty-state');
 
-        if (articles.length === 0) {
+        if (filtered.length === 0) {
             tbody.innerHTML = '';
             emptyState.classList.remove('hidden');
+            document.getElementById('empty-state h3').textContent = articles.length === 0 ? 'No articles yet' : 'No matching articles';
+            document.getElementById('empty-state p').textContent = articles.length === 0 ? 'Create your first article to get started' : 'Try adjusting your search or filters';
             return;
         }
         emptyState.classList.add('hidden');
 
-        tbody.innerHTML = articles.map(a => {
+        tbody.innerHTML = filtered.map(a => {
             const cat = CATEGORY_BADGES[a.category] || { label: a.category, color: 'bg-slate-700/40 text-slate-300 border-slate-600' };
             const cover = a.coverImage || 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?q=80&w=200&auto=format&fit=crop';
             const isPub = a.status === 'published';

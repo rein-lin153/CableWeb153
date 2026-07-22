@@ -23,25 +23,13 @@
         }
 
         /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f172a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #475569;
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
         /* Smooth transitions */
-        .calc-panel {
-            animation: fadeIn 0.3s ease-in-out;
-        }
+        .calc-panel { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -55,36 +43,21 @@
         }
 
         /* Input focus glow */
-        .input-glow:focus {
-            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
-        }
+        .input-glow:focus { box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1); }
 
         /* Button ripple effect */
-        .btn-ripple {
-            position: relative;
-            overflow: hidden;
-        }
+        .btn-ripple { position: relative; overflow: hidden; }
         .btn-ripple::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
+            content: ''; position: absolute; top: 50%; left: 50%;
+            width: 0; height: 0; border-radius: 50%;
             background: rgba(255, 255, 255, 0.2);
             transform: translate(-50%, -50%);
             transition: width 0.6s, height 0.6s;
         }
-        .btn-ripple:active::after {
-            width: 300px;
-            height: 300px;
-        }
+        .btn-ripple:active::after { width: 300px; height: 300px; }
 
         /* Card hover lift */
-        .card-hover {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .card-hover:hover {
             transform: translateY(-2px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
@@ -110,41 +83,83 @@
         }
 
         /* Category panel transition */
-        .calc-category-panel {
-            animation: slideUp 0.35s ease-out;
-        }
+        .calc-category-panel { animation: slideUp 0.35s ease-out; }
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(16px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         /* Magazine card hover */
-        .mag-card:hover .mag-cover-img {
-            transform: scale(1.06);
-        }
-        .mag-cover-img {
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .mag-card:hover .mag-cover-img { transform: scale(1.06); }
+        .mag-cover-img { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
 
         /* Result animation */
-        .result-animate {
-            animation: slideIn 0.4s ease-out;
-        }
+        .result-animate { animation: slideIn 0.4s ease-out; }
         @keyframes slideIn {
             from { opacity: 0; transform: translateX(-10px); }
             to { opacity: 1; transform: translateX(0); }
         }
 
         /* Modal backdrop */
-        .modal-backdrop {
-            background: rgba(2, 6, 23, 0.85);
-            backdrop-filter: blur(8px);
-        }
+        .modal-backdrop { background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(8px); }
 
         /* Progress bar animation */
-        .progress-bar {
-            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        .progress-bar { transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* Sub-pill bar */
+        .sub-pill-bar {
+            overflow-x: auto; -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; padding-bottom: 4px;
         }
+        .sub-pill-bar::-webkit-scrollbar { display: none; }
+
+        /* Calculator card swap transition */
+        .calc-card { transition: opacity 0.2s ease, transform 0.2s ease; }
+        .calc-card.hidden { display: none; }
+        @keyframes calcFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .calc-card-enter { animation: calcFadeIn 0.25s ease-out forwards; }
+
+        /* Article card hover */
+        .article-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .article-card:hover { transform: translateY(-4px); box-shadow: 0 25px 30px -8px rgba(0,0,0,0.4); }
+        .article-card:hover .article-cover { transform: scale(1.05); }
+        .article-cover { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* Category filter pill */
+        .filter-pill { transition: all 0.2s ease; }
+        .filter-pill.active { background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; font-weight: 700; box-shadow: 0 4px 6px -1px rgba(245,158,11,0.3); }
+
+        /* Markdown rendered content styles */
+        .article-content h1 { font-size: 1.75rem; font-weight: 700; color: #fbbf24; margin: 1.5rem 0 0.75rem; line-height: 1.3; }
+        .article-content h2 { font-size: 1.375rem; font-weight: 600; color: #fcd34d; margin: 1.25rem 0 0.5rem; line-height: 1.35; }
+        .article-content h3 { font-size: 1.125rem; font-weight: 600; color: #fde68a; margin: 1rem 0 0.5rem; }
+        .article-content p { margin: 0.75rem 0; line-height: 1.8; color: #cbd5e1; }
+        .article-content ul, .article-content ol { margin: 0.75rem 0; padding-left: 1.5rem; color: #cbd5e1; }
+        .article-content li { margin: 0.35rem 0; line-height: 1.7; }
+        .article-content strong { color: #fbbf24; font-weight: 600; }
+        .article-content em { color: #fcd34d; }
+        .article-content blockquote {
+            border-left: 3px solid #f59e0b; padding: 0.75rem 1rem; margin: 1rem 0;
+            background: rgba(245, 158, 11, 0.06); border-radius: 0 8px 8px 0;
+        }
+        .article-content blockquote p { color: #fde68a; margin: 0; }
+        .article-content table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+        .article-content th { background: rgba(245, 158, 11, 0.1); color: #fbbf24; font-weight: 600; padding: 0.75rem; text-align: left; border: 1px solid #334155; }
+        .article-content td { padding: 0.625rem; border: 1px solid #334155; color: #cbd5e1; }
+        .article-content code {
+            background: rgba(245, 158, 11, 0.1); padding: 0.125rem 0.375rem;
+            border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.875rem; color: #fde68a;
+        }
+        .article-content pre {
+            background: #0f172a; border: 1px solid #334155; border-radius: 8px;
+            padding: 1rem; margin: 1rem 0; overflow-x: auto;
+        }
+        .article-content pre code { background: none; padding: 0; color: #e2e8f0; }
+        .article-content hr { border: none; border-top: 1px solid #334155; margin: 1.5rem 0; }
+        .article-content a { color: #fbbf24; text-decoration: underline; }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen antialiased">
@@ -168,7 +183,7 @@
         </div>
     </nav>
 
-    <!-- 9合1 电工计算器套件 -->
+    <!-- Calculator Section -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/50 rounded-2xl p-6 sm:p-8 shadow-2xl">
             <div class="flex items-center gap-3 mb-2">
@@ -186,797 +201,651 @@
             <!-- Category Tab Navigation -->
             <div id="calc-tabs" class="flex flex-wrap gap-3 mb-8 border-b border-slate-700/50 pb-4">
                 <button class="calc-category-tab active-tab px-5 py-3 bg-amber-500 text-slate-950 font-bold rounded-xl text-sm transition-all duration-300 whitespace-nowrap btn-ripple shadow-lg shadow-amber-500/20" data-category="cat-electric">
-                    ⚡ អគ្គិសនី <span class="text-xs opacity-70 ml-1">(9)</span>
+                    ⚡ 电力 <span class="text-xs opacity-70 ml-1">(9)</span>
                 </button>
                 <button class="calc-category-tab px-3 py-3 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition-all duration-300 whitespace-nowrap btn-ripple" data-category="cat-civil">
-                    🧱 សំណង់ស៊ីវិល
+                    🧱 土木工程
                 </button>
                 <button class="calc-category-tab px-3 py-3 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition-all duration-300 whitespace-nowrap btn-ripple" data-category="cat-decor">
-                    🎨 តុបតែង
+                    🎨 装饰
                 </button>
                 <button class="calc-category-tab px-3 py-3 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition-all duration-300 whitespace-nowrap btn-ripple" data-category="cat-cost">
-                    🏠 វ៉ាយតម្លៃ
+                    🏠 价格范围
                 </button>
             </div>
+
+            <!-- Sub-Pill Navigation -->
+            <div id="electric-sub-pills" class="sub-pill-bar flex gap-2 mb-6 overflow-x-auto"></div>
+            <div id="civil-sub-pills" class="sub-pill-bar flex gap-2 mb-6 overflow-x-auto hidden"></div>
+            <div id="decor-sub-pills" class="sub-pill-bar flex gap-2 mb-6 overflow-x-auto hidden"></div>
+            <div id="cost-sub-pills" class="sub-pill-bar flex gap-2 mb-6 overflow-x-auto hidden"></div>
 
             <!-- ===== Electric Category ===== -->
             <div id="cat-electric" class="calc-category-panel">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
+                <div id="electric-cards-container" class="min-h-[400px]">
                     <!-- 1. Cable Size & Voltage Drop -->
-                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
-                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
-                            <i class="fa-solid fa-plug"></i>
-                            ទំហំខ្សែភ្លើងនិងការធ្លាក់វ៉ុល
-                        </h3>
+                    <div class="calc-card calc-card-active bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5 calc-card-1">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-plug"></i> 缆线载流量与电压降计算</h3>
                         <div class="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
                             <div class="flex items-start gap-3">
                                 <span class="text-xl shrink-0 mt-0.5">💡</span>
                                 <div class="text-sm leading-relaxed">
-                                    <h4 class="font-bold text-amber-400 mb-1">ការណែនាំសាមញ្ញ (មគ្គុទ្ទេសក៍សម្រាប់អ្នកចាប់ផ្តើម)</h4>
-                                    <p class="text-slate-300">ខ្សែភ្លើងដូចជាទុយោទឹក! បើខ្សែតូចពេក ភ្លើងដើរមិនទាន់នឹងក្តៅឆេះ។ ប្រវែងកាន់តែវែង សម្ពាធភ្លើងកាន់តែធ្លាក់ (Voltage Drop)។ ឧបករណ៍នេះជួយអ្នករើសទំហំខ្សែភ្លើងដែលសុវត្ថិភាពបំផុត។</p>
+                                    <h4 class="font-bold text-amber-400 mb-1">傻瓜指南</h4>
+                                    <p class="text-slate-300">电线就像水管！如果线径太小，电流过大就会发热甚至起火。距离越远，电压降越大（Voltage Drop）。这个工具帮你选择最安全的线径。</p>
                                 </div>
                             </div>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រព័ន្ធ (Phase)</label>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">系统 (Phase)</label>
                                 <select id="cable-phase" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
-                                    <option value="single">មួយដំណាក់កាល Single</option>
-                                    <option value="three">បីដំណាក់កាល Three</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">សម្ភារៈ (Material)</label>
+                                    <option value="single">单相 Single</option><option value="three">三相 Three</option></select></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">材质 (Material)</label>
                                 <select id="cable-material" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
-                                    <option value="copper">ស័ង្កសី Copper</option>
-                                    <option value="aluminum">អាល្យុយមីញ៉ូម Aluminum</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ថាមពល (kW)</label>
-                                <input type="number" id="cable-power" placeholder="ឧ. 15" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ចម្ងាយ (m)</label>
-                                <input type="number" id="cable-length" placeholder="ឧ. 80" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
+                                    <option value="copper">铜 Copper</option><option value="aluminum">铝 Aluminum</option></select></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">功率 (kW)</label>
+                                <input type="number" id="cable-power" placeholder="例 15" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">距离 (m)</label>
+                                <input type="number" id="cable-length" placeholder="例 80" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
                         </div>
-                        <button id="btn-cable-size" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
-                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
-                        </button>
+                        <button id="btn-cable-size" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
                         <div id="cable-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
                     </div>
-
                     <!-- 2. Copper Weight & Cost -->
-                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
-                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
-                            <i class="fa-solid fa-coins"></i>
-                            ទម្ងន់ស័ង្កសីនិងការប៉ាន់ស្មាន
-                        </h3>
+                    <div class="calc-card hidden bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5 calc-card-2">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-coins"></i> 铜重估价计算</h3>
                         <div class="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
-                            <div class="flex items-start gap-3">
-                                <span class="text-xl shrink-0 mt-0.5">💡</span>
-                                <div class="text-sm leading-relaxed">
-                                    <h4 class="font-bold text-amber-400 mb-1">ការណែនាំសាមញ្ញ (មគ្គុទ្ទេសក៍សម្រាប់អ្នកចាប់ផ្តើម)</h4>
-                                    <p class="text-slate-300">ចង់ដឹងថាយកខ្សែភ្លើងចាស់ទៅលក់បានលុយប៉ុន្មាន? ឬទិញខ្សែភ្លើងមិនឱ្យគេបោក? ឧបករណ៍នេះគណនាទម្ងន់ស្ពាន់សុទ្ធក្នុងខ្សែ និងតម្លៃប្រហាក់ប្រហែលតាមទីផ្សារ។</p>
-                                </div>
-                            </div>
-                        </div>
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-amber-400 mb-1">傻瓜指南</h4><p class="text-slate-300">想知道把旧电缆拿去卖能值多少钱？或者买电缆不被坑？这个工具计算电缆中纯铜的重量和大约市场价格。</p></div></div></div>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ផ្ទៃកាត់ mm²</label>
-                                <input type="number" id="cu-area" placeholder="ឧ. 25" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ចំនួនខ្សែ (1-4)</label>
-                                <select id="cu-cores" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-emerald-500 outline-none input-glow transition-all">
-                                    <option>1</option>
-                                    <option selected>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រវែងសរុប (m)</label>
-                                <input type="number" id="cu-length" placeholder="ឧ. 100" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all">
-                            </div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">截面积 mm²</label><input type="number" id="cu-area" placeholder="例 25" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">芯数 (1-4)</label><select id="cu-cores" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-emerald-500 outline-none input-glow transition-all"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">总长度 (m)</label><input type="number" id="cu-length" placeholder="例 100" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all"></div>
                         </div>
-                        <button id="btn-copper-weight" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
-                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
-                        </button>
+                        <button id="btn-copper-weight" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
                         <div id="copper-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
                     </div>
-
                     <!-- 3. Distribution System Design -->
-                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
-                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
-                            <i class="fa-solid fa-server"></i>
-                            ការរចនាការបែងចែកថាមពល
-                        </h3>
+                    <div class="calc-card hidden bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5 calc-card-3">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-server"></i> 配电设计负荷计算</h3>
                         <div class="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
-                            <div class="flex items-start gap-3">
-                                <span class="text-xl shrink-0 mt-0.5">💡</span>
-                                <div class="text-sm leading-relaxed">
-                                    <h4 class="font-bold text-amber-400 mb-1">ការណែនាំសាមញ្ញ (មគ្គុទ្ទេសក៍សម្រាប់អ្នកចាប់ផ្តើម)</h4>
-                                    <p class="text-slate-300">កុំដោតគ្រឿងអគ្គិសនីទាំងអស់លើព្រីតែមួយ! ឧបករណ៍នេះជួយគណនាបន្ទុកថាមពលសរុបក្នុងផ្ទះ ឬរោងចក្រ ដើម្បីជ្រើសរើសឌីសង់ទ័រ (Breaker) ឱ្យត្រូវទំហំ មិនងាយលោតឌីសង់ទ័រ។</p>
-                                </div>
-                            </div>
-                        </div>
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-amber-400 mb-1">傻瓜指南</h4><p class="text-slate-300">不要把电器全插在一个插座上！这个工具帮你计算家庭或工厂的总功率负荷，选择合适的断路器（Breaker），避免频繁跳闸。</p></div></div></div>
                         <div id="device-list" class="space-y-3"></div>
                         <div class="flex flex-wrap gap-3">
-                            <button id="btn-add-device" class="px-5 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
-                                <i class="fa-solid fa-plus mr-2"></i>បន្ថែមឧបករណ៍ (Add)
-                            </button>
-                            <button id="btn-distribution" class="px-5 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
-                                <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算总负荷)
-                            </button>
+                            <button id="btn-add-device" class="px-5 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-plus mr-2"></i>添加设备 (Add)</button>
+                            <button id="btn-distribution" class="px-5 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算总负荷</button>
                         </div>
                         <div id="distribution-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
                     </div>
-
                     <!-- 4. P/I/V/PF Converter -->
-                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
-                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
-                            <i class="fa-solid fa-right-left"></i>
-                            ការបំលែង P/I/V/PF
-                        </h3>
+                    <div class="calc-card hidden bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5 calc-card-4">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-right-left"></i> P/I/V/PF 转换器</h3>
                         <div class="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
-                            <div class="flex items-start gap-3">
-                                <span class="text-xl shrink-0 mt-0.5">💡</span>
-                                <div class="text-sm leading-relaxed">
-                                    <h4 class="font-bold text-amber-400 mb-1">ការណែនាំសាមញ្ញ (មគ្គុទ្ទេសក៍សម្រាប់អ្នកចាប់ផ្តើម)</h4>
-                                    <p class="text-slate-300">មិនយល់ពីទំនាក់ទំនងរវាង វ៉ាត់ (Watt), អំពែរ (Ampere) និង វ៉ុល (Volt)? គ្រាន់តែបញ្ចូលលេខដែលមាន ឧបករណ៍នេះនឹងគណនារកលេខផ្សេងទៀតដោយស្វ័យប្រវត្តិ។</p>
-                                </div>
-                            </div>
-                        </div>
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-amber-400 mb-1">傻瓜指南</h4><p class="text-slate-300">不理解瓦特(Watt)、安培(Ampere)和伏特(Volt)之间的关系？只需输入已知数值，工具自动计算其余参数。</p></div></div></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រព័ន្ធ</label>
-                                <select id="pc-phase" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
-                                    <option value="single">មួយដំណាក់កាល</option>
-                                    <option value="three">បីដំណាក់កាល</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ត្រូវរក (Unknown)</label>
-                                <select id="pc-unknown" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
-                                    <option value="p">ថាមពល P</option>
-                                    <option value="i">ចរន្ត I</option>
-                                    <option value="v">វ៉ុល V</option>
-                                    <option value="pf">កត្តាថាមពល PF</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">P (kW)</label>
-                                <input type="number" id="pc-p" placeholder="ថាមពល kW" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">V (V)</label>
-                                <input type="number" id="pc-v" placeholder="វ៉ុល" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">I (A)</label>
-                                <input type="number" id="pc-i" placeholder="ចរន្ត" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">PF</label>
-                                <input type="number" id="pc-pf" step="0.01" placeholder="0.85" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">系统</label><select id="pc-phase" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all"><option value="single">单相</option><option value="three">三相</option></select></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">求未知量 (Unknown)</label><select id="pc-unknown" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all"><option value="p">功率 P</option><option value="i">电流 I</option><option value="v">电压 V</option><option value="pf">功率因数 PF</option></select></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">P (kW)</label><input type="number" id="pc-p" placeholder="功率 kW" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">V (V)</label><input type="number" id="pc-v" placeholder="电压" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">I (A)</label><input type="number" id="pc-i" placeholder="电流" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">PF</label><input type="number" id="pc-pf" step="0.01" placeholder="0.85" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
                         </div>
-                        <button id="btn-power-conv" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
-                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
-                        </button>
+                        <button id="btn-power-conv" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
                         <div id="power-conv-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
                     </div>
-
                     <!-- 5. Transformer Current -->
-                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
-                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
-                            <i class="fa-solid fa-bolt"></i>
-                            ចរន្តខ្សែភ្លើងត្រង់ស្វ័យ
-                        </h3>
+                    <div class="calc-card hidden bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5 calc-card-5">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-bolt"></i> 变压器电流感应</h3>
                         <div class="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
-                            <div class="flex items-start gap-3">
-                                <span class="text-xl shrink-0 mt-0.5">💡</span>
-                                <div class="text-sm leading-relaxed">
-                                    <h4 class="font-bold text-amber-400 mb-1">ការណែនាំសាមញ្ញ (មគ្គុទ្ទេសក៍សម្រាប់អ្នកចាប់ផ្តើម)</h4>
-                                    <p class="text-slate-300">ភ្លើងរដ្ឋរត់ចូលរោងចក្រមានតង់ស្យុងខ្ពស់ (22kV)។ ត្រង់ស្វ័រជួយបញ្ចុះមក (400V) សម្រាប់ប្រើប្រាស់។ ឧបករណ៍នេះជួយគណនាចរន្តអគ្គិសនីសរុបខាងភ្លើងចូល និងខាងភ្លើងចេញ។</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="text-xs text-slate-400 mb-1.5 block">សមត្ថភាព kVA (ឧ. 250 / 630 / 1000)</label>
-                            <input type="number" id="xfmr-kva" placeholder="ឧ. 250" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                        </div>
-                        <button id="btn-transformer" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
-                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
-                        </button>
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-amber-400 mb-1">傻瓜指南</h4><p class="text-slate-300">国家电网进入工厂是高压(22kV)。变压器将其降压到(400V)供使用。这个工具帮助计算变压器一次侧和二次侧的总电流。</p></div></div></div>
+                        <div><label class="text-xs text-slate-400 mb-1.5 block">容量 kVA (例 250 / 630 / 1000)</label><input type="number" id="xfmr-kva" placeholder="例 250" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
+                        <button id="btn-transformer" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
                         <div id="transformer-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
                     </div>
-
                     <!-- 6. AC vs DC -->
-                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
-                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
-                            <i class="fa-solid fa-arrows-left-right"></i>
-                            ប្រៀបធៀប AC vs DC
-                        </h3>
+                    <div class="calc-card hidden bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5 calc-card-6">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-arrows-left-right"></i> AC vs DC 对比</h3>
                         <div class="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
-                            <div class="flex items-start gap-3">
-                                <span class="text-xl shrink-0 mt-0.5">💡</span>
-                                <div class="text-sm leading-relaxed">
-                                    <h4 class="font-bold text-amber-400 mb-1">ការណែនាំសាមញ្ញ (មគ្គុទ្ទេសក៍សម្រាប់អ្នកចាប់ផ្តើម)</h4>
-                                    <p class="text-slate-300">ភ្លើងតាមផ្ទះ (AC) និងភ្លើងអាគុយ/សូឡា (DC) មានលក្ខណៈខុសគ្នា។ ឧបករណ៍នេះជួយប្រៀបធៀបទំហំចរន្ត និងការខាតបង់ថាមពលរវាងប្រភេទភ្លើងទាំងពីរ។</p>
-                                </div>
-                            </div>
-                        </div>
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-amber-400 mb-1">傻瓜指南</h4><p class="text-slate-300">家庭用电(AC)和电池/太阳能用电(DC)特性不同。这个工具帮助比较两种电流的电流大小和能量损耗。</p></div></div></div>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ថាមពល kW</label>
-                                <input type="number" id="acdc-power" placeholder="ឧ. 50" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">វ៉ុល V</label>
-                                <input type="number" id="acdc-voltage" placeholder="ឧ. 380" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">PF</label>
-                                <input type="number" id="acdc-pf" step="0.01" value="0.85" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all">
-                            </div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">功率 kW</label><input type="number" id="acdc-power" placeholder="例 50" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">电压 V</label><input type="number" id="acdc-voltage" placeholder="例 380" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">PF</label><input type="number" id="acdc-pf" step="0.01" value="0.85" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all"></div>
                         </div>
-                        <button id="btn-acdc" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
-                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算对比)
-                        </button>
+                        <button id="btn-acdc" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算对比</button>
                         <div id="acdc-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
                     </div>
-
                     <!-- 7. EDC Electricity Bill -->
-                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
-                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
-                            <i class="fa-solid fa-file-invoice-dollar"></i>
-                            ការប៉ាន់ស្មានគុណិយ៍អគ្គិសនី EDC
-                        </h3>
+                    <div class="calc-card hidden bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5 calc-card-7">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-file-invoice-dollar"></i> EDC 电费估算</h3>
                         <div class="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
-                            <div class="flex items-start gap-3">
-                                <span class="text-xl shrink-0 mt-0.5">💡</span>
-                                <div class="text-sm leading-relaxed">
-                                    <h4 class="font-bold text-amber-400 mb-1">ការណែនាំសាមញ្ញ (មគ្គុទ្ទេសក៍សម្រាប់អ្នកចាប់ផ្តើម)</h4>
-                                    <p class="text-slate-300">ចង់ដឹងថាខែនេះត្រូវបង់ថ្លៃភ្លើង EDC ប្រហែលប៉ុន្មាន? បញ្ចូលចំនួនគីឡូវ៉ាត់ម៉ោង (kWh) ឧបករណ៍នេះនឹងគណនាថ្លៃភ្លើងតាមកម្រិតជណ្តើររបស់ EDC ជាប្រាក់រៀល និងដុល្លារ។</p>
-                                </div>
-                            </div>
-                        </div>
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-amber-400 mb-1">傻瓜指南</h4><p class="text-slate-300">想知道这个月大概要交多少电费？输入月用电量(kWh)，工具根据EDC阶梯电价计算约瑞尔和美元费用。</p></div></div></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រភេទ</label>
-                                <select id="edc-type" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
-                                    <option value="residential">គ្រួសារ Residential</option>
-                                    <option value="commercial">អាជីវកម្ម Commercial</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រើប្រាស់ក្នុងមួយខែ kWh</label>
-                                <input type="number" id="edc-kwh" placeholder="ឧ. 500" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">类型</label><select id="edc-type" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all"><option value="residential">住宅 Residential</option><option value="commercial">商业 Commercial</option></select></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">月用电量 kWh</label><input type="number" id="edc-kwh" placeholder="例 500" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
                         </div>
-                        <button id="btn-edc" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
-                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算电费)
-                        </button>
+                        <button id="btn-edc" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算电费</button>
                         <div id="edc-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
                     </div>
-
                     <!-- 8. Lighting Lux -->
-                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
-                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
-                            <i class="fa-solid fa-lightbulb"></i>
-                            ការគណនាលោកស្រី Lux និងចំនួនភ្លើង
-                        </h3>
+                    <div class="calc-card hidden bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5 calc-card-8">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-lightbulb"></i> 照度 Lux 与灯具数量计算</h3>
                         <div class="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
-                            <div class="flex items-start gap-3">
-                                <span class="text-xl shrink-0 mt-0.5">💡</span>
-                                <div class="text-sm leading-relaxed">
-                                    <h4 class="font-bold text-amber-400 mb-1">ការណែនាំសាមញ្ញ (មគ្គុទ្ទេសក៍សម្រាប់អ្នកចាប់ផ្តើម)</h4>
-                                    <p class="text-slate-300">បន្ទប់ធ្វើការងងឹតពេកនាំឱ្យខូចភ្នែក! គ្រាន់តែបញ្ចូលប្រវែងបន្ទប់ (បណ្តោយxទទឹងxកម្ពស់) ឧបករណ៍នេះនឹងប្រាប់ថាត្រូវដាក់អំពូល LED ប៉ុន្មានទើបភ្លឺល្មមល្អ។</p>
-                                </div>
-                            </div>
-                        </div>
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-amber-400 mb-1">傻瓜指南</h4><p class="text-slate-300">房间太暗伤眼睛！只需输入房间尺寸(长x宽x高)，工具会告诉你需要安装多少LED灯才够亮。</p></div></div></div>
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រវែង (m)</label>
-                                <input type="number" id="light-room-l" placeholder="10" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ទទឹង (m)</label>
-                                <input type="number" id="light-room-w" placeholder="8" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">កម្ពស់ (m)</label>
-                                <input type="number" id="light-room-h" placeholder="3.5" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">长度 (m)</label><input type="number" id="light-room-l" placeholder="10" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">宽度 (m)</label><input type="number" id="light-room-w" placeholder="8" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">高度 (m)</label><input type="number" id="light-room-h" placeholder="3.5" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ការប្រើប្រាស់ / Lux</label>
-                                <select id="light-lux" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
-                                    <option value="150">ឃ្លាំង Warehouse 150</option>
-                                    <option value="300" selected>ការិយាល័យ Office 300</option>
-                                    <option value="500">រោងចក្រ Workshop 500</option>
-                                    <option value="750">រោងចក្រ Factory 750</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ថាមពល LED W</label>
-                                <input type="number" id="light-led-w" value="40" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">用途 / Lux</label><select id="light-lux" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all"><option value="150">仓库 Warehouse 150</option><option value="300" selected>办公室 Office 300</option><option value="500">车间 Workshop 500</option><option value="750">工厂 Factory 750</option></select></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">LED功率 W</label><input type="number" id="light-led-w" value="40" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
                         </div>
-                        <button id="btn-lighting" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
-                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算灯具数)
-                        </button>
+                        <button id="btn-lighting" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算灯具数</button>
                         <div id="lighting-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
                     </div>
-
                     <!-- 9. Conduit & Bending Radius -->
-                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
-                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
-                            <i class="fa-solid fa-ring"></i>
-                            កាំបត់ខ្សែភ្លើង និងទំហំបំពង់
-                        </h3>
+                    <div class="calc-card hidden bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5 calc-card-9">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-ring"></i> 电缆弯曲半径与穿线管</h3>
                         <div class="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
-                            <div class="flex items-start gap-3">
-                                <span class="text-xl shrink-0 mt-0.5">💡</span>
-                                <div class="text-sm leading-relaxed">
-                                    <h4 class="font-bold text-amber-400 mb-1">ការណែនាំសាមញ្ញ (មគ្គុទ្ទេសក៍សម្រាប់អ្នកចាប់ផ្តើម)</h4>
-                                    <p class="text-slate-300">ញាត់ខ្សែភ្លើងក្នុងបំពង់ច្រើនពេកអាចធ្វើឱ្យក្តៅឆេះ! ឧបករណ៍នេះជួយគណនាទំហំបំពង់ PVC/GI ដែលត្រូវប្រើ និងកម្រិតបត់បំពង់មិនឱ្យបាក់ខ្សែខាងក្នុង។</p>
-                                </div>
-                            </div>
-                        </div>
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-amber-400 mb-1">傻瓜指南</h4><p class="text-slate-300">穿线管内塞太多线会发热起火！这个工具帮助计算合适的PVC/GI穿线管尺寸，以及电缆弯曲的最小半径。</p></div></div></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">អង្កត់ផ្ចិតខាងក្រៅ mm</label>
-                                <input type="number" id="conduit-d" step="0.1" placeholder="ឧ. 10" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ចំនួនខ្សែ</label>
-                                <input type="number" id="conduit-count" value="1" min="1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រភេទខ្សែ</label>
-                                <select id="conduit-type" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
-                                    <option value="general">ទូទៅ General (4×)</option>
-                                    <option value="armored">铠装 Armored (6×)</option>
-                                </select>
-                            </div>
-                            <div class="flex items-end">
-                                <div class="text-xs text-slate-500">弯曲半径标准见右侧说明</div>
-                            </div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">外径 mm</label><input type="number" id="conduit-d" step="0.1" placeholder="例 10" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">电缆数量</label><input type="number" id="conduit-count" value="1" min="1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">电缆类型</label><select id="conduit-type" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all"><option value="general">普通 General (4×)</option><option value="armored">铠装 Armored (6×)</option></select></div>
+                            <div class="flex items-end"><div class="text-xs text-slate-500">弯曲半径标准见右侧说明</div></div>
                         </div>
-                        <button id="btn-conduit" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
-                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
-                        </button>
+                        <button id="btn-conduit" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
                         <div id="conduit-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
                     </div>
-
-                </div>
-            </div>
+                </div><!-- /electric-cards-container -->
+            </div><!-- /cat-electric -->
 
             <!-- ===== Civil Category ===== -->
             <div id="cat-civil" class="calc-category-panel hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-                    <!-- A. Brick & Cement Mortar -->
-                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
-                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
-                            <i class="fa-solid fa-trowel-bricks"></i>
-                            🧱 砖块与水泥砂浆计算器 — គណនាឥដ្ឋ & ស៊ីម៉ង់ត៍
-                        </h3>
+                <div id="civil-cards-container" class="min-h-[400px]">
+                    <div class="calc-card calc-card-active bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5 calc-card-1">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-trowel-bricks"></i> 🧱 砖块与水泥砂浆计算器</h3>
                         <div class="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
-                            <div class="flex items-start gap-3">
-                                <span class="text-xl shrink-0 mt-0.5">💡</span>
-                                <div class="text-sm leading-relaxed">
-                                    <h4 class="font-bold text-amber-400 mb-1">មគ្គុទ្ទេសក៍សាមញ្ញ — 傻瓜指南</h4>
-                                    <p class="text-slate-300">ចង់ស្ថានជញ្ជាំង ប៉ុន្មានម៉ែត្រ? បញ្ចូលប្រវែង និងកម្ពស់ជញ្ជាំង ឧបករណ៍នេះនឹងគណនាឱ្យអ្នកភ្លាមៗថាត្រូវទិញឥដ្ឋប៉ុន្មាន ថង់ស៊ីម៉ង់ប៉ុន្មាន និងខ្សាច់ប៉ុន្មានម៉ែត្រគូប។ ប្រើឥដ្ឋកម្ពុជាស្តង់ដារ 4x8x18cm។</p>
-                                </div>
-                            </div>
-                        </div>
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-amber-400 mb-1">傻瓜指南</h4><p class="text-slate-300">想建墙，多少米？输入墙体长度和高度，工具立即算出需要多少红砖、多少袋水泥和多少立方米沙子。使用柬埔寨标准红砖 4x8x18cm。</p></div></div></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រវែងជញ្ជាំង (m)</label>
-                                <input type="number" id="brick-length" placeholder="ឧ. 10" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">កម្ពស់ជញ្ជាំង (m)</label>
-                                <input type="number" id="brick-height" placeholder="ឧ. 3" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">墙体长度 (m)</label><input type="number" id="brick-length" placeholder="例 10" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">墙体高度 (m)</label><input type="number" id="brick-height" placeholder="例 3" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
                         </div>
-                        <button id="btn-brick" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
-                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
-                        </button>
+                        <button id="btn-brick" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
                         <div id="brick-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
                     </div>
-
-                    <!-- B. Steel Bar Calculator (placeholder for future) -->
-                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
-                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
-                            <i class="fa-solid fa-bars-staggered"></i>
-                            🏗️ 钢筋重量计算器 — គណនាដែន
-                        </h3>
+                    <div class="calc-card hidden bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5 calc-card-2">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-bars-staggered"></i> 🏗️ 钢筋重量计算器</h3>
                         <div class="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
-                            <div class="flex items-start gap-3">
-                                <span class="text-xl shrink-0 mt-0.5">💡</span>
-                                <div class="text-sm leading-relaxed">
-                                    <h4 class="font-bold text-amber-400 mb-1">មគ្គុទ្ទេសក៍សាមញ្ញ — 傻瓜指南</h4>
-                                    <p class="text-slate-300">គណនាទម្ងន់ដែនស៖ងក់ (Rebar) តាមអង្កត់ផ្ចិតនិងប្រវែង។ ជួយអ្នកប៉ាន់ស្មានថ្លៃដែនសម្រាប់គម្រោងស្ថាន ឬកម្មសិទ្ធិ។</p>
-                                </div>
-                            </div>
-                        </div>
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-amber-400 mb-1">傻瓜指南</h4><p class="text-slate-300">根据直径和长度计算钢筋重量。帮助你估算建筑或房地产项目的钢筋成本。</p></div></div></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">អង្កត់ផ្ចិតដែន mm</label>
-                                <select id="rebar-d" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all">
-                                    <option value="6">6 mm</option>
-                                    <option value="8">8 mm</option>
-                                    <option value="10" selected>10 mm</option>
-                                    <option value="12">12 mm</option>
-                                    <option value="16">16 mm</option>
-                                    <option value="20">20 mm</option>
-                                    <option value="25">25 mm</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រវែងសរុប (m)</label>
-                                <input type="number" id="rebar-length" placeholder="ឧ. 100" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">钢筋直径 mm</label><select id="rebar-d" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white focus:border-amber-500 outline-none input-glow transition-all"><option value="6">6 mm</option><option value="8">8 mm</option><option value="10" selected>10 mm</option><option value="12">12 mm</option><option value="16">16 mm</option><option value="20">20 mm</option><option value="25">25 mm</option></select></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">总长度 (m)</label><input type="number" id="rebar-length" placeholder="例 100" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
                         </div>
-                        <button id="btn-rebar" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
-                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
-                        </button>
+                        <button id="btn-rebar" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
                         <div id="rebar-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
                     </div>
-
-                </div>
-            </div>
+                </div><!-- /civil-cards-container -->
+            </div><!-- /cat-civil -->
 
             <!-- ===== Decoration Category ===== -->
             <div id="cat-decor" class="calc-category-panel hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-                    <!-- A. Tile & Adhesive -->
-                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
-                        <h3 class="text-emerald-400 font-bold text-base flex items-center gap-2">
-                            <i class="fa-solid fa-border-all"></i>
-                            📦 瓷砖与胶泥箱数计算器 — គណនាការ៉ូ
-                        </h3>
+                <div id="decor-cards-container" class="min-h-[400px]">
+                    <div class="calc-card calc-card-active bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5 calc-card-1">
+                        <h3 class="text-emerald-400 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-border-all"></i> 📦 瓷砖与胶泥箱数计算器</h3>
                         <div class="mb-5 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-sm">
-                            <div class="flex items-start gap-3">
-                                <span class="text-xl shrink-0 mt-0.5">💡</span>
-                                <div class="text-sm leading-relaxed">
-                                    <h4 class="font-bold text-emerald-400 mb-1">មគ្គុទ្ទេសក៍សាមញ្ញ — 傻瓜指南</h4>
-                                    <p class="text-slate-300">ចង់ដាក់ការ៉ូកម្ហឺរ ឬផ្ទះ? បញ្ចូលប្រវែង និងទទឹងបន្ទប់ រួចចុចទំហំការ៉ូដែលអ្នកចង់បាន ឧបករណ៍នឹងគណនាថាត្រូវទិញកេសការ៉ូប៉ុន្មាន រួមទាំង ៥% ចំនួនខាតបង់ ហើយក៏គណនាថង់ម្សៅបិទការ៉ូផង។</p>
-                                </div>
-                            </div>
-                        </div>
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-emerald-400 mb-1">傻瓜指南</h4><p class="text-slate-300">想铺客厅或房间的瓷砖？输入房间长和宽，选择瓷砖尺寸，工具会算出需要多少箱瓷砖（含5%损耗）以及多少袋瓷砖胶泥。</p></div></div></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រវែងបន្ទប់ (m)</label>
-                                <input type="number" id="tile-length" placeholder="ឧ. 5" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all">
-                            </div>
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ទទឹងបន្ទប់ (m)</label>
-                                <input type="number" id="tile-width" placeholder="ឧ. 4" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all">
-                            </div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">房间长度 (m)</label><input type="number" id="tile-length" placeholder="例 5" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">房间宽度 (m)</label><input type="number" id="tile-width" placeholder="例 4" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all"></div>
                         </div>
-                        <div>
-                            <label class="text-xs text-slate-400 mb-2 block">ទំហំការ៉ូ (Tile Size)</label>
+                        <div><label class="text-xs text-slate-400 mb-2 block">瓷砖尺寸 (Tile Size)</label>
                             <div class="flex flex-wrap gap-3">
-                                <button type="button" class="tile-size-btn px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-bold transition-all duration-300 border-2 border-transparent" data-tile="60" data-desc="60×60cm">
-                                    📐 60×60 cm
-                                </button>
-                                <button type="button" class="tile-size-btn px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-bold transition-all duration-300 border-2 border-transparent" data-tile="30" data-desc="30×30cm">
-                                    📐 30×30 cm
-                                </button>
-                            </div>
-                            <input type="hidden" id="tile-size" value="60">
-                        </div>
-                        <button id="btn-tile" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
-                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
-                        </button>
+                                <button type="button" class="tile-size-btn px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-bold transition-all duration-300 border-2 border-transparent" data-tile="60" data-desc="60×60cm">📐 60×60 cm</button>
+                                <button type="button" class="tile-size-btn px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-bold transition-all duration-300 border-2 border-transparent" data-tile="30" data-desc="30×30cm">📐 30×30 cm</button>
+                            </div><input type="hidden" id="tile-size" value="60"></div>
+                        <button id="btn-tile" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
                         <div id="tile-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
                     </div>
-
-                    <!-- B. Paint Calculator -->
-                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
-                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
-                            <i class="fa-solid fa-paint-roller"></i>
-                            🪣 墙面油漆大桶数计算器 — គណនាថ្នាំលាប
-                        </h3>
+                    <div class="calc-card hidden bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5 calc-card-2">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-paint-roller"></i> 🪣 墙面油漆大桶数计算器</h3>
                         <div class="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
-                            <div class="flex items-start gap-3">
-                                <span class="text-xl shrink-0 mt-0.5">💡</span>
-                                <div class="text-sm leading-relaxed">
-                                    <h4 class="font-bold text-amber-400 mb-1">មគ្គុទ្ទេសក៍សាមញ្ញ — 傻瓜指南</h4>
-                                    <p class="text-slate-300">ចង់លាបជញ្ជាំងប៉ុន្មានម៉ែត្រការ៉ូ? បញ្ចូលតែផ្ទៃសរុបដែលអ្នកចង់លាប ឧបករណ៍នឹងគណនាថាត្រូវទិញថ្នាំលាបធុងធំ (18L) ប៉ុន្មាន និងថ្នាំទ្រនាប់ប៉ុន្មានធុង។</p>
-                                </div>
-                            </div>
-                        </div>
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-amber-400 mb-1">傻瓜指南</h4><p class="text-slate-300">想刷漆多少平方米？只需输入总刷漆面积，工具会算出需要多少桶大桶油漆(18L)和底漆。</p></div></div></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-xs text-slate-400 mb-1.5 block">ផ្ទៃជញ្ជាំងសរុប (m²)</label>
-                                <input type="number" id="paint-area" placeholder="ឧ. 60" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
-                            </div>
+                            <div><label class="text-xs text-slate-400 mb-1.5 block">墙面总面积 (m²)</label><input type="number" id="paint-area" placeholder="例 60" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all"></div>
                         </div>
-                        <button id="btn-paint" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
-                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
-                        </button>
+                        <button id="btn-paint" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
                         <div id="paint-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
                     </div>
-
-                </div>
-            </div>
+                </div><!-- /decor-cards-container -->
+            </div><!-- /cat-decor -->
 
             <!-- ===== Cost Estimation Category ===== -->
             <div id="cat-cost" class="calc-category-panel hidden">
                 <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-10 text-center space-y-4">
-                    <div class="p-5 bg-amber-500/10 rounded-full w-fit mx-auto">
-                        <i class="fa-solid fa-house-chimney text-4xl text-amber-400"></i>
-                    </div>
-                    <h3 class="text-amber-400 font-bold text-lg">🏠 វ៉ាយតម្លៃ — 造价估算</h3>
-                    <p class="text-slate-400 text-sm max-w-md mx-auto leading-relaxed">
-                        排屋/别墅造价估算与工钱计算器即将上线。<br>
-                        <span class="text-slate-500">Coming soon — 敬请期待！</span>
-                    </p>
-                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 rounded-full text-xs text-slate-400">
-                        <i class="fa-solid fa-clock fa-spin"></i> 开发中 (Developing)
-                    </div>
+                    <div class="p-5 bg-amber-500/10 rounded-full w-fit mx-auto"><i class="fa-solid fa-house-chimney text-4xl text-amber-400"></i></div>
+                    <h3 class="text-amber-400 font-bold text-lg">🏠 造价估算</h3>
+                    <p class="text-slate-400 text-sm max-w-md mx-auto leading-relaxed">排屋/别墅造价估算与工钱计算器即将上线。<br><span class="text-slate-500">Coming soon — 敬请期待！</span></p>
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 rounded-full text-xs text-slate-400"><i class="fa-solid fa-clock fa-spin"></i> 开发中 (Developing)</div>
                 </div>
             </div>
-
         </div>
     </section>
 
-    <!-- Category Tabs -->
+    <!-- ==================== ARTICLE SECTION ==================== -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-        <div class="flex space-x-2 border-b border-slate-700/50 pb-3 overflow-x-auto">
-            <button class="px-5 py-2.5 bg-amber-500 text-slate-950 font-bold rounded-xl text-sm transition-all duration-300 whitespace-nowrap hover:scale-105">ទាំងអស់ (全部)</button>
-            <button class="px-5 py-2.5 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition-all duration-300 whitespace-nowrap hover:scale-105">📈 ទីផ្សារ (行情)</button>
-            <button class="px-5 py-2.5 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition-all duration-300 whitespace-nowrap hover:scale-105">⚠️ ការស្វែងយល់ (避坑)</button>
-            <button class="px-5 py-2.5 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-sm transition-all duration-300 whitespace-nowrap hover:scale-105">💡 ចំណេះដឹង (知识)</button>
+        <div class="flex items-center gap-3 mb-6">
+            <div class="p-2 bg-amber-500/10 rounded-lg"><i class="fa-solid fa-newspaper text-amber-400"></i></div>
+            <h2 class="text-xl font-bold text-white">文章资讯</h2>
+            <span class="text-xs text-slate-500 ml-1">Articles &amp; Knowledge Base</span>
         </div>
-        <div id="posts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-            <div class="text-slate-500 col-span-3 text-center py-12">
-                <div class="inline-flex items-center gap-3">
+
+        <!-- Category Filter Pills -->
+        <div id="article-filters" class="flex flex-wrap gap-2 mb-6">
+            <button class="filter-pill active px-4 py-2 rounded-xl text-sm font-semibold bg-amber-500 text-slate-950 shadow-lg" data-filter="all">全部 (All)</button>
+            <button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700" data-filter="អគ្គិសនី">⚡ 电力</button>
+            <button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700" data-filter="សំណង់">🧱 土木工程</button>
+            <button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700" data-filter="តុបតែង">🎨 装饰</button>
+            <button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700" data-filter="វ៉ាយតម្លៃ">🏠 造价</button>
+            <button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700" data-filter="សុវត្ថិភាព">⚠️ 安全</button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="mb-6 relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+            <input type="text" id="article-search" placeholder="搜索文章标题或摘要..." class="w-full bg-slate-800/80 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none transition-all">
+        </div>
+
+        <!-- Article Grid -->
+        <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="col-span-3 text-center py-12">
+                <div class="inline-flex items-center gap-3 text-slate-500">
                     <i class="fa-solid fa-circle-notch fa-spin text-amber-500"></i>
-                    <span>កំពុងទាញយកទិន្នន័យ... (加载中)</span>
+                    <span>加载中...</span>
                 </div>
             </div>
+        </div>
+
+        <!-- No Results State -->
+        <div id="articles-empty" class="hidden text-center py-16">
+            <div class="p-4 bg-slate-800/40 rounded-full w-fit mx-auto mb-4"><i class="fa-solid fa-newspaper text-2xl text-slate-600"></i></div>
+            <h3 class="text-base font-semibold text-slate-300 mb-1">没有找到文章</h3>
+            <p class="text-slate-500 text-sm">该分类下暂无文章或搜索无结果</p>
         </div>
     </section>
 
     <footer class="mt-16 border-t border-slate-800/50 py-8 text-center text-xs text-slate-500">
-        © 2026 GCC Cable Cambodia. ព័ត៌មានខ្សែភ្លើងឯករាជ្យ.
+        © 2026 GCC Cable Cambodia. 独立电线资讯平台.
     </footer>
 
-    <!-- Article Reader Modal -->
-    <div id="post-modal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-4 transition-all duration-300">
-        <div class="bg-slate-900 border border-slate-700/80 rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden relative text-slate-200 transform transition-all duration-300 scale-95 opacity-0" id="modal-content">
-            <!-- Modal Header -->
-            <div class="p-6 border-b border-slate-800 flex justify-between items-start bg-slate-950/50">
-                <div class="flex-1">
-                    <span class="text-xs text-amber-400 font-semibold uppercase tracking-wider flex items-center gap-1">
-                        <i class="fa-solid fa-bolt"></i> GCC CABLE REPORT
-                    </span>
-                    <h2 id="modal-title" class="text-xl md:text-2xl font-bold text-white mt-1 leading-snug"></h2>
-                    <div id="modal-date" class="text-xs text-slate-400 mt-2"></div>
+    <!-- ==================== ARTICLE READER MODAL ==================== -->
+    <div id="article-modal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-4 transition-all duration-300">
+        <div class="bg-slate-900 border border-slate-700/80 rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden relative transform transition-all duration-300 scale-95 opacity-0" id="article-modal-content">
+            <!-- Cover Image Header -->
+            <div id="article-modal-cover" class="h-48 sm:h-56 overflow-hidden relative shrink-0">
+                <img id="article-modal-cover-img" src="" alt="" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent"></div>
+                <div class="absolute bottom-4 left-6 right-6">
+                    <span id="article-modal-cat" class="inline-block px-3 py-1 bg-amber-500/20 backdrop-blur-md text-amber-400 border border-amber-500/30 text-xs font-bold rounded-full mb-2"></span>
+                    <h2 id="article-modal-title" class="text-xl sm:text-2xl font-bold text-white leading-snug drop-shadow-lg"></h2>
                 </div>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-white p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition ml-4 min-w-[44px] min-h-[44px] flex items-center justify-center">
+                <button onclick="closeArticleModal()" class="absolute top-4 right-4 text-slate-300 hover:text-white p-2 rounded-lg bg-slate-950/50 backdrop-blur-sm hover:bg-slate-950/70 transition min-w-[44px] min-h-[44px] flex items-center justify-center">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
-            <!-- Modal Content Body -->
-            <div id="modal-body" class="p-6 md:p-8 overflow-y-auto leading-relaxed space-y-4 text-slate-300 text-sm md:text-base border-t border-slate-800/40">
-                <!-- Content will load here dynamically -->
+            <!-- Meta Bar -->
+            <div class="px-6 py-3 border-b border-slate-800 flex items-center gap-4 text-xs text-slate-400 shrink-0 bg-slate-950/30">
+                <span id="article-modal-date"><i class="fa-regular fa-calendar mr-1"></i></span>
+                <span id="article-modal-views"><i class="fa-regular fa-eye mr-1"></i></span>
+                <span id="article-modal-readtime"><i class="fa-regular fa-clock mr-1"></i></span>
             </div>
-            <!-- Modal Footer -->
-            <div class="p-4 border-t border-slate-800 bg-slate-950/50 flex justify-end">
-                <button onclick="closeModal()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm rounded-xl transition-all duration-300 min-h-[44px]">
-                    បិទ (关闭)
-                </button>
+            <!-- Content Body -->
+            <div id="article-modal-body" class="article-content p-6 md:p-8 overflow-y-auto leading-relaxed space-y-4 text-slate-300 text-sm md:text-base border-t border-slate-800/40">
+                <div class="text-center py-12 text-slate-500">
+                    <i class="fa-solid fa-circle-notch fa-spin text-amber-500 text-3xl mb-3"></i><br>正在加载文章...
+                </div>
+            </div>
+            <!-- Footer -->
+            <div class="p-4 border-t border-slate-800 bg-slate-950/50 flex justify-end shrink-0">
+                <button onclick="closeArticleModal()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm rounded-xl transition-all duration-300 min-h-[44px]">关闭</button>
             </div>
         </div>
     </div>
 
-    <!-- Category Tab Switching Logic -->
+    <!-- ==================== CALCULATOR SUB-PILL LOGIC ==================== -->
     <script>
+    (function() {
+        const SUB_PILLS = {
+            'cat-electric': [
+                { id: 'elec-1', label: '① 缆线载流量' }, { id: 'elec-2', label: '② 铜重估价' },
+                { id: 'elec-3', label: '③ 配电设计' }, { id: 'elec-4', label: '④ P/I/V/PF转换' },
+                { id: 'elec-5', label: '⑤ 变压器电流感应' }, { id: 'elec-6', label: '⑥ AC vs DC' },
+                { id: 'elec-7', label: '⑦ EDC电费估算' }, { id: 'elec-8', label: '⑧ 照度计算' },
+                { id: 'elec-9', label: '⑨ 弯曲半径与穿线管' },
+            ],
+            'cat-civil': [{ id: 'civil-1', label: '① 砖块与水泥' }, { id: 'civil-2', label: '② 钢筋重量' }],
+            'cat-decor': [{ id: 'decor-1', label: '① 瓷砖与胶泥' }, { id: 'decor-2', label: '② 油漆计算' }],
+            'cat-cost': [],
+        };
+
+        function renderSubPills(containerId, pills) {
+            const c = document.getElementById(containerId); if (!c) return;
+            c.innerHTML = pills.map((p, i) =>
+                `<button type="button" class="sub-pill px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all duration-200 ${i === 0 ? 'bg-amber-500 text-slate-950 font-bold shadow-lg' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}" data-index="${i}">${p.label}</button>`
+            ).join('');
+        }
+
+        function switchCard(panelId, idx) {
+            const panel = document.getElementById(panelId); if (!panel) return;
+            const cards = panel.querySelectorAll('.calc-card');
+            if (cards[idx]) {
+                cards.forEach(c => c.classList.add('hidden'));
+                cards[idx].classList.remove('hidden');
+                cards[idx].classList.add('calc-card-enter');
+                setTimeout(() => cards[idx].classList.remove('calc-card-enter'), 300);
+            }
+        }
+
+        function attachSubPills(containerId, panelId) {
+            const c = document.getElementById(containerId); if (!c) return;
+            c.addEventListener('click', (e) => {
+                const btn = e.target.closest('.sub-pill'); if (!btn) return;
+                const idx = parseInt(btn.dataset.index, 10);
+                c.querySelectorAll('.sub-pill').forEach((b, i) => {
+                    if (i === idx) { b.classList.remove('bg-slate-800','text-slate-300','hover:bg-slate-700'); b.classList.add('bg-amber-500','text-slate-950','font-bold','shadow-lg'); }
+                    else { b.classList.remove('bg-amber-500','text-slate-950','font-bold','shadow-lg'); b.classList.add('bg-slate-800','text-slate-300','hover:bg-slate-700'); }
+                });
+                switchCard(panelId, idx);
+            });
+        }
+
+        function initSubPills() {
+            renderSubPills('electric-sub-pills', SUB_PILLS['cat-electric']);
+            renderSubPills('civil-sub-pills', SUB_PILLS['cat-civil']);
+            renderSubPills('decor-sub-pills', SUB_PILLS['cat-decor']);
+            renderSubPills('cost-sub-pills', SUB_PILLS['cat-cost']);
+            attachSubPills('electric-sub-pills', 'cat-electric');
+            attachSubPills('civil-sub-pills', 'cat-civil');
+            attachSubPills('decor-sub-pills', 'cat-decor');
+            attachSubPills('cost-sub-pills', 'cat-cost');
+        }
+
+        // Category tabs
         document.querySelectorAll('.calc-category-tab').forEach(tab => {
             tab.addEventListener('click', () => {
-                // Update active tab styling
                 document.querySelectorAll('.calc-category-tab').forEach(t => {
-                    t.classList.remove('active-tab');
-                    t.classList.add('bg-slate-800/80', 'hover:bg-slate-700', 'text-slate-300');
-                    t.classList.remove('bg-amber-500', 'text-slate-950', 'shadow-lg', 'shadow-amber-500/20');
+                    t.classList.remove('active-tab','bg-amber-500','text-slate-950','shadow-lg','shadow-amber-500/20');
+                    t.classList.add('bg-slate-800/80','hover:bg-slate-700','text-slate-300');
                 });
-                tab.classList.add('active-tab');
-                tab.classList.remove('bg-slate-800/80', 'hover:bg-slate-700', 'text-slate-300');
-                tab.classList.add('bg-amber-500', 'text-slate-950', 'shadow-lg', 'shadow-amber-500/20');
-
-                // Show/hide category panels
-                const targetCategory = tab.dataset.category;
-                document.querySelectorAll('.calc-category-panel').forEach(panel => {
-                    panel.classList.add('hidden');
-                });
-                const targetPanel = document.getElementById(targetCategory);
-                if (targetPanel) {
-                    targetPanel.classList.remove('hidden');
-                }
+                tab.classList.add('active-tab','bg-amber-500','text-slate-950','shadow-lg','shadow-amber-500/20');
+                tab.classList.remove('bg-slate-800/80','hover:bg-slate-700','text-slate-300');
+                const cat = tab.dataset.category;
+                document.querySelectorAll('.calc-category-panel').forEach(p => p.classList.add('hidden'));
+                document.getElementById(cat)?.classList.remove('hidden');
+                const map = {'cat-electric':'electric-sub-pills','cat-civil':'civil-sub-pills','cat-decor':'decor-sub-pills','cat-cost':'cost-sub-pills'};
+                Object.values(map).forEach(id => document.getElementById(id)?.classList.add('hidden'));
+                document.getElementById(map[cat])?.classList.remove('hidden');
             });
         });
 
-        // Initialize first category as active
-        document.querySelector('[data-category="cat-electric"]')?.click();
+        initSubPills();
+    })();
     </script>
 
+    <!-- ==================== ARTICLE RENDERER ==================== -->
     <script>
-        const API_URL = '/wp-json/wp/v2/posts?_embed&per_page=9';
-        // 高质感工业电线铜材占位图
+    (function() {
+        const ARTICLES_URL = 'data/articles.json';
         const FALLBACK_IMG = 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?q=80&w=800&auto=format&fit=crop';
 
-        // 安全地提取 WordPress 嵌入资源
-        function getFeaturedImage(post) {
-            if (!post._embedded || !post._embedded['wp:featuredmedia']) return FALLBACK_IMG;
-            const media = post._embedded['wp:featuredmedia'][0];
-            return media && media.source_url ? media.source_url : FALLBACK_IMG;
+        // ---- Simple Markdown Parser ----
+        function parseMarkdown(md) {
+            if (!md) return '<p class="text-slate-500">暂无内容</p>';
+            let html = md;
+            // Escape HTML entities first
+            html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            // Code blocks (``` ... ```)
+            html = html.replace(/```(\w*)\n([\s\S]*?)```/g, function(_, lang, code) {
+                return '<pre><code class="language-' + lang + '">' + code.trim() + '</code></pre>';
+            });
+            // Inline code
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+            // Headers
+            html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+            html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+            // Bold + Italic
+            html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+            // Blockquotes
+            html = html.replace(/^&gt; (.+)$/gm, '<blockquote><p>$1</p></blockquote>');
+            // Tables
+            html = html.replace(/^\|(.+)\|$/gm, function(match, content) {
+                const cells = content.split('|').map(c => c.trim());
+                // Skip separator rows (---|---)
+                if (cells.every(c => /^[-:]+$/.test(c))) return '';
+                const tag = 'td';
+                const rowHtml = cells.map(c => '<' + tag + '>' + c + '</' + tag + '>').join('');
+                return '<tr>' + rowHtml + '</tr>';
+            });
+            // Wrap consecutive <tr> in <table>
+            html = html.replace(/((?:<tr>.*<\/tr>\n?)+)/g, '<table>$1</table>');
+            // Horizontal rule
+            html = html.replace(/^---$/gm, '<hr>');
+            // Unordered lists
+            html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+            html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
+            // Ordered lists
+            html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
+            // Paragraphs: wrap remaining plain text lines
+            html = html.replace(/^(?!<[a-z/])((?!<).+)$/gm, '<p>$1</p>');
+            // Clean up extra newlines
+            html = html.replace(/\n{2,}/g, '\n');
+            return html;
         }
 
-        // 文章分类映射
-        const CATEGORY_MAP = {
-            'ទីផ្សារ': '📈 ទីផ្សារ (行情)',
-            'ការស្វែងយល់': '⚠️ ការស្វែងយល់ (避坑)',
-            'ចំណេះដឹង': '💡 ចំណេះដឹង (知识)',
-            'default': '⚡ អគ្គិសនី (电工)'
+        // ---- Category badge config ----
+        const CATEGORY_CONFIG = {
+            'អគ្គិសនី':   { emoji: '⚡', label: '电力',   color: 'bg-amber-500/15 text-amber-400 border-amber-500/25' },
+            'សំណង់':     { emoji: '🧱', label: '土木工程', color: 'bg-orange-500/15 text-orange-400 border-orange-500/25' },
+            'តុបតែង':   { emoji: '🎨', label: '装饰',   color: 'bg-purple-500/15 text-purple-400 border-purple-500/25' },
+            'វ៉ាយតម្លៃ': { emoji: '🏠', label: '造价',   color: 'bg-blue-500/15 text-blue-400 border-blue-500/25' },
+            'សុវត្ថិភាព': { emoji: '⚠️', label: '安全',   color: 'bg-red-500/15 text-red-400 border-red-500/25' },
         };
 
-        async function loadPosts(catId = '') {
-            const container = document.getElementById('posts-container');
-            container.innerHTML = '<div class="text-slate-500 col-span-3 text-center py-12"><div class="inline-flex items-center gap-3"><i class="fa-solid fa-circle-notch fa-spin text-amber-500"></i><span>កំពុងទាញយកទិន្នន័យ... (加载中)</span></div></div>';
+        let allArticles = [];
+        let currentFilter = 'all';
+        let currentSearch = '';
 
+        // ---- Load articles ----
+        async function loadArticles() {
             try {
-                let url = API_URL;
-                if (catId) url += `&categories=${catId}`;
-                const res = await fetch(url);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const posts = await res.json();
-
-                if (!posts || posts.length === 0) {
-                    container.innerHTML = '<div class="text-slate-400 col-span-3 text-center py-12 border border-slate-700/50 rounded-xl bg-slate-900/40">មិនទាន់មានអត្ថបទនៅក្នុងផ្នែកនេះ (该分类下暂无文章)</div>';
-                    return;
-                }
-
-                container.innerHTML = posts.map(post => {
-                    const title = post.title.rendered;
-                    const date = new Date(post.date).toLocaleDateString('km-KH', { year: 'numeric', month: 'short', day: 'numeric' });
-                    const rawExcerpt = post.excerpt ? post.excerpt.rendered : (post.content ? post.content.rendered : '');
-                    const excerpt = rawExcerpt.replace(/<[^>]+>/g, '').slice(0, 120) + '...';
-                    const imgSrc = getFeaturedImage(post);
-                    const categoryBadge = CATEGORY_MAP[post.categories?.[0]] || CATEGORY_MAP['default'];
-                    const readTime = Math.max(2, Math.ceil(rawExcerpt.replace(/<[^>]+>/g, '').length / 300));
-
-                    return `
-                    <article class="mag-card bg-slate-900/80 border border-slate-700/50 rounded-2xl overflow-hidden hover:border-amber-500/40 transition-all duration-300 flex flex-col group shadow-lg cursor-pointer card-hover" onclick="openPostModal(${post.id})">
-                        <div class="h-52 overflow-hidden relative bg-slate-800">
-                            <img src="${imgSrc}" alt="" class="mag-cover-img w-full h-full object-cover opacity-90">
-                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent"></div>
-                            <div class="absolute top-3 left-3">
-                                <span class="px-3 py-1.5 bg-slate-950/80 backdrop-blur-md text-amber-400 border border-amber-500/30 text-xs font-bold rounded-full">
-                                    ${categoryBadge}
-                                </span>
-                            </div>
-                            <div class="absolute bottom-3 right-3">
-                                <span class="px-2 py-1 bg-slate-950/70 backdrop-blur-sm text-slate-300 text-xs rounded-md flex items-center gap-1">
-                                    <i class="fa-regular fa-clock text-[10px]"></i> ${readTime} នាទី
-                                </span>
-                            </div>
-                        </div>
-                        <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
-                            <div>
-                                <div class="text-xs text-slate-500 mb-2 flex items-center gap-2">
-                                    <i class="fa-regular fa-calendar"></i> ${date}
-                                    <span class="mx-1">•</span>
-                                    <i class="fa-solid fa-bolt text-amber-500/70"></i> GCC Cable
-                                </div>
-                                <h3 class="font-bold text-lg text-white group-hover:text-amber-400 transition mb-2 line-clamp-2 leading-snug">${title}</h3>
-                                <p class="text-slate-400 text-sm line-clamp-3 leading-relaxed">${excerpt}</p>
-                            </div>
-                            <div class="pt-4 border-t border-slate-700/50 flex justify-between items-center">
-                                <span class="text-sm text-amber-400 font-semibold flex items-center gap-2 group-hover:translate-x-1 transition-transform duration-300">
-                                    អានបន្ថែម (阅读全文)
-                                    <i class="fa-solid fa-arrow-right text-xs"></i>
-                                </span>
-                                <div class="flex items-center gap-1 text-slate-500 text-xs">
-                                    <i class="fa-regular fa-eye"></i>
-                                    <span>${Math.floor(Math.random() * 500 + 100)}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
-                    `;
-                }).join('');
+                const res = await fetch(ARTICLES_URL);
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                allArticles = await res.json();
             } catch (err) {
-                console.error(err);
-                container.innerHTML = '<div class="text-rose-400 col-span-3 text-center py-12 border border-rose-900/30 rounded-xl bg-rose-950/10">បរាជ័យក្នុងការទាញយកទិន្នន័យ (API 关联失败)</div>';
+                console.error('Failed to load articles:', err);
+                allArticles = [];
             }
+            renderArticles();
         }
 
-        document.addEventListener('DOMContentLoaded', () => loadPosts());
+        // ---- Render article cards ----
+        function renderArticles() {
+            const grid = document.getElementById('articles-grid');
+            const empty = document.getElementById('articles-empty');
 
-        // Modal Controller Logic
-        async function openPostModal(id) {
-            const modal = document.getElementById('post-modal');
-            const modalContent = document.getElementById('modal-content');
-            const titleEl = document.getElementById('modal-title');
-            const dateEl = document.getElementById('modal-date');
-            const bodyEl = document.getElementById('modal-body');
+            let filtered = allArticles.filter(a => a.status === 'published');
 
+            // Apply category filter
+            if (currentFilter !== 'all') {
+                filtered = filtered.filter(a => a.category === currentFilter);
+            }
+
+            // Apply search
+            if (currentSearch.trim()) {
+                const q = currentSearch.trim().toLowerCase();
+                filtered = filtered.filter(a =>
+                    (a.title || '').toLowerCase().includes(q) ||
+                    (a.excerpt || '').toLowerCase().includes(q)
+                );
+            }
+
+            // Sort by date descending
+            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            grid.innerHTML = filtered.map(article => {
+                const cat = CATEGORY_CONFIG[article.category] || { emoji: '📄', label: article.category, color: 'bg-slate-700/40 text-slate-300 border-slate-600' };
+                const cover = article.coverImage || FALLBACK_IMG;
+                const d = new Date(article.date);
+                const dateStr = d.toLocaleDateString('km-KH', { year: 'numeric', month: 'short', day: 'numeric' });
+                const readTime = Math.max(2, Math.ceil((article.content || article.excerpt || '').length / 500));
+
+                return `
+                <article class="article-card bg-slate-900/80 border border-slate-700/50 rounded-2xl overflow-hidden cursor-pointer group shadow-lg" onclick="openArticleModal('${article.id}')">
+                    <div class="h-48 overflow-hidden relative bg-slate-800">
+                        <img src="${cover}" alt="" class="article-cover w-full h-full object-cover opacity-90" onerror="this.src='${FALLBACK_IMG}'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent"></div>
+                        <div class="absolute top-3 left-3">
+                            <span class="px-2.5 py-1 bg-slate-950/80 backdrop-blur-md ${cat.color} text-xs font-bold rounded-full border">${cat.emoji} ${cat.label}</span>
+                        </div>
+                        <div class="absolute bottom-3 right-3">
+                            <span class="px-2 py-1 bg-slate-950/70 backdrop-blur-sm text-slate-300 text-xs rounded-md flex items-center gap-1">
+                                <i class="fa-regular fa-clock text-[10px]"></i> ${readTime} 分钟阅读
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-5 flex-1 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="text-xs text-slate-500 mb-2 flex items-center gap-2">
+                                <i class="fa-regular fa-calendar"></i> ${dateStr}
+                                <span class="mx-1">•</span>
+                                <i class="fa-solid fa-bolt text-amber-500/70"></i> GCC Cable
+                            </div>
+                            <h3 class="font-bold text-base text-white group-hover:text-amber-400 transition mb-2 line-clamp-2 leading-snug">${escHtml(article.title)}</h3>
+                            <p class="text-slate-400 text-sm line-clamp-2 leading-relaxed">${escHtml(article.excerpt || '')}</p>
+                        </div>
+                        <div class="pt-3 border-t border-slate-700/50 flex justify-between items-center">
+                            <span class="text-sm text-amber-400 font-semibold flex items-center gap-2 group-hover:translate-x-1 transition-transform duration-300">
+                                阅读全文 <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </span>
+                            <div class="flex items-center gap-1 text-slate-500 text-xs">
+                                <i class="fa-regular fa-eye"></i> ${article.views || 0}
+                            </div>
+                        </div>
+                    </div>
+                </article>`;
+            }).join('');
+        }
+
+        function escHtml(s) {
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
+        // ---- Category filter ----
+        document.getElementById('article-filters').addEventListener('click', (e) => {
+            const pill = e.target.closest('.filter-pill');
+            if (!pill) return;
+            document.querySelectorAll('.filter-pill').forEach(p => {
+                p.classList.remove('active','bg-amber-500','text-slate-950','shadow-lg');
+                p.classList.add('bg-slate-800','text-slate-300','hover:bg-slate-700');
+            });
+            pill.classList.add('active','bg-amber-500','text-slate-950','shadow-lg');
+            pill.classList.remove('bg-slate-800','text-slate-300','hover:bg-slate-700');
+            currentFilter = pill.dataset.filter;
+            renderArticles();
+        });
+
+        // ---- Search ----
+        document.getElementById('article-search').addEventListener('input', (e) => {
+            currentSearch = e.target.value;
+            renderArticles();
+        });
+
+        // ---- Article Reader Modal ----
+        window.openArticleModal = function(id) {
+            const article = allArticles.find(a => a.id === id);
+            if (!article) return;
+
+            const modal = document.getElementById('article-modal');
+            const content = document.getElementById('article-modal-content');
+            const coverImg = document.getElementById('article-modal-cover-img');
+            const titleEl = document.getElementById('article-modal-title');
+            const catEl = document.getElementById('article-modal-cat');
+            const dateEl = document.getElementById('article-modal-date');
+            const viewsEl = document.getElementById('article-modal-views');
+            const bodyEl = document.getElementById('article-modal-body');
+
+            // Populate data
+            coverImg.src = article.coverImage || FALLBACK_IMG;
+            coverImg.onerror = function() { this.src = FALLBACK_IMG; };
+            titleEl.textContent = article.title;
+            const cat = CATEGORY_CONFIG[article.category] || { emoji: '📄', label: article.category, color: 'bg-slate-700/40 text-slate-300 border-slate-600' };
+            catEl.className = 'inline-block px-3 py-1 backdrop-blur-md text-xs font-bold rounded-full border ' + cat.color;
+            catEl.textContent = cat.emoji + ' ' + cat.label;
+            dateEl.innerHTML = '<i class="fa-regular fa-calendar mr-1"></i> ' + new Date(article.date).toLocaleDateString('km-KH', { year: 'numeric', month: 'long', day: 'numeric' });
+            viewsEl.innerHTML = '<i class="fa-regular fa-eye mr-1"></i> ' + (article.views || 0) + ' 次阅读';
+            const readTime = Math.max(2, Math.ceil((article.content || article.excerpt || '').length / 500));
+            const totalMinutes = Math.ceil(readTime * 3); // rough estimate: ~500 chars per 3 min
+            viewsEl.innerHTML += ' • ' + readTime + ' 分钟阅读';
+
+            // Parse markdown content
+            bodyEl.innerHTML = parseMarkdown(article.content);
+
+            // Show modal with animation
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+            requestAnimationFrame(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            });
+        };
 
-            // Trigger animation
-            setTimeout(() => {
-                modalContent.classList.remove('scale-95', 'opacity-0');
-                modalContent.classList.add('scale-100', 'opacity-100');
-            }, 10);
-
-            titleEl.textContent = 'កំពុងទាញយក... (加载中)';
-            dateEl.textContent = '';
-            bodyEl.innerHTML = '<div class="text-center py-12 text-slate-500"><i class="fa-solid fa-circle-notch fa-spin text-amber-500 text-3xl mb-3"></i><br>កំពុងទាញយកអត្ថបទ...</div>';
-
-            try {
-                const res = await fetch(`/wp-json/wp/v2/posts/${id}`);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const post = await res.json();
-
-                titleEl.textContent = post.title.rendered;
-                dateEl.innerHTML = '<i class="fa-regular fa-clock mr-1"></i> ' + new Date(post.date).toLocaleDateString('km-KH', { year: 'numeric', month: 'short', day: 'numeric' });
-                bodyEl.innerHTML = sanitizePostContent(post.content.rendered);
-            } catch(err) {
-                console.error(err);
-                bodyEl.innerHTML = '<div class="text-rose-400 text-center py-6">បរាជ័យក្នុងការទាញយកអត្ថបទ (无法加载文章内容)</div>';
-            }
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('post-modal');
-            const modalContent = document.getElementById('modal-content');
-
-            modalContent.classList.remove('scale-100', 'opacity-100');
-            modalContent.classList.add('scale-95', 'opacity-0');
-
+        window.closeArticleModal = function() {
+            const modal = document.getElementById('article-modal');
+            const content = document.getElementById('article-modal-content');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
             setTimeout(() => {
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
             }, 300);
-        }
+        };
 
-        // 简单清理 WordPress 内容：移除 script/style/iframe/object/embed 等危险标签
-        function sanitizePostContent(html) {
-            if (!html) return '';
-            return html
-                .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-                .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
-                .replace(/<iframe\b[^>]*\/?>/gi, '')
-                .replace(/<object\b[^>]*>/gi, '')
-                .replace(/<embed\b[^>]*\/?>/gi, '')
-                .replace(/\son\w+\s*=\s*"[^"]*"/gi, '')
-                .replace(/\son\w+\s*=\s*'[^']*'/gi, '')
-                .replace(/\bon\w+\s*=\s*[^\s>]*/gi, '');
-        }
+        // Close modal on backdrop click
+        document.getElementById('article-modal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'article-modal') closeArticleModal();
+        });
 
-        // ESC 键关闭 modal
+        // ESC to close
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
+            if (e.key === 'Escape') closeArticleModal();
         });
 
-        // 点击背景关闭 modal
-        document.getElementById('post-modal')?.addEventListener('click', (e) => {
-            if (e.target.id === 'post-modal') closeModal();
-        });
+        // ---- Init ----
+        loadArticles();
+    })();
     </script>
 
     <script src="js/calculators.js"></script>
