@@ -3,7 +3,7 @@
  * Formulas:
  *   I = P(kW)*1000 / (V * PF * √3) [3φ]  or  I = P(kW)*1000 / (V * PF) [1φ]
  *   V_drop% = (k * I * L * ρ) / S / V * 100
- *     k=2 [1φ], k=√3 [3φ], ρ=0.0175 Ω·mm²/m
+ *     k=2 [1φ], k=√3 [3φ], ρ=0.01786 Ω·mm²/m (Cu @ 20°C, IEC 60287)
  *   Cu weight = cores * S(mm²) * L(m) * 0.00889 kg
  */
 
@@ -54,7 +54,7 @@ function calculateAmpacity() {
     return;
   }
 
-  const V = phase === '1' ? 220 : 380;
+  const V = phase === '1' ? 230 : 400;
   const PF = 0.85;
   const sqrt3 = Math.sqrt(3);
   const denom = V * PF * (phase === '3' ? sqrt3 : 1);
@@ -67,7 +67,7 @@ function calculateAmpacity() {
   let vDropPct = null;
   if (wireS !== null) {
     const k = phase === '1' ? 2 : sqrt3;
-    const rho = 0.0175; // Ω·mm²/m at ~20°C
+    const rho = 0.01786; // Ω·mm²/m at ~20°C (Cu, IEC 60287)
     vDropPct = (k * currentA * lengthM * rho) / wireS / V * 100;
   }
 

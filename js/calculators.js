@@ -67,7 +67,7 @@ function initCableSizeCalculator() {
         const material = document.getElementById('cable-material')?.value;
         const powerKW = val('cable-power');
         const lengthM = val('cable-length');
-        const voltage = phase === 'single' ? 220 : 380;
+        const voltage = phase === 'single' ? 230 : 400; // Cambodia nominal: 230V single / 400V three-phase
 
         // FIX: Validate both inputs > 0 (rejects zero, NaN, and negatives)
         if (isNaN(powerKW) || isNaN(lengthM) || powerKW <= 0 || lengthM <= 0) {
@@ -609,7 +609,7 @@ function initBrickCementCalculator() {
 
 // ================================================================
 // 10B. Tile & Adhesive Calculator
-// AUDIT: 5% waste factor ✓
+// AUDIT: 10% waste factor (industry standard for tile installation)
 //   Tiles per box: 4 for 60×60, 8 for 30×30 (typical packaging) ✓
 // FIX: Guard against zero/negative room dimensions
 // ================================================================
@@ -644,8 +644,8 @@ function initTileCalculator() {
         const tilesPerBox = tileSizeCm === 60 ? 4 : 8;
         const boxArea = tilesPerBox * tileArea;
 
-        // Add 5% waste
-        const areaWithWaste = area * 1.05;
+        // Add 10% waste (industry standard)
+        const areaWithWaste = area * 1.10;
         const boxesNeeded = Math.ceil(areaWithWaste / boxArea);
 
         // Tile adhesive: ~5 kg/m² for 60x60, ~4 kg/m² for 30x30
