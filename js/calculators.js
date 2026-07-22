@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initBrickCementCalculator();
     initTileCalculator();
     initPaintCalculator();
+    initRebarCalculator();
 });
 
 /* ---------- Utility helpers ---------- */
@@ -564,6 +565,29 @@ function initPaintCalculator() {
         showBigResult('paint-result',
             highlightCard('🪣', 'ថ្នាំលាប (Paint 18L)', '18L大桶油漆', paintBuckets.toLocaleString(), 'ធុងធំ', 'amber') +
             highlightCard('🎨', 'ថ្នាំទ្រនាប់ (Primer)', '底漆', primerBuckets.toLocaleString(), 'ធុង', 'emerald')
+        );
+    });
+}
+
+// ---------- 10D. Rebar Weight Calculator ----------
+function initRebarCalculator() {
+    document.getElementById('btn-rebar')?.addEventListener('click', () => {
+        const diameter = val('rebar-d');
+        const lengthM = val('rebar-length');
+        if (isNaN(diameter) || isNaN(lengthM) || diameter <= 0 || lengthM <= 0) {
+            showResult('rebar-result', 'សូមបញ្ចូលអង្កត់ផ្ចិត និងប្រវែង (请输入直径和长度)');
+            return;
+        }
+
+        // Steel density: 7850 kg/m³
+        // Weight per meter = π × (d/2)² × 1m × 7850 kg/m³
+        // Simplified: weight/m ≈ d² / 162 (common construction formula)
+        const weightPerMeter = (diameter * diameter) / 162; // kg/m
+        const totalWeight = weightPerMeter * lengthM;
+
+        showBigResult('rebar-result',
+            highlightCard('⚙️', 'ទម្ងន់ក្នុងមួយម៉ែត្រ', '每米重量', weightPerMeter.toFixed(3), 'kg/m', 'amber') +
+            highlightCard('🏗️', 'ទម្ងន់សរុប', '总重量', totalWeight.toFixed(2), 'kg', 'emerald')
         );
     });
 }
