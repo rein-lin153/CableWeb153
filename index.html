@@ -159,7 +159,7 @@
                     <i class="fa-solid fa-calculator text-amber-400 text-lg"></i>
                 </div>
                 <h2 class="text-xl sm:text-2xl font-bold text-white">
-                    គណនាករអ្នកដំបងអគ្គិសនី 9 合 1
+                    គណនាករអ្នកដំបងអគ្គិសនី 12 合 1
                 </h2>
             </div>
             <p class="text-sm text-slate-400 mb-8 ml-1">
@@ -177,6 +177,7 @@
                 <button class="calc-tab px-3 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition-all duration-300 whitespace-nowrap btn-ripple" data-tab="tab-edc">⑦ គិតលុយ</button>
                 <button class="calc-tab px-3 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition-all duration-300 whitespace-nowrap btn-ripple" data-tab="tab-light">⑧ ពន្លឺ</button>
                 <button class="calc-tab px-3 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition-all duration-300 whitespace-nowrap btn-ripple" data-tab="tab-conduit">⑨ បំពង់</button>
+                <button class="calc-tab px-3 py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 rounded-xl text-xs transition-all duration-300 whitespace-nowrap btn-ripple" data-tab="tab-civil">⑩ សំណង់ស៊ីវិល</button>
             </div>
 
             <!-- 1. Cable Size & Voltage Drop -->
@@ -644,6 +645,114 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- 10. Construction & Decor Calculators -->
+            <div id="tab-civil" class="calc-panel hidden">
+                <div class="space-y-8">
+
+                    <!-- A. Brick & Cement Mortar -->
+                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
+                            <i class="fa-solid fa-trowel-bricks"></i>
+                            🧱 砖块与水泥砂浆计算器 — គណនាឥដ្ឋ & ស៊ីម៉ង់ត៍
+                        </h3>
+                        <div class="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
+                            <div class="flex items-start gap-3">
+                                <span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed">
+                                    <h4 class="font-bold text-amber-400 mb-1">មគ្គុទ្ទេសក៍សាមញ្ញ — 傻瓜指南</h4>
+                                    <p class="text-slate-300">ចង់ស្ថានជញ្ជាំង ប៉ុន្មានម៉ែត្រ? បញ្ចូលប្រវែង និងកម្ពស់ជញ្ជាំង ឧបករណ៍នេះនឹងគណនាឱ្យអ្នកភ្លាមៗថាត្រូវទិញឥដ្ឋប៉ុន្មាន ថង់ស៊ីម៉ង់ប៉ុន្មាន និងខ្សាច់ប៉ុន្មានម៉ែត្រគូប។ ប្រើឥដ្ឋកម្ពុជាស្តង់ដារ 4x8x18cm។</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រវែងជញ្ជាំង (m)</label>
+                                <input type="number" id="brick-length" placeholder="ឧ. 10" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">កម្ពស់ជញ្ជាំង (m)</label>
+                                <input type="number" id="brick-height" placeholder="ឧ. 3" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
+                            </div>
+                        </div>
+                        <button id="btn-brick" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
+                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
+                        </button>
+                        <div id="brick-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
+                    </div>
+
+                    <!-- B. Tile & Adhesive -->
+                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
+                        <h3 class="text-emerald-400 font-bold text-base flex items-center gap-2">
+                            <i class="fa-solid fa-border-all"></i>
+                            📦 瓷砖与胶泥箱数计算器 — គណនាការ៉ូ
+                        </h3>
+                        <div class="mb-5 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-sm">
+                            <div class="flex items-start gap-3">
+                                <span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed">
+                                    <h4 class="font-bold text-emerald-400 mb-1">មគ្គុទ្ទេសក៍សាមញ្ញ — 傻瓜指南</h4>
+                                    <p class="text-slate-300">ចង់ដាក់ការ៉ូកម្ហឺរ ឬផ្ទះ? បញ្ចូលប្រវែង និងទទឹងបន្ទប់ រួចចុចទំហំការ៉ូដែលអ្នកចង់បាន ឧបករណ៍នឹងគណនាថាត្រូវទិញកេសការ៉ូប៉ុន្មាន រួមទាំង ៥% ចំនួនខាតបង់ ហើយក៏គណនាថង់ម្សៅបិទការ៉ូផង។</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ប្រវែងបន្ទប់ (m)</label>
+                                <input type="number" id="tile-length" placeholder="ឧ. 5" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all">
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ទទឹងបន្ទប់ (m)</label>
+                                <input type="number" id="tile-width" placeholder="ឧ. 4" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-emerald-500 outline-none input-glow transition-all">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-xs text-slate-400 mb-2 block">ទំហំការ៉ូ (Tile Size)</label>
+                            <div class="flex flex-wrap gap-3">
+                                <button type="button" class="tile-size-btn px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-bold transition-all duration-300 border-2 border-transparent" data-tile="60" data-desc="60×60cm">
+                                    📐 60×60 cm
+                                </button>
+                                <button type="button" class="tile-size-btn px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl text-sm font-bold transition-all duration-300 border-2 border-transparent" data-tile="30" data-desc="30×30cm">
+                                    📐 30×30 cm
+                                </button>
+                            </div>
+                            <input type="hidden" id="tile-size" value="60">
+                        </div>
+                        <button id="btn-tile" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
+                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
+                        </button>
+                        <div id="tile-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
+                    </div>
+
+                    <!-- C. Paint Calculator -->
+                    <div class="bg-slate-900/80 border border-slate-700/50 rounded-xl p-6 space-y-5">
+                        <h3 class="text-amber-400 font-bold text-base flex items-center gap-2">
+                            <i class="fa-solid fa-paint-roller"></i>
+                            🪣 墙面油漆大桶数计算器 — គណនាថ្នាំលាប
+                        </h3>
+                        <div class="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-sm">
+                            <div class="flex items-start gap-3">
+                                <span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed">
+                                    <h4 class="font-bold text-amber-400 mb-1">មគ្គុទ្ទេសក៍សាមញ្ញ — 傻瓜指南</h4>
+                                    <p class="text-slate-300">ចង់លាបជញ្ជាំងប៉ុន្មានម៉ែត្រការ៉ូ? បញ្ចូលតែផ្ទៃសរុបដែលអ្នកចង់លាប ឧបករណ៍នឹងគណនាថាត្រូវទិញថ្នាំលាបធុងធំ (18L) ប៉ុន្មាន និងថ្នាំទ្រនាប់ប៉ុន្មានធុង។</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs text-slate-400 mb-1.5 block">ផ្ទៃជញ្ជាំងសរុប (m²)</label>
+                                <input type="number" id="paint-area" placeholder="ឧ. 60" step="0.1" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-3 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none input-glow transition-all">
+                            </div>
+                        </div>
+                        <button id="btn-paint" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple">
+                            <i class="fa-solid fa-calculator mr-2"></i>គណនា (计算)
+                        </button>
+                        <div id="paint-result" class="mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200 min-h-[80px]"></div>
+                    </div>
+
                 </div>
             </div>
 

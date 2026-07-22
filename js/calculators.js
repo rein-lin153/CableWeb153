@@ -1,5 +1,5 @@
 // ============================================================
-// GCC Cable — គណនាករអ្នកដំបងអគ្គិសនី 9 合 1 (电工计算器套件)
+// GCC Cable — គណនាករអ្នកដំបងអគ្គិសនី 12 合 1 (电工计算器套件)
 // All math & DOM interaction logic separated from HTML
 // ============================================================
 
@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initEDCCalculator();
     initLightingCalculator();
     initConduitCalculator();
+    initBrickCementCalculator();
+    initTileCalculator();
+    initPaintCalculator();
 });
 
 /* ---------- Utility helpers ---------- */
@@ -423,6 +426,144 @@ function initConduitCalculator() {
             `推荐穿线管 (Recommended Conduit): <b class="text-emerald-400">${recommended} mm (PVC/GI)</b><br>` +
             `计算依据 (Basis): IEC 61386, 填充率 ≤40%, ${conduitType === 'armored' ? '铠装 Armored' : '普通 General'}`,
             'info'
+        );
+    });
+}
+
+/* ---------- Construction & Decor Helpers ---------- */
+function showBigResult(id, cardsHtml) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = 'mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200';
+    el.innerHTML = cardsHtml;
+}
+
+function highlightCard(icon, labelKhmer, labelCn, value, unit, colorClass) {
+    const glow = colorClass === 'amber' ? 'text-amber-400 shadow-amber-500/20' : 'text-emerald-400 shadow-emerald-500/20';
+    const bg = colorClass === 'amber' ? 'from-amber-500/10 to-yellow-500/5 border-amber-500/30' : 'from-emerald-500/10 to-green-500/5 border-emerald-500/30';
+    return `
+    <div class="result-animate bg-gradient-to-br ${bg} border rounded-xl p-4 mb-3 shadow-lg">
+        <div class="flex items-center gap-3">
+            <div class="p-3 bg-slate-950/60 rounded-full shrink-0">
+                <span class="text-3xl">${icon}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="text-xs text-slate-400 mb-0.5">${labelKhmer} / ${labelCn}</div>
+                <div class="text-2xl font-extrabold ${glow.split(' ')[0]} drop-shadow-md">${value} <span class="text-base font-bold text-slate-300">${unit}</span></div>
+            </div>
+        </div>
+    </div>`;
+}
+
+// ---------- 10A. Brick & Cement Mortar Calculator ----------
+function initBrickCementCalculator() {
+    document.getElementById('btn-brick')?.addEventListener('click', () => {
+        const wallLength = val('brick-length');
+        const wallHeight = val('brick-height');
+        if (isNaN(wallLength) || isNaN(wallHeight) || wallLength <= 0 || wallHeight <= 0) {
+            showResult('brick-result', 'សូមបញ្ចូលប្រវែងនិងកម្ពស់ជញ្ជាំង (请输入墙体长度和高度)');
+            return;
+        }
+
+        // Cambodia standard red brick: 4cm × 8cm × 18cm
+        const brickL = 0.18, brickW = 0.08, brickH = 0.04; // meters
+        const mortarThickness = 0.01; // 1cm mortar joint
+
+        const wallArea = wallLength * wallHeight;
+
+        // Bricks per m² with mortar: each brick occupies (L+T) × (H+T)
+        const effectiveArea = (brickL + mortarThickness) * (brickH + mortarThickness);
+        const bricksNeeded = Math.ceil(wallArea / effectiveArea);
+
+        // Mortar volume: wall volume minus brick solid volume
+        const brickSolidVolume = bricksNeeded * brickL * brickW * brickH;
+        const wallVolume = wallArea * 0.24; // assume 24cm thick wall
+        let mortarVolume = Math.max(0, wallVolume - brickSolidVolume);
+
+        // Add 10% waste
+        mortarVolume *= 1.10;
+
+        // Cement: ~0.3 bags (50kg) per m³ of mortar (M5 mix approx)
+        const cementBags = Math.ceil(mortarVolume * 0.3);
+        // Sand: ~0.5 m³ per m³ of mortar
+        const sandM3 = (mortarVolume * 0.5).toFixed(3);
+
+        showBigResult('brick-result',
+            highlightCard('🧱', 'ឥដ្ឋ (Red Bricks)', '红砖数量', bricksNeeded.toLocaleString(), '块', 'amber') +
+            highlightCard('🏗️', 'ស៊ីម៉ង់ត៍ (Cement)', '水泥包数', cementBags.toLocaleString(), 'ថង់ (50kg)', 'emerald') +
+            highlightCard('⛰️', 'ខ្សាច់ (Sand)', '沙子体积', sandM3, 'm³', 'amber')
+        );
+    });
+}
+
+// ---------- 10B. Tile & Adhesive Calculator ----------
+function initTileCalculator() {
+    // Tile size button selection
+    document.querySelectorAll('.tile-size-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tile-size-btn').forEach(b => {
+                b.classList.remove('border-amber-500', 'bg-amber-500/20');
+                b.classList.add('border-transparent', 'bg-slate-700');
+            });
+            btn.classList.remove('border-transparent', 'bg-slate-700');
+            btn.classList.add('border-amber-500', 'bg-amber-500/20');
+            document.getElementById('tile-size').value = btn.dataset.tile;
+        });
+    });
+
+    document.getElementById('btn-tile')?.addEventListener('click', () => {
+        const roomLength = val('tile-length');
+        const roomWidth = val('tile-width');
+        const tileSizeCm = parseInt(document.getElementById('tile-size')?.value) || 60;
+        if (isNaN(roomLength) || isNaN(roomWidth) || roomLength <= 0 || roomWidth <= 0) {
+            showResult('tile-result', 'សូមបញ្ចូលប្រវែងនិងទទឹងបន្ទប់ (请输入房间长和宽)');
+            return;
+        }
+
+        const area = roomLength * roomWidth;
+        const tileSizeM = tileSizeCm / 100;
+        const tileArea = tileSizeM * tileSizeM;
+
+        // Each box contains 4 tiles for 60x60, 8 tiles for 30x30 (typical)
+        const tilesPerBox = tileSizeCm === 60 ? 4 : 8;
+        const boxArea = tilesPerBox * tileArea;
+
+        // Add 5% waste
+        const areaWithWaste = area * 1.05;
+        const boxesNeeded = Math.ceil(areaWithWaste / boxArea);
+
+        // Tile adhesive: ~5 kg/m² for 60x60, ~4 kg/m² for 30x30
+        const adhesiveKgPerM2 = tileSizeCm === 60 ? 5 : 4;
+        const totalAdhesiveKg = area * adhesiveKgPerM2;
+        // Each bag is 25kg
+        const adhesiveBags = Math.ceil(totalAdhesiveKg / 25);
+
+        showBigResult('tile-result',
+            highlightCard('📦', 'ចំនួនកេស (Tile Boxes)', '瓷砖总箱数', boxesNeeded.toLocaleString(), 'កេស (箱)', 'amber') +
+            highlightCard('🪣', 'ម្សៅបិទការ៉ូ (Adhesive)', '瓷砖胶泥', adhesiveBags.toLocaleString(), 'ថង់ (25kg)', 'emerald')
+        );
+    });
+}
+
+// ---------- 10C. Paint Calculator ----------
+function initPaintCalculator() {
+    document.getElementById('btn-paint')?.addEventListener('click', () => {
+        const paintArea = val('paint-area');
+        if (isNaN(paintArea) || paintArea <= 0) {
+            showResult('paint-result', 'សូមបញ្ចូលផ្ទៃជញ្ជាំង (请输入刷漆面积)');
+            return;
+        }
+
+        // 18L big bucket covers ~200m² (2 coats)
+        const coveragePerBigBucket = 200; // m² per 18L bucket
+        const primerCoverage = 150; // m² per 18L primer bucket
+
+        const paintBuckets = Math.ceil(paintArea / coveragePerBigBucket);
+        const primerBuckets = Math.ceil(paintArea / primerCoverage);
+
+        showBigResult('paint-result',
+            highlightCard('🪣', 'ថ្នាំលាប (Paint 18L)', '18L大桶油漆', paintBuckets.toLocaleString(), 'ធុងធំ', 'amber') +
+            highlightCard('🎨', 'ថ្នាំទ្រនាប់ (Primer)', '底漆', primerBuckets.toLocaleString(), 'ធុង', 'emerald')
         );
     });
 }
