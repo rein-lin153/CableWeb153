@@ -31,11 +31,11 @@ function showResult(id, html, type = 'neutral') {
     const el = document.getElementById(id);
     if (!el) return;
     const colors = {
-        neutral: 'bg-slate-800 border-slate-700 text-slate-200',
-        success: 'bg-emerald-950/40 border-emerald-600/50 text-emerald-300',
-        warning: 'bg-yellow-950/40 border-yellow-600/50 text-yellow-300',
-        danger: 'bg-rose-950/40 border-rose-600/50 text-rose-300',
-        info: 'bg-cyan-950/40 border-cyan-600/50 text-cyan-300'
+        neutral: 'bg-white border-slate-300 text-slate-700',
+        success: 'bg-emerald-50 border-emerald-400 text-emerald-800',
+        warning: 'bg-amber-50 border-amber-400 text-amber-800',
+        danger: 'bg-red-50 border-red-400 text-red-800',
+        info: 'bg-sky-50 border-sky-400 text-sky-800'
     };
     el.className = `mt-3 p-3 rounded-lg border text-sm font-semibold ${colors[type] || colors.neutral}`;
     el.innerHTML = html;
@@ -47,7 +47,7 @@ function safetyBar(pct) {
     else if (pct < 5) { cls = 'bg-yellow-500'; label = pct.toFixed(2) + '%'; khmer = '⚠️ ប្រុងប្រយ័ត្ន (注意)'; }
     else { cls = 'bg-rose-500'; label = pct.toFixed(2) + '%'; khmer = '❌ ហានិភ័យ (危险)'; }
     const w = Math.min(pct / 10 * 100, 100);
-    return `<div class="flex items-center gap-3"><div class="flex-1 h-3 bg-slate-700 rounded-full overflow-hidden"><div class="h-full ${cls} transition-all" style="width:${w}%"></div></div><span class="text-xs whitespace-nowrap">${label} — ${khmer}</span></div>`;
+    return `<div class="flex items-center gap-3"><div class="flex-1 h-3 bg-slate-200 rounded-full overflow-hidden"><div class="h-full ${cls} transition-all" style="width:${w}%"></div></div><span class="text-xs whitespace-nowrap">${label} — ${khmer}</span></div>`;
 }
 
 /* Standard cable sizes (mm²) */
@@ -111,8 +111,8 @@ function initCableSizeCalculator() {
 
         const barHtml = safetyBar(voltageDropPct);
         showResult('cable-result',
-            `电流 (Current): <b>${current.toFixed(2)} A</b><br>` +
-            `推荐线径 (Recommended): <b class="text-amber-400">${recommended} mm²</b><br>` +
+            `电流 (Current): <b class="text-slate-900">${current.toFixed(2)} A</b><br>` +
+            `推荐线径 (Recommended): <b class="text-amber-700">${recommended} mm²</b><br>` +
             `电压降 (Voltage Drop): ${barHtml}`,
             voltageDropPct < 3 ? 'success' : voltageDropPct < 5 ? 'warning' : 'danger'
         );
@@ -139,7 +139,7 @@ function initCopperWeightCalculator() {
         const totalCost = pureWeight * lmePrice;
 
         showResult('copper-result',
-            `纯铜重量 (Pure Copper Weight): <b class="text-emerald-400">${pureWeight.toFixed(2)} kg</b><br>` +
+            `纯铜重量 (Pure Copper Weight): <b class="text-emerald-700">${pureWeight.toFixed(2)} kg</b><br>` +
             `LME 铜价估算 (Estimated Cost @ $${lmePrice}/kg): <b class="text-amber-400">$${totalCost.toFixed(2)}</b>`,
             'success'
         );
@@ -162,14 +162,14 @@ function initDistributionCalculator() {
         row.id = `device-row-${deviceCount}`;
         row.className = 'grid grid-cols-[1fr_100px_80px_36px] gap-2 items-center mb-2';
         row.innerHTML = `
-            <input type="text" placeholder="ឈ្មោះ (设备名)" value="${name}" class="device-name bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none">
-            <input type="number" placeholder="kW" class="device-kw bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none" value="${p}">
-            <select class="device-pf bg-slate-800 border border-slate-700 rounded px-2 py-2 text-sm text-white focus:border-amber-500 outline-none">
+            <input type="text" placeholder="ឈ្មោះ (设备名)" value="${name}" class="device-name bg-white border border-2 border-slate-300 rounded px-3 py-2 text-sm text-slate-900 font-bold placeholder-slate-500 focus:border-amber-500 outline-none">
+            <input type="number" placeholder="kW" class="device-kw bg-white border border-2 border-slate-300 rounded px-3 py-2 text-sm text-slate-900 font-bold placeholder-slate-500 focus:border-amber-500 outline-none" value="${p}">
+            <select class="device-pf bg-white border border-2 border-slate-300 rounded px-2 py-2 text-sm text-slate-900 font-bold focus:border-amber-500 outline-none">
                 <option value="0.8">0.8</option>
                 <option value="0.85" selected>0.85</option>
                 <option value="0.9">0.9</option>
             </select>
-            <button type="button" class="btn-remove-device bg-rose-600 hover:bg-rose-500 text-white rounded px-2 py-2 text-sm" onclick="this.closest('div[id^=device-row]').remove()">×</button>
+            <button type="button" class="btn-remove-device bg-red-500 hover:bg-red-600 text-white font-bold rounded px-2 py-2 text-sm" onclick="this.closest('div[id^=device-row]').remove()">×</button>
         `;
         listEl.appendChild(row);
     }
@@ -214,7 +214,7 @@ function initDistributionCalculator() {
             `总功率 (Total Power): <b>${totalKW.toFixed(1)} kW</b><br>` +
             `需要系数 (Demand Factor ×${demandFactor}): <b class="text-amber-400">${calcKW.toFixed(1)} kW / ${calcKVA.toFixed(1)} kVA</b><br>` +
             `计算电流 (Calculated Current): <b>${current.toFixed(1)} A</b><br>` +
-            `主断路器推荐 (Main Breaker @1.25×): <b class="text-emerald-400">${recommendedBreaker} A</b>`,
+            `主断路器推荐 (Main Breaker @1.25×): <b class="text-emerald-700">${recommendedBreaker} A</b>`,
             'info'
         );
     });
@@ -253,7 +253,7 @@ function initPowerConverter() {
             const i = phase === 'single'
                 ? (p * 1000) / (v * pf)
                 : (p * 1000) / (sqrt3 * v * pf);
-            showResult('power-conv-result', `电流 (Current): <b class="text-amber-400">${i.toFixed(2)} A</b>`, 'success');
+            showResult('power-conv-result', `电流 (Current): <b class="text-amber-700">${i.toFixed(2)} A</b>`, 'success');
         } else if (unknown === 'v') {
             const p = val('pc-p'); const i = val('pc-i'); const pf = val('pc-pf');
             if (isNaN(p) || isNaN(i) || isNaN(pf) || !p || !i || !pf) {
@@ -269,7 +269,7 @@ function initPowerConverter() {
             const v = phase === 'single'
                 ? (p * 1000) / (i * pf)
                 : (p * 1000) / (sqrt3 * i * pf);
-            showResult('power-conv-result', `电压 (Voltage): <b class="text-amber-400">${v.toFixed(2)} V</b>`, 'success');
+            showResult('power-conv-result', `电压 (Voltage): <b class="text-amber-700">${v.toFixed(2)} V</b>`, 'success');
         } else if (unknown === 'pf') {
             const p = val('pc-p'); const v = val('pc-v'); const i = val('pc-i');
             if (isNaN(p) || isNaN(v) || isNaN(i) || !p || !v || !i) {
@@ -292,7 +292,7 @@ function initPowerConverter() {
                     `<span class="text-xs">输入值超出物理范围 (输入值超出合理范围)</span>`,
                     'danger');
             } else {
-                showResult('power-conv-result', `功率因数 (Power Factor): <b class="text-amber-400">${pf.toFixed(3)}</b>`, 'success');
+                showResult('power-conv-result', `功率因数 (Power Factor): <b class="text-amber-700">${pf.toFixed(3)}</b>`, 'success');
             }
         } else {
             // Solving for P (power)
@@ -538,13 +538,13 @@ function initConduitCalculator() {
 function showBigResult(id, cardsHtml) {
     const el = document.getElementById(id);
     if (!el) return;
-    el.className = 'mt-3 p-4 rounded-xl border bg-slate-800/50 border-slate-700/50 text-sm font-semibold text-slate-200';
+    el.className = 'mt-3 p-4 rounded-xl border-2 bg-white border-slate-300 text-sm font-bold text-slate-800';
     el.innerHTML = cardsHtml;
 }
 
 function highlightCard(icon, labelKhmer, labelCn, value, unit, colorClass) {
-    const glow = colorClass === 'amber' ? 'text-amber-400 shadow-amber-500/20' : 'text-emerald-400 shadow-emerald-500/20';
-    const bg = colorClass === 'amber' ? 'from-amber-500/10 to-yellow-500/5 border-amber-500/30' : 'from-emerald-500/10 to-green-500/5 border-emerald-500/30';
+    const glow = colorClass === 'amber' ? 'text-amber-700 shadow-amber-500/30' : 'text-emerald-700 shadow-emerald-500/30';
+    const bg = colorClass === 'amber' ? 'from-amber-50 to-amber-100 border-2 border-amber-400' : 'from-emerald-50 to-emerald-100 border-2 border-emerald-400';
     return `
     <div class="result-animate bg-gradient-to-br ${bg} border rounded-xl p-4 mb-3 shadow-lg">
         <div class="flex items-center gap-3">
@@ -552,8 +552,8 @@ function highlightCard(icon, labelKhmer, labelCn, value, unit, colorClass) {
                 <span class="text-3xl">${icon}</span>
             </div>
             <div class="flex-1 min-w-0">
-                <div class="text-xs text-slate-400 mb-0.5">${labelKhmer} / ${labelCn}</div>
-                <div class="text-2xl font-extrabold ${glow.split(' ')[0]} drop-shadow-md">${value} <span class="text-base font-bold text-slate-300">${unit}</span></div>
+                <div class="text-xs text-slate-600 font-medium mb-0.5">${labelKhmer} / ${labelCn}</div>
+                <div class="text-3xl font-black ${glow.split(' ')[0]} drop-shadow-md">${value} <span class="text-base font-bold text-slate-300">${unit}</span></div>
             </div>
         </div>
     </div>`;
@@ -561,12 +561,14 @@ function highlightCard(icon, labelKhmer, labelCn, value, unit, colorClass) {
 
 // ================================================================
 // 10A. Brick & Cement Mortar Calculator
-// AUDIT: Uses Cambodia standard brick 4×8×18cm ✓
-//   Effective brick area includes mortar joint (1cm) ✓
-//   Wall assumed 24cm thick (standard for Cambodia) ✓
-//   10% waste factor added ✓
-// FIX: Guard against zero/negative wall dimensions
+// AUDIT: Uses Cambodia standard brick 4x8x18cm ✓
+// Effective brick area includes mortar joint (1cm) ✓
+// Wall assumed 24cm thick (standard for Cambodia) ✓
+// 10% waste factor added ✓
+// FIX: Cement bags factor corrected: 0.3->8 (M5 mortar 1:5 mix)
+// FIX: Sand factor corrected: 0.5->0.8 (M5 mortar 1:5 ratio)
 // ================================================================
+
 function initBrickCementCalculator() {
     document.getElementById('btn-brick')?.addEventListener('click', () => {
         const wallLength = val('brick-length');
@@ -594,10 +596,10 @@ function initBrickCementCalculator() {
         // Add 10% waste
         mortarVolume *= 1.10;
 
-        // Cement: ~0.3 bags (50kg) per m³ of mortar (M5 mix approx)
-        const cementBags = Math.ceil(mortarVolume * 0.3);
-        // Sand: ~0.5 m³ per m³ of mortar
-        const sandM3 = (mortarVolume * 0.5).toFixed(3);
+ // Cement: M5 mortar (1:5 cement:sand) -> ~8 bags of 50kg per m³ mortar (Cambodia std)
+const cementBags = Math.ceil(mortarVolume * 8);
+// Sand: M5 mix ratio 1:5 -> 0.8 m³ sand per m³ mortar
+const sandM3 = (mortarVolume * 0.8).toFixed(3);
 
         showBigResult('brick-result',
             highlightCard('🧱', 'ឥដ្ឋ (Red Bricks)', '红砖数量', bricksNeeded.toLocaleString(), '块', 'amber') +
