@@ -89,6 +89,9 @@
                         <i class="fa-solid fa-upload mr-1.5 text-emerald-400"></i>Import JSON
                     </button>
                     <input type="file" id="json-import-input" accept=".json" class="hidden">
+    <button id="btn-reset-data" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold transition-all border border-rose-500 ml-2" onclick="resetAllData()">
+      <i class="fa-solid fa-rotate-left mr-1.5"></i>Reset
+    </button>
                     <button id="btn-new-article" class="px-5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 rounded-lg text-xs font-bold transition-all shadow-lg shadow-amber-500/20">
                         <i class="fa-solid fa-plus mr-1.5"></i>+ បង្កើតអត្ថបទថ្មី
                     </button>
@@ -439,10 +442,10 @@
         if (editId) {
             const idx = articles.findIndex(x => x.id === editId);
             if (idx !== -1) { Object.assign(articles[idx], payload); }
-            showToast('Article updated successfully');
+            showToast('Saved to local! Export JSON to push to server.', 'success');
         } else {
             articles.unshift({ id: 'a' + Date.now(), ...payload, views: 0 });
-            showToast('Article created successfully');
+            showToast('Created locally! Export JSON to push to server.', 'success');
         }
 
         persist();
@@ -450,12 +453,19 @@
         closeModal();
     }
 
-    window.deleteArticle = function(id) {
+    window.resetAllData = function() {
+ if (!confirm('Reset all local articles back to default from articles.json?')) return;
+ localStorage.removeItem(STORAGE_KEY);
+ loadArticles();
+ showToast('Reset to default data');
+};
+
+window.deleteArticle = function(id) {
         if (!confirm('Are you sure you want to delete this article?')) return;
         articles = articles.filter(x => x.id !== id);
         persist();
         render();
-        showToast('Article deleted');
+        showToast('Deleted! Use Export JSON to save changes to server.', 'success');
     };
 
     /* ---- Import / Export ---- */
