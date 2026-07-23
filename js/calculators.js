@@ -1,5 +1,5 @@
 // ============================================================
-// GCC Cable — គណនាករអ្នកដំបងអគ្គិសនី 12 合 1 (电工计算器套件)
+// B·W CABLE — គណនាករអ្នកដំបងអគ្គិសនី 12 合 1 (电工计算器套件)
 // All math & DOM interaction logic separated from HTML
 // ============================================================
 
@@ -548,12 +548,12 @@ function highlightCard(icon, labelKhmer, labelCn, value, unit, colorClass) {
     return `
     <div class="result-animate bg-gradient-to-br ${bg} border rounded-xl p-4 mb-3 shadow-lg">
         <div class="flex items-center gap-3">
-            <div class="p-3 bg-slate-950/60 rounded-full shrink-0">
+            <div class="p-3 bg-white rounded-full shrink-0 shadow-inner">
                 <span class="text-3xl">${icon}</span>
             </div>
             <div class="flex-1 min-w-0">
                 <div class="text-xs text-slate-600 font-medium mb-0.5">${labelKhmer} / ${labelCn}</div>
-                <div class="text-3xl font-black ${glow.split(' ')[0]} drop-shadow-md">${value} <span class="text-base font-bold text-slate-300">${unit}</span></div>
+                <div class="text-3xl font-black ${glow.split(' ')[0]} drop-shadow-md">${value} <span class="text-base font-bold text-slate-500">${unit}</span></div>
             </div>
         </div>
     </div>`;
@@ -620,11 +620,11 @@ function initTileCalculator() {
     document.querySelectorAll('.tile-size-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.tile-size-btn').forEach(b => {
-                b.classList.remove('border-amber-500', 'bg-amber-500/20');
-                b.classList.add('border-transparent', 'bg-slate-700');
+                b.classList.remove('border-amber-500', 'bg-amber-500/20', 'font-black');
+                b.classList.add('border-transparent', 'bg-slate-200', 'font-bold');
             });
-            btn.classList.remove('border-transparent', 'bg-slate-700');
-            btn.classList.add('border-amber-500', 'bg-amber-500/20');
+            btn.classList.remove('border-transparent', 'bg-slate-200', 'font-bold');
+            btn.classList.add('border-amber-500', 'bg-amber-500/20', 'font-black');
             document.getElementById('tile-size').value = btn.dataset.tile;
         });
     });

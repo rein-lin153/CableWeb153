@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GCC Cable — ព័ត៌មានខ្សែភ្លើង</title>
+    <title>B·W CABLE — 柬埔寨专业电工与建筑计算门户 (B·W CABLE Portal)</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -173,7 +173,7 @@
                     <div class="absolute inset-0 blur-lg bg-amber-500/30 rounded-full"></div>
                 </div>
                 <div>
-                    <span class="font-black text-2xl tracking-wide text-slate-900">GCC Cable</span>
+                    <span class="font-black text-2xl tracking-wide text-slate-900">B·W CABLE</span>
                     <span class="text-xs bg-amber-400 text-slate-900 px-2 py-0.5 rounded-full font-black ml-2 border-2 border-amber-500">INDUSTRIAL</span>
                 </div>
             </div>
@@ -215,10 +215,10 @@
             </div>
 
             <!-- Sub-Pill Navigation -->
-            <div id="electric-sub-pills" class="sub-pill-bar flex gap-2 mb-6 overflow-x-auto"></div>
-            <div id="civil-sub-pills" class="sub-pill-bar flex gap-2 mb-6 overflow-x-auto hidden"></div>
-            <div id="decor-sub-pills" class="sub-pill-bar flex gap-2 mb-6 overflow-x-auto hidden"></div>
-            <div id="cost-sub-pills" class="sub-pill-bar flex gap-2 mb-6 overflow-x-auto hidden"></div>
+            <div id="electric-sub-pills" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none snap-x my-4 md:flex-wrap"></div>
+            <div id="civil-sub-pills" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none snap-x my-4 md:flex-wrap hidden"></div>
+            <div id="decor-sub-pills" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none snap-x my-4 md:flex-wrap hidden"></div>
+            <div id="cost-sub-pills" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none snap-x my-4 md:flex-wrap hidden"></div>
 
             <!-- ===== Electric Category ===== -->
             <div id="cat-electric" class="calc-category-panel">
@@ -411,8 +411,8 @@
                         </div>
                         <div><label class="text-xs text-slate-600 mb-2 block">瓷砖尺寸 (Tile Size)</label>
                             <div class="flex flex-wrap gap-3">
-                                <button type="button" class="tile-size-btn px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-900 rounded-xl text-sm font-black transition-all duration-300 border-2 border-transparent" data-tile="60" data-desc="60×60cm">📐 60×60 cm</button>
-                                <button type="button" class="tile-size-btn px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-900 rounded-xl text-sm font-black transition-all duration-300 border-2 border-transparent" data-tile="30" data-desc="30×30cm">📐 30×30 cm</button>
+                                <button type="button" class="tile-size-btn px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-sm font-bold transition-all duration-300 border-2 border-transparent" data-tile="60" data-desc="60×60cm">📐 60×60 cm</button>
+                                <button type="button" class="tile-size-btn px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-sm font-bold transition-all duration-300 border-2 border-transparent" data-tile="30" data-desc="30×30cm">📐 30×30 cm</button>
                             </div><input type="hidden" id="tile-size" value="60"></div>
                         <button id="btn-tile" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-slate-900 font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
                         <div id="tile-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
@@ -437,7 +437,7 @@
                     <div class="p-5 bg-amber-500/10 rounded-full w-fit mx-auto"><i class="fa-solid fa-house-chimney text-4xl text-amber-400"></i></div>
                     <h3 class="text-amber-400 font-bold text-lg">🏠 造价估算</h3>
                     <p class="text-slate-400 text-sm max-w-md mx-auto leading-relaxed">排屋/别墅造价估算与工钱计算器即将上线。<br><span class="text-slate-500">Coming soon — 敬请期待！</span></p>
-                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 rounded-full text-xs text-slate-400"><i class="fa-solid fa-clock fa-spin"></i> 开发中 (Developing)</div>
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-slate-200 border border-slate-300 rounded-full text-xs text-slate-600 font-semibold"><i class="fa-solid fa-clock fa-spin"></i> 开发中 (Developing)</div>
                 </div>
             </div>
         </div>
@@ -486,7 +486,7 @@
     </section>
 
     <footer class="mt-16 border-t border-slate-200 py-8 text-center text-xs text-slate-500">
-        © 2026 GCC Cable Cambodia. 独立电线资讯平台.
+        © 2026 B·W CABLE Cambodia. 独立电线资讯平台.
     </footer>
 
     <!-- ==================== ARTICLE READER MODAL ==================== -->
@@ -495,7 +495,7 @@
             <!-- Cover Image Header -->
             <div id="article-modal-cover" class="h-48 sm:h-56 overflow-hidden relative shrink-0">
                 <img id="article-modal-cover-img" src="" alt="" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-slate-800/90 via-slate-800/40 to-transparent"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-100/90 via-slate-100/30 to-transparent"></div>
                 <div class="absolute bottom-4 left-6 right-6">
                     <span id="article-modal-cat" class="inline-block px-3 py-1 bg-amber-500/20 backdrop-blur-md text-amber-400 border border-amber-500/30 text-xs font-bold rounded-full mb-2"></span>
                     <h2 id="article-modal-title" class="text-xl sm:text-2xl font-black text-slate-900 leading-snug drop-shadow-lg"></h2>
@@ -563,8 +563,8 @@
                 const btn = e.target.closest('.sub-pill'); if (!btn) return;
                 const idx = parseInt(btn.dataset.index, 10);
                 c.querySelectorAll('.sub-pill').forEach((b, i) => {
-                    if (i === idx) { b.classList.remove('bg-slate-800','text-slate-700','hover:bg-slate-700','font-bold'); b.classList.add('bg-amber-400','text-slate-950','font-black','shadow-md','border-2','border-amber-500'); }
-                    else { b.classList.remove('bg-amber-500','text-slate-950','font-bold','shadow-lg'); b.classList.add('bg-slate-200','text-slate-700','hover:bg-slate-300','font-bold'); }
+                    if (i === idx) { b.classList.remove('bg-slate-200','text-slate-700','hover:bg-slate-300','font-bold','border-transparent'); b.classList.add('bg-amber-400','text-slate-950','font-black','shadow-md','border-2','border-amber-500'); }
+                    else { b.classList.remove('bg-amber-400','text-slate-950','font-black','shadow-md','border-2','border-amber-500'); b.classList.add('bg-slate-200','text-slate-700','hover:bg-slate-300','font-bold','border-2','border-transparent'); }
                 });
                 switchCard(panelId, idx);
             });
@@ -585,11 +585,11 @@
         document.querySelectorAll('.calc-category-tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 document.querySelectorAll('.calc-category-tab').forEach(t => {
-                    t.classList.remove('active-tab','bg-amber-400','text-slate-950','shadow-md','border-2','border-amber-500');
-                    t.classList.add('bg-slate-800/80','hover:bg-slate-700','text-slate-700');
+                    t.classList.remove('active-tab','bg-amber-400','text-slate-950','font-black','shadow-md','border-2','border-amber-500');
+                    t.classList.add('bg-slate-200','text-slate-700','font-bold','hover:bg-slate-300','border-2','border-transparent');
                 });
-                tab.classList.add('active-tab','bg-amber-400','text-slate-950','shadow-md','border-2','border-amber-500');
-                tab.classList.remove('bg-slate-800/80','hover:bg-slate-700','text-slate-700');
+                tab.classList.add('active-tab','bg-amber-400','text-slate-950','font-black','shadow-md','border-2','border-amber-500');
+                tab.classList.remove('bg-slate-200','text-slate-700','font-bold','hover:bg-slate-300','border-transparent');
                 const cat = tab.dataset.category;
                 document.querySelectorAll('.calc-category-panel').forEach(p => p.classList.add('hidden'));
                 document.getElementById(cat)?.classList.remove('hidden');
@@ -681,7 +681,7 @@ try {
 }
 
 // Merge with localStorage overrides
-const LS_KEY = 'gcc_articles';
+const LS_KEY = 'bw_cable_articles';
 let localArticles = [];
 try {
  const stored = localStorage.getItem(LS_KEY);
@@ -733,7 +733,7 @@ renderArticles();
 
             empty.classList.add('hidden');
             grid.innerHTML = filtered.map(article => {
-                const cat = CATEGORY_CONFIG[article.category] || { emoji: '📄', label: article.category, color: 'bg-slate-700/40 text-slate-700 border-slate-600' };
+                const cat = CATEGORY_CONFIG[article.category] || { emoji: '📄', label: article.category, color: 'bg-slate-200 text-slate-600 border-slate-300' };
                 const cover = article.coverImage || FALLBACK_IMG;
                 const d = new Date(article.date);
                 const dateStr = d.toLocaleDateString('km-KH', { year: 'numeric', month: 'short', day: 'numeric' });
@@ -741,9 +741,9 @@ renderArticles();
 
                 return `
                 <article class="article-card bg-white border-2 border-slate-200 rounded-2xl overflow-hidden cursor-pointer group shadow-lg" onclick="openArticleModal('${article.id}')">
-                    <div class="h-48 overflow-hidden relative bg-slate-800">
+                    <div class="h-48 overflow-hidden relative bg-slate-300">
                         <img src="${cover}" alt="" class="article-cover w-full h-full object-cover opacity-90" onerror="this.src='${FALLBACK_IMG}'">
-                        <div class="absolute inset-0 bg-gradient-to-t from-slate-800/80 via-slate-800/20 to-transparent"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-100/80 via-slate-100/20 to-transparent"></div>
                         <div class="absolute top-3 left-3">
                             <span class="px-2.5 py-1 bg-slate-100/80 backdrop-blur-md ${cat.color} text-xs font-bold rounded-full border">${cat.emoji} ${cat.label}</span>
                         </div>
@@ -758,7 +758,7 @@ renderArticles();
                             <div class="text-xs text-slate-500 mb-2 flex items-center gap-2">
                                 <i class="fa-regular fa-calendar"></i> ${dateStr}
                                 <span class="mx-1">•</span>
-                                <i class="fa-solid fa-bolt text-amber-500/70"></i> GCC Cable
+                                <i class="fa-solid fa-bolt text-amber-500/70"></i> B·W CABLE
                             </div>
                             <h3 class="font-black text-base text-slate-900 group-hover:text-amber-400 transition mb-2 line-clamp-2 leading-snug">${escHtml(article.title)}</h3>
                             <p class="text-slate-400 text-sm line-clamp-2 leading-relaxed">${escHtml(article.excerpt || '')}</p>
@@ -787,11 +787,11 @@ renderArticles();
             const pill = e.target.closest('.filter-pill');
             if (!pill) return;
             document.querySelectorAll('.filter-pill').forEach(p => {
-                p.classList.remove('active','bg-amber-500','text-slate-950','shadow-lg');
-                p.classList.add('bg-slate-800','text-slate-700','hover:bg-slate-700');
+                p.classList.remove('active','bg-amber-500','text-slate-950','shadow-lg','font-semibold');
+                p.classList.add('bg-slate-200','text-slate-700','font-bold','hover:bg-slate-300');
             });
-            pill.classList.add('active','bg-amber-500','text-slate-950','shadow-lg');
-            pill.classList.remove('bg-slate-800','text-slate-700','hover:bg-slate-700');
+            pill.classList.add('active','bg-amber-500','text-slate-950','shadow-lg','font-semibold');
+            pill.classList.remove('bg-slate-200','text-slate-700','font-bold','hover:bg-slate-300');
             currentFilter = pill.dataset.filter;
             renderArticles();
         });
@@ -820,7 +820,7 @@ renderArticles();
             coverImg.src = article.coverImage || FALLBACK_IMG;
             coverImg.onerror = function() { this.src = FALLBACK_IMG; };
             titleEl.textContent = article.title;
-            const cat = CATEGORY_CONFIG[article.category] || { emoji: '📄', label: article.category, color: 'bg-slate-700/40 text-slate-700 border-slate-600' };
+            const cat = CATEGORY_CONFIG[article.category] || { emoji: '📄', label: article.category, color: 'bg-slate-200 text-slate-600 border-slate-300' };
             catEl.className = 'inline-block px-3 py-1 backdrop-blur-md text-xs font-bold rounded-full border ' + cat.color;
             catEl.textContent = cat.emoji + ' ' + cat.label;
             dateEl.innerHTML = '<i class="fa-regular fa-calendar mr-1"></i> ' + new Date(article.date).toLocaleDateString('km-KH', { year: 'numeric', month: 'long', day: 'numeric' });

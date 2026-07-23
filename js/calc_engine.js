@@ -1,5 +1,5 @@
 /**
- * GCC Cable — Electrician Calculator Engine
+ * B·W CABLE — Electrician Calculator Engine
  * Formulas:
  *   I = P(kW)*1000 / (V * PF * √3) [3φ]  or  I = P(kW)*1000 / (V * PF) [1φ]
  *   V_drop% = (k * I * L * ρ) / S / V * 100
@@ -117,13 +117,13 @@ function switchCalcTab(name) {
   /* Deactivate all tab buttons */
   document.querySelectorAll('.calc-tab-btn').forEach(btn => {
     btn.classList.remove('bg-amber-500', 'text-slate-950', 'font-bold');
-    btn.classList.add('bg-slate-800', 'text-slate-300');
+    btn.classList.add('bg-slate-200', 'text-slate-700');
   });
 
   /* Activate clicked tab button */
   const activeBtn = document.querySelector(`[data-calc-tab="${name}"]`);
   if (activeBtn) {
-    activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
+    activeBtn.classList.remove('bg-slate-200', 'text-slate-700');
     activeBtn.classList.add('bg-amber-500', 'text-slate-950', 'font-bold');
   }
 
