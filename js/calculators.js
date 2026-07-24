@@ -53,6 +53,23 @@ function safetyBar(pct) {
 /* Standard cable sizes (mm²) */
 const CABLE_SIZES = [1.5, 2.5, 4, 6, 10, 16, 25, 35, 50, 70, 95, 120, 150, 185, 240];
 
+/* Ampacity table (Cu, PVC insulated, air/conduit @ 30°C ambient, IEC 60364-5-52) */
+const AMPACITY_CU = {
+    1.5: 18, 2.5: 25, 4: 34, 6: 46,
+    10: 63, 16: 85, 25: 115, 35: 138,
+    50: 165, 70: 207, 95: 250, 120: 285,
+    150: 320, 185: 370, 240: 430
+};
+
+/* Temperature correction: @ 70°C operating temp, resistivity × 1.2 vs 20°C */
+const TEMP_FACTOR_70C = 1.2;
+
+/* Get ampacity for given material (Al ≈ 0.61 × Cu ampacity per IEC) */
+function getAmpacity(size, material) {
+    const base = AMPACITY_CU[size] || 0;
+    return material === 'copper' ? base : Math.round(base * 0.61);
+}
+
 // ================================================================
 // 1. Cable Size & Voltage Drop
 // AUDIT: Formula verified correct per IEC 60364
@@ -82,27 +99,32 @@ function initCableSizeCalculator() {
 
         // Conductivity in m/(Ω·mm²): copper ≈ 56, aluminum ≈ 35
         // Corresponds to ρ = 1/σ: Cu ≈ 0.01786, Al ≈ 0.02857 Ω·mm²/m
+        // Temperature correction: 70°C operating temp → resistivity × 1.2
         const conductivity = material === 'copper' ? 56 : 35;
         let recommended = CABLE_SIZES[CABLE_SIZES.length - 1];
         let voltageDropPct = 0;
+        let ampacityOK = false;
 
         for (const size of CABLE_SIZES) {
-            // R_phase = L / (σ × S) — single conductor resistance per meter
-            const r = lengthM / (conductivity * size);
+            // R = L / (σ × S) × tempFactor — resistance at 70°C operating temperature
+            const r = lengthM / (conductivity * size) * TEMP_FACTOR_70C;
             // 1φ: V_drop = 2 × I × R (round trip); 3φ: V_drop = √3 × I × R (line-to-line)
             const vdrop = phase === 'single' ? 2 * current * r : Math.sqrt(3) * current * r;
             const vdropPct = (vdrop / voltage) * 100;
-            if (vdropPct <= 3) {
+            // Ampacity check: selected wire must carry the load current safely
+            const amp = getAmpacity(size, material);
+            if (vdropPct <= 3 && amp >= current) {
                 recommended = size;
                 voltageDropPct = vdropPct;
+                ampacityOK = true;
                 break;
             }
         }
 
-        // If none meets <3%, use largest and report actual drop
-        if (voltageDropPct === 0) {
+        // If none meets both conditions, use largest and report actual status
+        if (!ampacityOK) {
             const size = CABLE_SIZES[CABLE_SIZES.length - 1];
-            const r = lengthM / (conductivity * size);
+            const r = lengthM / (conductivity * size) * TEMP_FACTOR_70C;
             voltageDropPct = phase === 'single'
                 ? (2 * current * r / voltage) * 100
                 : (Math.sqrt(3) * current * r / voltage) * 100;
@@ -110,10 +132,14 @@ function initCableSizeCalculator() {
         }
 
         const barHtml = safetyBar(voltageDropPct);
+        const ampLine = ampacityOK
+            ? `载流量 (Ampacity @70°C): <b class="text-emerald-700">${getAmpacity(recommended, material)} A ≥ ${current.toFixed(1)} A ✅</b><br>`
+            : `载流量 (Ampacity @70°C): <b class="text-rose-400">${getAmpacity(recommended, material)} A < ${current.toFixed(1)} A ⚠️</b> (已选最大线径)<br>`;
         showResult('cable-result',
             `电流 (Current): <b class="text-slate-900">${current.toFixed(2)} A</b><br>` +
             `推荐线径 (Recommended): <b class="text-amber-700">${recommended} mm²</b><br>` +
-            `电压降 (Voltage Drop): ${barHtml}`,
+            ampLine +
+            `电压降 (Voltage Drop @70°C): ${barHtml}`,
             voltageDropPct < 3 ? 'success' : voltageDropPct < 5 ? 'warning' : 'danger'
         );
     });
@@ -198,9 +224,10 @@ function initDistributionCalculator() {
 
         const demandFactor = 0.75;
         const calcKVA = totalKVA * demandFactor;
-        const calcKW = calcKVA * 0.85;
+        const calcKW = calcKVA * 0.85; // informational display only (approximate real power)
         const voltage = 400;
-        const current = calcKW * 1000 / (Math.sqrt(3) * voltage * 0.85);
+        // I = S(kVA) × 1000 / (√3 × V) — direct from apparent power, no PF in denominator
+        const current = (calcKVA * 1000) / (Math.sqrt(3) * voltage);
 
         // Recommend breaker size (standard: 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400)
         // Breaker rated ≥ 1.25 × calculated current (per IEC 60898 / NEC 210.20)
@@ -313,6 +340,21 @@ function initPowerConverter() {
                 'success');
         }
     });
+
+    // Auto-fill default voltage based on phase selection
+    const pcPhaseEl = document.getElementById('pc-phase');
+    const pcVEl = document.getElementById('pc-v');
+    pcPhaseEl?.addEventListener('change', () => {
+        if (!pcVEl || pcVEl.dataset.userSet === 'true') return;
+        pcVEl.value = pcPhaseEl.value === 'single' ? '230' : '400';
+    });
+    pcVEl?.addEventListener('input', function() {
+        if (this.value.trim() !== '') this.dataset.userSet = 'true';
+    });
+    // Set initial default voltage
+    if (pcPhaseEl && pcVEl && !pcVEl.dataset.userSet) {
+        pcVEl.value = pcPhaseEl.value === 'single' ? '230' : '400';
+    }
 }
 
 // ================================================================
@@ -474,7 +516,7 @@ function initLightingCalculator() {
         // Height factor: higher ceiling → more light loss → multiply numerator (need more fixtures)
         // Base factor 1.0 at 3m; increases linearly above 3m
         const h = roomH > 0 ? roomH : 3; // default to 3m if not entered
-        const heightFactor = Math.max(1 + (h - 3) * 0.1, 1);
+        const heightFactor = 1 + (h - 3) * 0.15; // allows < 1.0 for low ceilings (e.g. 2.5m → 0.925)
         // Typical LED fixture: 40W, ~4000 lumens (100 lm/W estimate)
         const lumensPerFixture = (ledWatt > 0 ? ledWatt : 40) * 100;
         const utilization = 0.6; // room-dependent
@@ -514,8 +556,10 @@ function initConduitCalculator() {
         const minRadius = outerD * bendMultiplier;
 
         // Conduit fill: max 40% fill per IEC 61386
+        // Multi-cable gap factor: when N > 1, add 15% for inter-cable spacing
         const cableArea = Math.PI * Math.pow(outerD / 2, 2);
-        const conduitArea = cableArea / 0.4 * cables;
+        const gapFactor = cables > 1 ? 1.15 : 1.0;
+        const conduitArea = (cableArea / 0.4) * cables * gapFactor;
         const minConduitD = Math.sqrt(conduitArea / Math.PI) * 2;
 
         // Standard PVC/GI sizes (mm)
@@ -528,7 +572,7 @@ function initConduitCalculator() {
         showResult('conduit-result',
             `最小弯曲半径 (Min Bending Radius): <b class="text-amber-400">${minRadius.toFixed(0)} mm</b> (${bendMultiplier}× 外径)<br>` +
             `推荐穿线管 (Recommended Conduit): <b class="text-emerald-400">${recommended} mm (PVC/GI)</b><br>` +
-            `计算依据 (Basis): IEC 61386, 填充率 ≤40%, ${conduitType === 'armored' ? '铠装 Armored' : '普通 General'}`,
+            `计算依据 (Basis): IEC 61386, 填充率 ≤40%${cables > 1 ? ', 多线间隙系数 1.15' : ''}, ${conduitType === 'armored' ? '铠装 Armored' : '普通 General'}`,
             'info'
         );
     });
@@ -573,6 +617,8 @@ function initBrickCementCalculator() {
     document.getElementById('btn-brick')?.addEventListener('click', () => {
         const wallLength = val('brick-length');
         const wallHeight = val('brick-height');
+        const wallType = document.getElementById('brick-wall-type')?.value || 'double';
+        const wallThickness = wallType === 'single' ? 0.10 : 0.24; // single: 10cm, double: 24cm
         if (isNaN(wallLength) || isNaN(wallHeight) || wallLength <= 0 || wallHeight <= 0) {
             showResult('brick-result', 'សូមបញ្ចូលប្រវែងនិងកម្ពស់ជញ្ជាំង (请输入墙体长度和高度，必须大于0)', 'warning');
             return;
@@ -590,7 +636,7 @@ function initBrickCementCalculator() {
 
         // Mortar volume: wall volume minus brick solid volume
         const brickSolidVolume = bricksNeeded * brickL * brickW * brickH;
-        const wallVolume = wallArea * 0.24; // assume 24cm thick wall
+        const wallVolume = wallArea * wallThickness; // user-selected wall type
         let mortarVolume = Math.max(0, wallVolume - brickSolidVolume);
 
         // Add 10% waste

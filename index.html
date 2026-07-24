@@ -606,7 +606,8 @@
     <!-- ==================== ARTICLE RENDERER ==================== -->
     <script>
     (function() {
-        const ARTICLES_URL = 'data/articles.json';
+        const ARTICLES_API = '/api/articles';
+        const FALLBACK_URL = 'data/articles.json';
         const FALLBACK_IMG = 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?q=80&w=800&auto=format&fit=crop';
 
         // ---- Simple Markdown Parser ----
@@ -672,13 +673,27 @@
         // ---- Load articles ----
         async function loadArticles() {
 let baseArticles = [];
-try {
- const res = await fetch(ARTICLES_URL);
- if (!res.ok) throw new Error('HTTP ' + res.status);
- baseArticles = await res.json();
-} catch (err) {
- console.warn('Failed to load data/articles.json, using empty base:', err);
-}
+	// 1. Try Cloudflare KV via API first
+	try {
+	 const res = await fetch(ARTICLES_API);
+	 if (!res.ok) throw new Error('HTTP ' + res.status);
+	 const data = await res.json();
+	 if (Array.isArray(data) && data.length > 0) {
+	   baseArticles = data;
+	 } else {
+	   throw new Error('Empty KV response');
+	 }
+	} catch (err) {
+	 // 2. Fallback to static articles.json
+	 console.warn('API fetch failed, fallback to data/articles.json:', err.message);
+	 try {
+	   const res2 = await fetch(FALLBACK_URL);
+	   if (!res2.ok) throw new Error('HTTP ' + res2.status);
+	   baseArticles = await res2.json();
+	 } catch (err2) {
+	   console.warn('Fallback also failed, using empty base:', err2);
+	 }
+	}
 
 // Merge with localStorage overrides
 const LS_KEY = 'bw_cable_articles';
