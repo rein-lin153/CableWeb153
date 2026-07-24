@@ -1,520 +1,540 @@
 <!doctype html>
 <html lang="km">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
-    <title>Wiring Master · មេខ្សែភ្លើង · 接线大师</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <style>
-      /* ========== CSS CUSTOM PROPERTIES ========== */
-      :root {
-        --blue-600: #1e69ff; --blue-700: #0052d9; --blue-900: #0a1628;
-        --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0;
-        --slate-400: #94a3b8; --slate-600: #475569; --slate-800: #1e293b;
-        --slate-900: #0f172a; --slate-950: #020617;
-        --green-500: #22c55e; --orange-500: #f97316;
-        --red-500: #ef4444; --yellow-500: #eab308;
-        --radius-sm: 10px; --radius-md: 16px; --radius-lg: 22px;
-        --shadow-card: 0 4px 24px rgba(0,0,0,.12);
-        --font-ui: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Khmer",sans-serif;
-      }
-      * { box-sizing:border-box; margin:0; padding:0; }
-      body {
-        font-family: var(--font-ui); background: var(--slate-950);
-        color: var(--slate-100); height: 100vh; overflow: hidden;
-        display: flex; flex-direction: column;
-        -webkit-tap-highlight-color: transparent;
-        user-select: none; -webkit-user-select: none;
-      }
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>Wiring Master · មេខ្សែភ្លើង · 接线大师</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<style>
+/* ===== CSS VARIABLES ===== */
+:root {
+  --blue-600:#1e69ff; --blue-700:#0052d9; --blue-900:#0a1628;
+  --slate-50:#f8fafc; --slate-100:#f1f5f9; --slate-200:#e2e8f0;
+  --slate-400:#94a3b8; --slate-600:#475569; --slate-800:#1e293b;
+  --slate-900:#0f172a; --slate-950:#020617;
+  --green-500:#22c55e; --orange-500:#f97316;
+  --red-500:#ef4444; --yellow-500:#eab308; --amber-500:#f59e0b;
+  --phase-L:#ef4444; --phase-N:#3b82f6; --phase-PE:#eab308;
+  --phase-L1:#eab308; --phase-L2:#22c55e; --phase-L3:#ef4444;
+  --radius-sm:10px; --radius-md:16px; --radius-lg:22px;
+  --shadow-card:0 4px 24px rgba(0,0,0,.12);
+  --font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Khmer","Leelawadee UI",sans-serif;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+body {
+  font-family:var(--font-ui); background:var(--slate-950);
+  color:var(--slate-100); height:100vh; overflow:hidden;
+  display:flex; flex-direction:column;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none; -webkit-user-select:none;
+  touch-action:manipulation;
+  text-rendering:optimizeLegibility;
+}
 
-      /* ========== TMA HEADER BAR ========== */
-      #tmaHeader {
-        height: 48px; display: flex; align-items: center; justify-content: space-between;
-        padding: 0 16px; font-weight: 700; font-size: 15px; letter-spacing: .3px;
-        flex-shrink: 0; z-index: 200;
-        transition: background .35s, color .35s;
-      }
-      #tmaHeader.home { background: var(--blue-600); color: #fff; }
-      #tmaHeader.sim { background: #151d2a; color: #e2e8f0; border-bottom: 1px solid #2a364f; }
-      #tmaHeader.practice { background: #0f1a2e; color: #e2e8f0; border-bottom: 1px solid #1e3a5f; }
+/* ===== TMA HEADER ===== */
+#tmaHeader {
+  height:48px; display:flex; align-items:center; justify-content:space-between;
+  padding:0 16px; font-weight:700; font-size:15px; letter-spacing:.3px;
+  flex-shrink:0; z-index:200; transition:background .35s,color .35s;
+}
+#tmaHeader.home { background:var(--blue-600); color:#fff; }
+#tmaHeader.sim { background:#151d2a; color:#e2e8f0; border-bottom:1px solid #2a364f; }
+#tmaHeader.practice { background:#0f1a2e; color:#e2e8f0; border-bottom:1px solid #1e3a5f; }
+#tmaTitle { display:flex; align-items:center; gap:8px; }
+#tmaTitle i { font-size:18px; }
+#headerActions { display:flex; gap:6px; }
+.hdr-btn {
+  width:34px; height:34px; border-radius:50%; border:none;
+  background:rgba(255,255,255,.15); color:inherit; font-size:14px;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:background .2s;
+}
+.hdr-btn:active { background:rgba(255,255,255,.3); }
 
-      #tmaTitle { display: flex; align-items: center; gap: 8px; }
-      #tmaTitle i { font-size: 18px; }
-      #headerActions { display: flex; gap: 6px; }
-      .hdr-btn {
-        width: 34px; height: 34px; border-radius: 50%;
-        border: none; background: rgba(255,255,255,.15);
-        color: inherit; font-size: 14px; cursor: pointer;
-        display: flex; align-items: center; justify-content: center;
-        transition: background .2s;
-      }
-      .hdr-btn:active { background: rgba(255,255,255,.3); }
+/* ===== VIEW STACK ===== */
+.view { display:none; flex:1; flex-direction:column; overflow:hidden; }
+.view.active { display:flex; }
 
-      /* ========== VIEW STACK ========== */
-      .view { display: none; flex: 1; flex-direction: column; overflow: hidden; }
-      .view.active { display: flex; }
+/* ===== HOME VIEW ===== */
+#homeView {
+  background:linear-gradient(180deg,var(--blue-600) 0%,var(--blue-700) 40%,var(--slate-50) 70%);
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+}
+.home-hero { text-align:center; padding:40px 20px 24px; color:#fff; }
+.home-hero h1 { font-size:28px; font-weight:800; letter-spacing:.5px; text-shadow:0 2px 8px rgba(0,0,0,.2); }
+.home-hero .sub { font-size:14px; opacity:.85; margin-top:6px; display:flex; align-items:center; justify-content:center; gap:6px; }
+.hero-svg { width:120px; height:90px; margin:0 auto 16px; display:block; }
+.card-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:14px;
+  padding:0 16px 20px; max-width:480px; margin:0 auto;
+}
+.fn-card {
+  background:#fff; border-radius:var(--radius-lg); padding:20px 14px;
+  text-align:center; box-shadow:var(--shadow-card); cursor:pointer;
+  transition:transform .2s,box-shadow .2s;
+  display:flex; flex-direction:column; align-items:center; gap:10px;
+  color:var(--slate-800); position:relative; overflow:hidden;
+}
+.fn-card:active { transform:scale(.96); }
+.fn-card .glow-icon {
+  width:52px; height:52px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; font-size:24px; position:relative;
+}
+.fn-card .glow-icon.orange { background:#fff7ed; color:var(--orange-500); box-shadow:0 0 20px rgba(249,115,22,.25); }
+.fn-card .glow-icon.green  { background:#f0fdf4; color:var(--green-500);  box-shadow:0 0 20px rgba(34,197,94,.25); }
+.fn-card .glow-icon.blue   { background:#eff6ff; color:var(--blue-600);  box-shadow:0 0 20px rgba(30,105,255,.25); }
+.fn-card .glow-icon.yellow { background:#fefce8; color:var(--yellow-500); box-shadow:0 0 20px rgba(234,179,8,.25); }
+.fn-card .card-title { font-size:15px; font-weight:700; line-height:1.5; word-break:break-word; }
+.fn-card .card-desc  { font-size:11px; color:var(--slate-400); line-height:1.5; word-break:break-word; }
+.home-footer { text-align:center; padding:16px 20px 30px; font-size:11px; color:var(--slate-400); }
+.home-footer a { color:var(--blue-600); text-decoration:none; }
 
-      /* ========== HOME VIEW ========== */
-      #homeView {
-        background: linear-gradient(180deg, var(--blue-600) 0%, var(--blue-700) 40%, var(--slate-50) 70%);
-        overflow-y: auto; -webkit-overflow-scrolling: touch;
-      }
-      .home-hero {
-        text-align: center; padding: 40px 20px 24px;
-        color: #fff;
-      }
-      .home-hero h1 {
-        font-size: 28px; font-weight: 800; letter-spacing: .5px;
-        text-shadow: 0 2px 8px rgba(0,0,0,.2);
-      }
-      .home-hero .sub {
-        font-size: 14px; opacity: .85; margin-top: 6px;
-        display: flex; align-items: center; justify-content: center; gap: 6px;
-      }
-      /* SVG装饰 */
-      .hero-svg {
-        width: 120px; height: 90px; margin: 0 auto 16px;
-        display: block;
-      }
+/* ===== SETTINGS ===== */
+.settings-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:500;
+  display:none; align-items:flex-end; justify-content:center;
+}
+.settings-overlay.show { display:flex; }
+.settings-sheet {
+  background:#fff; border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+  width:100%; max-width:480px; padding:24px 20px 36px;
+  animation:slideUp .3s ease-out; color:var(--slate-800);
+}
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.settings-sheet h3 { font-size:18px; margin-bottom:18px; display:flex; align-items:center; gap:8px; }
+.setting-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--slate-200); }
+.setting-label { font-size:14px; font-weight:600; }
+.lang-chips { display:flex; gap:6px; }
+.lang-chip {
+  padding:6px 14px; border-radius:20px; border:2px solid var(--slate-200);
+  font-size:12px; font-weight:600; cursor:pointer; background:#fff; transition:all .2s;
+}
+.lang-chip.active { border-color:var(--blue-600); background:#eff6ff; color:var(--blue-600); }
+.toggle-sw { position:relative; display:inline-block; width:48px; height:26px; }
+.toggle-sw input { opacity:0; width:0; height:0; }
+.toggle-slider { position:absolute; cursor:pointer; inset:0; background:var(--slate-400); border-radius:26px; transition:.3s; }
+.toggle-slider:before { position:absolute; content:""; height:20px; width:20px; left:3px; bottom:3px; background:#fff; border-radius:50%; transition:.3s; }
+input:checked+.toggle-slider { background:var(--green-500); }
+input:checked+.toggle-slider:before { transform:translateX(22px); }
+.settings-close {
+  width:100%; margin-top:20px; padding:12px; background:var(--blue-600);
+  color:#fff; border:none; border-radius:var(--radius-sm); font-size:15px; font-weight:700; cursor:pointer;
+}
 
-      /* 功能卡片网格 */
-      .card-grid {
-        display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
-        padding: 0 16px 20px; max-width: 480px; margin: 0 auto;
-      }
-      .fn-card {
-        background: #fff; border-radius: var(--radius-lg);
-        padding: 20px 14px; text-align: center;
-        box-shadow: var(--shadow-card); cursor: pointer;
-        transition: transform .2s, box-shadow .2s;
-        display: flex; flex-direction: column; align-items: center; gap: 10px;
-        color: var(--slate-800);
-        position: relative; overflow: hidden;
-      }
-      .fn-card:active { transform: scale(.96); }
-      .fn-card .glow-icon {
-        width: 52px; height: 52px; border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 24px; position: relative;
-      }
-      .fn-card .glow-icon.orange {
-        background: #fff7ed; color: var(--orange-500);
-        box-shadow: 0 0 20px rgba(249,115,22,.25);
-      }
-      .fn-card .glow-icon.green {
-        background: #f0fdf4; color: var(--green-500);
-        box-shadow: 0 0 20px rgba(34,197,94,.25);
-      }
-      .fn-card .glow-icon.blue {
-        background: #eff6ff; color: var(--blue-600);
-        box-shadow: 0 0 20px rgba(30,105,255,.25);
-      }
-      .fn-card .glow-icon.yellow {
-        background: #fefce8; color: var(--yellow-500);
-        box-shadow: 0 0 20px rgba(234,179,8,.25);
-      }
-      .fn-card .card-title { font-size: 15px; font-weight: 700; }
-      .fn-card .card-desc { font-size: 11px; color: var(--slate-400); line-height: 1.4; }
+/* ===== SIM VIEW ===== */
+#simView { background:var(--slate-950); }
+.sim-toolbar {
+  height:44px; display:flex; align-items:center; gap:6px;
+  padding:0 10px; background:#151d2a; border-bottom:1px solid #2a364f;
+  overflow-x:auto; flex-shrink:0;
+}
+.sim-toolbar::-webkit-scrollbar { height:0; }
+.tb-btn {
+  height:32px; padding:0 10px; border-radius:6px; border:1px solid #2a364f;
+  background:#1e293b; color:var(--slate-100); font-size:12px; cursor:pointer;
+  display:flex; align-items:center; gap:5px; white-space:nowrap; transition:all .2s;
+}
+.tb-btn:active { background:#334155; }
+.tb-btn.accent { background:var(--blue-600); border-color:var(--blue-600); }
+.tb-btn.danger { background:#7f1d1d; border-color:#991b1b; }
+.tb-btn.active-btn { background:var(--green-500); border-color:var(--green-500); color:#000; }
 
-      /* 页脚 */
-      .home-footer {
-        text-align: center; padding: 16px 20px 30px;
-        font-size: 11px; color: var(--slate-400);
-      }
-      .home-footer a { color: var(--blue-600); text-decoration: none; }
+.sim-main { flex:1; display:flex; position:relative; overflow:hidden; }
 
-      /* ========== SETTINGS PANEL ========== */
-      .settings-overlay {
-        position: fixed; inset: 0; background: rgba(0,0,0,.55);
-        z-index: 500; display: none; align-items: flex-end; justify-content: center;
-      }
-      .settings-overlay.show { display: flex; }
-      .settings-sheet {
-        background: #fff; border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-        width: 100%; max-width: 480px; padding: 24px 20px 36px;
-        animation: slideUp .3s ease-out; color: var(--slate-800);
-      }
-      @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-      .settings-sheet h3 { font-size: 18px; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
-      .setting-row {
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 12px 0; border-bottom: 1px solid var(--slate-200);
-      }
-      .setting-label { font-size: 14px; font-weight: 600; }
-      .lang-chips { display: flex; gap: 6px; }
-      .lang-chip {
-        padding: 6px 14px; border-radius: 20px; border: 2px solid var(--slate-200);
-        font-size: 12px; font-weight: 600; cursor: pointer; background: #fff;
-        transition: all .2s;
-      }
-      .lang-chip.active { border-color: var(--blue-600); background: #eff6ff; color: var(--blue-600); }
-      .toggle-sw {
-        position: relative; display: inline-block; width: 48px; height: 26px;
-      }
-      .toggle-sw input { opacity: 0; width: 0; height: 0; }
-      .toggle-slider {
-        position: absolute; cursor: pointer; inset: 0;
-        background: var(--slate-400); border-radius: 26px; transition: .3s;
-      }
-      .toggle-slider:before {
-        position: absolute; content: ""; height: 20px; width: 20px;
-        left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: .3s;
-      }
-      input:checked + .toggle-slider { background: var(--green-500); }
-      input:checked + .toggle-slider:before { transform: translateX(22px); }
-      .settings-close {
-        width: 100%; margin-top: 20px; padding: 12px;
-        background: var(--blue-600); color: #fff; border: none;
-        border-radius: var(--radius-sm); font-size: 15px; font-weight: 700;
-        cursor: pointer;
-      }
+/* Left component panel */
+.comp-panel {
+  width:260px; background:#151d2a; border-right:1px solid #2a364f;
+  display:flex; flex-direction:column; flex-shrink:0;
+  transition:transform .25s; z-index:30;
+}
+.comp-panel.collapsed { transform:translateX(-100%); position:absolute; height:100%; }
+.comp-panel-header { padding:10px 12px; font-size:13px; font-weight:700; border-bottom:1px solid #2a364f; background:#111827; }
+.comp-grid { flex:1; padding:10px; overflow-y:auto; display:grid; grid-template-columns:1fr 1fr; gap:8px; align-content:start; }
+.comp-item {
+  background:#1e293b; border:1px solid #2a364f; border-radius:8px;
+  padding:10px 6px; text-align:center; cursor:pointer; transition:all .2s;
+}
+.comp-item:active { border-color:var(--blue-600); transform:scale(.95); }
+.comp-item i { font-size:22px; color:var(--blue-600); display:block; margin-bottom:6px; }
+.comp-item span { font-size:10px; color:var(--slate-100); line-height:1.5; word-break:break-word; }
 
-      /* ========== SIM VIEW ========== */
-      #simView { background: var(--slate-950); }
-      .sim-toolbar {
-        height: 44px; display: flex; align-items: center; gap: 6px;
-        padding: 0 10px; background: #151d2a; border-bottom: 1px solid #2a364f;
-        overflow-x: auto; flex-shrink: 0;
-      }
-      .sim-toolbar::-webkit-scrollbar { height: 0; }
-      .tb-btn {
-        height: 32px; padding: 0 10px; border-radius: 6px;
-        border: 1px solid #2a364f; background: #1e293b;
-        color: var(--slate-100); font-size: 12px; cursor: pointer;
-        display: flex; align-items: center; gap: 5px;
-        white-space: nowrap; transition: all .2s;
-      }
-      .tb-btn:active { background: #334155; }
-      .tb-btn.accent { background: var(--blue-600); border-color: var(--blue-600); }
-      .tb-btn.danger { background: #7f1d1d; border-color: #991b1b; }
-      .tb-btn.active-btn { background: var(--green-500); border-color: var(--green-500); color: #000; }
+/* Mobile bottom drawer for components */
+.comp-drawer-handle {
+  display:none; position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
+  z-index:40; padding:8px 20px; border-radius:20px;
+  background:var(--blue-600); color:#fff; border:none;
+  font-size:13px; font-weight:700; cursor:pointer;
+  box-shadow:0 4px 16px rgba(0,0,0,.4);
+}
+.comp-drawer-handle i { margin-right:6px; }
+.comp-drawer {
+  display:none; position:absolute; bottom:0; left:0; right:0;
+  max-height:60vh; background:#151d2a; border-top:2px solid #2a364f;
+  border-radius:var(--radius-lg) var(--radius-lg) 0 0; z-index:35;
+  transform:translateY(100%); transition:transform .3s;
+  flex-direction:column; overflow:hidden;
+}
+.comp-drawer.open { transform:translateY(0); }
+.comp-drawer .drawer-header {
+  padding:12px 16px; font-weight:700; font-size:14px;
+  border-bottom:1px solid #2a364f; display:flex; justify-content:space-between; align-items:center;
+}
+.comp-drawer .drawer-grid { flex:1; padding:10px; overflow-y:auto; display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; align-content:start; }
 
-      .sim-main {
-        flex: 1; display: flex; position: relative; overflow: hidden;
-      }
-      /* 元件面板 */
-      .comp-panel {
-        width: 260px; background: #151d2a; border-right: 1px solid #2a364f;
-        display: flex; flex-direction: column; flex-shrink: 0;
-        transition: transform .25s; z-index: 10;
-      }
-      .comp-panel.collapsed { transform: translateX(-100%); position: absolute; height: 100%; }
-      .comp-panel-header {
-        padding: 10px 12px; font-size: 13px; font-weight: 700;
-        border-bottom: 1px solid #2a364f; background: #111827;
-      }
-      .comp-grid {
-        flex: 1; padding: 10px; overflow-y: auto;
-        display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-content: start;
-      }
-      .comp-item {
-        background: #1e293b; border: 1px solid #2a364f; border-radius: 8px;
-        padding: 10px 6px; text-align: center; cursor: pointer;
-        transition: all .2s;
-      }
-      .comp-item:active { border-color: var(--blue-600); transform: scale(.95); }
-      .comp-item i { font-size: 22px; color: var(--blue-600); display: block; margin-bottom: 6px; }
-      .comp-item span { font-size: 10px; color: var(--slate-100); line-height: 1.3; }
+/* Canvas area */
+.canvas-wrap { flex:1; position:relative; overflow:hidden; }
+#simCanvas { width:100%; height:100%; display:block; touch-action:none; }
+.canvas-info {
+  position:absolute; top:8px; left:8px; background:rgba(21,29,42,.85);
+  border:1px solid #2a364f; border-radius:6px; padding:4px 10px;
+  font-size:11px; color:var(--slate-400); pointer-events:none;
+}
+.short-flash { position:absolute; inset:0; pointer-events:none; background:rgba(239,68,68,0); transition:background .15s; z-index:50; }
+.short-flash.active { background:rgba(239,68,68,.25); }
 
-      /* 画布 */
-      .canvas-wrap { flex: 1; position: relative; overflow: hidden; }
-      #simCanvas { width: 100%; height: 100%; display: block; }
-      .canvas-info {
-        position: absolute; top: 8px; left: 8px;
-        background: rgba(21,29,42,.85); border: 1px solid #2a364f;
-        border-radius: 6px; padding: 4px 10px; font-size: 11px;
-        color: var(--slate-400); pointer-events: none;
-      }
-      /* 短路闪烁层 */
-      .short-flash {
-        position: absolute; inset: 0; pointer-events: none;
-        background: rgba(239,68,68,0); transition: background .15s;
-        z-index: 50;
-      }
-      .short-flash.active { background: rgba(239,68,68,.25); }
+/* Floating component toolbar */
+.comp-float-bar {
+  position:absolute; z-index:60; display:none;
+  background:#151d2a; border:1px solid var(--blue-600); border-radius:10px;
+  padding:6px; gap:4px; box-shadow:0 4px 16px rgba(0,0,0,.5);
+}
+.comp-float-bar.show { display:flex; }
+.float-btn {
+  width:32px; height:32px; border-radius:6px; border:1px solid #2a364f;
+  background:#1e293b; color:var(--slate-100); font-size:13px;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .2s;
+}
+.float-btn:active { background:var(--blue-600); border-color:var(--blue-600); }
+.float-btn.danger:active { background:var(--red-500); border-color:var(--red-500); }
 
-      /* 告警弹窗 */
-      .alert-overlay {
-        position: fixed; inset: 0; background: rgba(0,0,0,.7);
-        z-index: 600; display: none; align-items: center; justify-content: center;
-      }
-      .alert-overlay.show { display: flex; }
-      .alert-box {
-        background: #151d2a; border: 2px solid var(--red-500);
-        border-radius: 16px; padding: 28px; max-width: 340px;
-        text-align: center; animation: shake .5s;
-      }
-      @keyframes shake {
-        0%,100% { transform: translateX(0); }
-        25% { transform: translateX(-8px); }
-        75% { transform: translateX(8px); }
-      }
-      .alert-box i { font-size: 44px; color: var(--red-500); margin-bottom: 14px; }
-      .alert-box h4 { font-size: 18px; color: var(--red-500); margin-bottom: 6px; }
-      .alert-box p { font-size: 13px; color: var(--slate-400); margin-bottom: 18px; }
-      .alert-box button {
-        background: var(--red-500); color: #fff; border: none;
-        padding: 10px 28px; border-radius: 8px; font-size: 14px; font-weight: 700;
-        cursor: pointer;
-      }
+/* Alerts */
+.alert-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.7);
+  z-index:600; display:none; align-items:center; justify-content:center;
+}
+.alert-overlay.show { display:flex; }
+.alert-box {
+  background:#151d2a; border-radius:16px; padding:28px; max-width:340px;
+  text-align:center; animation:shake .5s;
+}
+.alert-box.danger { border:2px solid var(--red-500); }
+.alert-box.success { border:2px solid var(--green-500); }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+.alert-box i { font-size:44px; margin-bottom:14px; }
+.alert-box.danger i { color:var(--red-500); }
+.alert-box.success i { color:var(--green-500); }
+.alert-box h4 { font-size:18px; margin-bottom:6px; }
+.alert-box.danger h4 { color:var(--red-500); }
+.alert-box.success h4 { color:var(--green-500); }
+.alert-box p { font-size:13px; color:var(--slate-400); margin-bottom:18px; }
+.alert-box button {
+  color:#fff; border:none; padding:10px 28px; border-radius:8px;
+  font-size:14px; font-weight:700; cursor:pointer;
+}
+.alert-box.danger button { background:var(--red-500); }
+.alert-box.success button { background:var(--green-500); }
 
-      /* ========== PRACTICE VIEW ========== */
-      #practiceView { background: #0d1320; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-      .practice-header {
-        background: linear-gradient(180deg, #0f1a2e 0%, #0d1320 100%);
-        padding: 20px 16px; text-align: center; border-bottom: 1px solid #1e3a5f;
-      }
-      .practice-header h2 { font-size: 20px; font-weight: 700; }
-      .practice-header p { font-size: 12px; color: var(--slate-400); margin-top: 4px; }
-      .practice-list { padding: 14px 16px 30px; max-width: 480px; margin: 0 auto; }
-      .exercise-card {
-        background: #151d2a; border: 1px solid #2a364f; border-radius: var(--radius-md);
-        padding: 16px; margin-bottom: 12px; cursor: pointer;
-        display: flex; align-items: center; gap: 14px;
-        transition: all .2s;
-      }
-      .exercise-card:active { border-color: var(--blue-600); }
-      .ex-badge {
-        width: 44px; height: 44px; border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 18px; flex-shrink: 0;
-      }
-      .ex-badge.easy { background: #f0fdf4; color: var(--green-500); }
-      .ex-badge.medium { background: #eff6ff; color: var(--blue-600); }
-      .ex-badge.hard { background: #fff7ed; color: var(--orange-500); }
-      .ex-info { flex: 1; }
-      .ex-info h4 { font-size: 14px; margin-bottom: 2px; }
-      .ex-info span { font-size: 11px; color: var(--slate-400); }
-      .ex-info .stars { color: var(--yellow-500); font-size: 12px; margin-top: 3px; }
-      .ex-arrow { color: var(--slate-600); font-size: 18px; }
+/* ===== PRACTICE VIEW ===== */
+#practiceView { background:#0d1320; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.practice-header {
+  background:linear-gradient(180deg,#0f1a2e 0%,#0d1320 100%);
+  padding:20px 16px; text-align:center; border-bottom:1px solid #1e3a5f;
+}
+.practice-header h2 { font-size:20px; font-weight:700; }
+.practice-header p { font-size:12px; color:var(--slate-400); margin-top:4px; }
+.practice-list { padding:14px 16px 30px; max-width:480px; margin:0 auto; }
+.exercise-card {
+  background:#151d2a; border:1px solid #2a364f; border-radius:var(--radius-md);
+  padding:16px; margin-bottom:12px; cursor:pointer;
+  display:flex; align-items:center; gap:14px; transition:all .2s;
+}
+.exercise-card:active { border-color:var(--blue-600); }
+.ex-badge {
+  width:44px; height:44px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;
+}
+.ex-badge.easy { background:#f0fdf4; color:var(--green-500); }
+.ex-badge.medium { background:#eff6ff; color:var(--blue-600); }
+.ex-badge.hard { background:#fff7ed; color:var(--orange-500); }
+.ex-info { flex:1; }
+.ex-info h4 { font-size:14px; margin-bottom:2px; }
+.ex-info span { font-size:11px; color:var(--slate-400); }
+.ex-info .stars { color:var(--yellow-500); font-size:12px; margin-top:3px; }
+.ex-arrow { color:var(--slate-600); font-size:18px; }
 
-      /* 通用滚动条 */
-      ::-webkit-scrollbar { width: 6px; height: 6px; }
-      ::-webkit-scrollbar-track { background: transparent; }
-      ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+/* Scrollbar */
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:#334155; border-radius:3px; }
 
-      /* 响应式 */
-      @media (max-width: 420px) {
-        .card-grid { gap: 10px; padding: 0 10px 16px; }
-        .fn-card { padding: 16px 10px; }
-      }
-    </style>
-  </head>
-  <body>
-    <!-- TMA Header -->
-    <div id="tmaHeader" class="home">
-      <div id="tmaTitle"><i class="fa-solid fa-bolt"></i><span>接线大师</span></div>
-      <div id="headerActions">
-        <button class="hdr-btn" id="btnLang" title="语言"><i class="fa-solid fa-globe"></i></button>
-        <button class="hdr-btn" id="btnSettings" title="设置"><i class="fa-solid fa-gear"></i></button>
+/* Responsive */
+@media (max-width:600px) {
+  .comp-panel { display:none; }
+  .comp-drawer-handle { display:block; }
+  .comp-drawer { display:flex; }
+  .card-grid { gap:10px; padding:0 10px 16px; }
+  .fn-card { padding:16px 10px; }
+}
+</style>
+</head>
+<body>
+<!-- TMA Header -->
+<div id="tmaHeader" class="home">
+  <div id="tmaTitle"><i class="fa-solid fa-bolt"></i><span>接线大师</span></div>
+  <div id="headerActions">
+    <button class="hdr-btn" id="btnLang" title="语言"><i class="fa-solid fa-globe"></i></button>
+    <button class="hdr-btn" id="btnSettings" title="设置"><i class="fa-solid fa-gear"></i></button>
+  </div>
+</div>
+
+<!-- ===== HOME VIEW ===== -->
+<div class="view active" id="homeView">
+  <div class="home-hero">
+    <svg class="hero-svg" viewBox="0 0 120 90">
+      <rect x="10" y="5" width="100" height="80" rx="6" fill="rgba(255,255,255,.15)" stroke="rgba(255,255,255,.3)" stroke-width="2"/>
+      <rect x="20" y="15" width="35" height="25" rx="3" fill="rgba(255,255,255,.2)"/>
+      <circle cx="37" cy="27" r="5" fill="none" stroke="#fff" stroke-width="1.5"/>
+      <rect x="65" y="15" width="35" height="25" rx="3" fill="rgba(255,255,255,.2)"/>
+      <rect x="20" y="48" width="35" height="25" rx="3" fill="rgba(255,255,255,.2)"/>
+      <circle cx="37" cy="60" r="5" fill="#22c55e" stroke="#fff" stroke-width="1.5"/>
+      <rect x="65" y="48" width="35" height="25" rx="3" fill="rgba(255,255,255,.2)"/>
+      <line x1="60" y1="28" x2="65" y2="28" stroke="#fff" stroke-width="1.5"/>
+      <line x1="60" y1="60" x2="65" y2="60" stroke="#fff" stroke-width="1.5"/>
+    </svg>
+    <h1>接线大师</h1>
+    <div class="sub">Wiring Master · មេខ្សែភ្លើង</div>
+  </div>
+  <div class="card-grid">
+    <div class="fn-card" onclick="navTo('sim','home220v')">
+      <div class="glow-icon orange"><i class="fa-solid fa-house-chimney"></i></div>
+      <div class="card-title" data-i18n="home220v">家庭电路</div>
+      <div class="card-desc" data-i18n="home220vDesc">220V 单相自由接线</div>
+    </div>
+    <div class="fn-card" onclick="navTo('sim','industrial380v')">
+      <div class="glow-icon green"><i class="fa-solid fa-industry"></i></div>
+      <div class="card-title" data-i18n="industrial380v">工业电路</div>
+      <div class="card-desc" data-i18n="industrial380vDesc">380V 三相自由接线</div>
+    </div>
+    <div class="fn-card" onclick="navTo('practice')">
+      <div class="glow-icon blue"><i class="fa-solid fa-graduation-cap"></i></div>
+      <div class="card-title" data-i18n="practiceMode">接线练习</div>
+      <div class="card-desc" data-i18n="practiceModeDesc">标准电路模拟训练</div>
+    </div>
+    <div class="fn-card" onclick="openSettings()">
+      <div class="glow-icon yellow"><i class="fa-solid fa-sliders"></i></div>
+      <div class="card-title" data-i18n="settings">我的设置</div>
+      <div class="card-desc" data-i18n="settingsDesc">语言 · 声音 · 震动</div>
+    </div>
+  </div>
+  <div class="home-footer">v3.0 · Wiring Master<br/><span data-i18n="support">技术支持</span>: cableweb@bdwm.co</div>
+</div>
+
+<!-- ===== SIM VIEW ===== -->
+<div class="view" id="simView">
+  <div class="sim-toolbar" id="simToolbar">
+    <button class="tb-btn" onclick="navTo('home')"><i class="fa-solid fa-arrow-left"></i></button>
+    <span id="simModeLabel" style="font-size:13px;font-weight:700;margin:0 6px;white-space:nowrap;">家庭电路</span>
+    <span id="exerciseBadge" style="display:none;font-size:11px;background:var(--green-500);color:#000;padding:2px 8px;border-radius:10px;font-weight:700;"></span>
+    <button class="tb-btn" id="simToggleBtn" onclick="toggleSimulation()"><i class="fa-solid fa-play"></i> <span data-i18n="startSim">启动仿真</span></button>
+    <button class="tb-btn" onclick="undo()" id="undoBtn" disabled><i class="fa-solid fa-rotate-left"></i></button>
+    <button class="tb-btn danger" onclick="clearCanvas()"><i class="fa-solid fa-trash"></i></button>
+    <button class="tb-btn" onclick="zoomFit()"><i class="fa-solid fa-compress"></i></button>
+  </div>
+  <div class="sim-main">
+    <div class="comp-panel" id="compPanel">
+      <div class="comp-panel-header"><i class="fa-solid fa-microchip"></i> <span data-i18n="components">元件库</span></div>
+      <div class="comp-grid" id="compGrid"></div>
+    </div>
+    <div class="canvas-wrap" id="canvasWrap">
+      <canvas id="simCanvas"></canvas>
+      <div class="short-flash" id="shortFlash"></div>
+      <div class="canvas-info" id="canvasInfo">Zoom: 100% | Grid: ON</div>
+      <div class="comp-float-bar" id="floatBar">
+        <button class="float-btn" onclick="rotateComp(90)" title="Rotate 90°"><i class="fa-solid fa-rotate-right"></i></button>
+        <button class="float-btn" onclick="rotateComp(180)" title="Rotate 180°"><i class="fa-solid fa-rotate"></i></button>
+        <button class="float-btn danger" onclick="deleteCompFromBar()" title="Delete"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <!-- Mobile drawer handle -->
+      <button class="comp-drawer-handle" id="drawerHandle" onclick="toggleDrawer()"><i class="fa-solid fa-box"></i><span data-i18n="components">元件库</span></button>
+    </div>
+    <!-- Mobile component drawer -->
+    <div class="comp-drawer" id="compDrawer">
+      <div class="drawer-header">
+        <span><i class="fa-solid fa-microchip"></i> <span data-i18n="components">元件库</span></span>
+        <button class="float-btn" onclick="toggleDrawer()"><i class="fa-solid fa-chevron-down"></i></button>
+      </div>
+      <div class="drawer-grid" id="drawerGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Short circuit alert -->
+<div class="alert-overlay" id="shortAlert">
+  <div class="alert-box danger">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <h4 data-i18n="shortCircuit">短路告警</h4>
+    <p data-i18n="shortCircuitMsg">检测到电源短路！请立即检查电路连接。</p>
+    <button onclick="closeAlert('short')" data-i18n="confirm">确认</button>
+  </div>
+</div>
+
+<!-- Success / exercise passed alert -->
+<div class="alert-overlay" id="successAlert">
+  <div class="alert-box success">
+    <i class="fa-solid fa-circle-check"></i>
+    <h4 data-i18n="exercisePassed">通关成功!</h4>
+    <p data-i18n="exercisePassedMsg">电路连接正确，关卡通过！</p>
+    <button onclick="closeAlert('success')" data-i18n="confirm">确认</button>
+  </div>
+</div>
+
+<!-- ===== PRACTICE VIEW ===== -->
+<div class="view" id="practiceView">
+  <div class="practice-header">
+    <button class="tb-btn" onclick="navTo('home')" style="margin-bottom:12px;"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="back">返回</span></button>
+    <h2 data-i18n="practiceModeTitle">接线练习</h2>
+    <p data-i18n="practiceModeSub">标准电路模拟训练 · Standard Circuit Drills</p>
+  </div>
+  <div class="practice-list" id="practiceList"></div>
+</div>
+
+<!-- ===== SETTINGS OVERLAY ===== -->
+<div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
+  <div class="settings-sheet">
+    <h3><i class="fa-solid fa-gear"></i> <span data-i18n="settings">我的设置</span></h3>
+    <div class="setting-row">
+      <span class="setting-label" data-i18n="language">语言 / Language / ភាសា</span>
+      <div class="lang-chips" id="langChips">
+        <button class="lang-chip active" data-lang="zh">中文</button>
+        <button class="lang-chip" data-lang="en">EN</button>
+        <button class="lang-chip" data-lang="km">ខ្មែរ</button>
       </div>
     </div>
-
-    <!-- ====== HOME VIEW ====== -->
-    <div class="view active" id="homeView">
-      <div class="home-hero">
-        <!-- 工业配电箱SVG装饰 -->
-        <svg class="hero-svg" viewBox="0 0 120 90">
-          <rect x="10" y="5" width="100" height="80" rx="6" fill="rgba(255,255,255,.15)" stroke="rgba(255,255,255,.3)" stroke-width="2"/>
-          <rect x="20" y="15" width="35" height="25" rx="3" fill="rgba(255,255,255,.2)"/>
-          <circle cx="37" cy="27" r="5" fill="none" stroke="#fff" stroke-width="1.5"/>
-          <rect x="65" y="15" width="35" height="25" rx="3" fill="rgba(255,255,255,.2)"/>
-          <rect x="20" y="48" width="35" height="25" rx="3" fill="rgba(255,255,255,.2)"/>
-          <circle cx="37" cy="60" r="5" fill="#22c55e" stroke="#fff" stroke-width="1.5"/>
-          <rect x="65" y="48" width="35" height="25" rx="3" fill="rgba(255,255,255,.2)"/>
-          <line x1="60" y1="28" x2="65" y2="28" stroke="#fff" stroke-width="1.5"/>
-          <line x1="60" y1="60" x2="65" y2="60" stroke="#fff" stroke-width="1.5"/>
-        </svg>
-        <h1>接线大师</h1>
-        <div class="sub">Wiring Master · មេខ្សែភ្លើង</div>
-      </div>
-
-      <div class="card-grid">
-        <div class="fn-card" onclick="navTo('sim','home220v')">
-          <div class="glow-icon orange"><i class="fa-solid fa-house-chimney"></i></div>
-          <div class="card-title" data-i18n="home220v">家庭电路</div>
-          <div class="card-desc" data-i18n="home220vDesc">220V 单相自由接线</div>
-        </div>
-        <div class="fn-card" onclick="navTo('sim','industrial380v')">
-          <div class="glow-icon green"><i class="fa-solid fa-industry"></i></div>
-          <div class="card-title" data-i18n="industrial380v">工业电路</div>
-          <div class="card-desc" data-i18n="industrial380vDesc">380V 三相自由接线</div>
-        </div>
-        <div class="fn-card" onclick="navTo('practice')">
-          <div class="glow-icon blue"><i class="fa-solid fa-graduation-cap"></i></div>
-          <div class="card-title" data-i18n="practiceMode">接线练习</div>
-          <div class="card-desc" data-i18n="practiceModeDesc">标准电路模拟训练</div>
-        </div>
-        <div class="fn-card" onclick="openSettings()">
-          <div class="glow-icon yellow"><i class="fa-solid fa-sliders"></i></div>
-          <div class="card-title" data-i18n="settings">我的设置</div>
-          <div class="card-desc" data-i18n="settingsDesc">语言 · 声音 · 震动</div>
-        </div>
-      </div>
-
-      <div class="home-footer">
-        v2.0 · Wiring Master<br/>
-        <span data-i18n="support">技术支持</span>: cableweb@bdwm.co
-      </div>
+    <div class="setting-row">
+      <span class="setting-label" data-i18n="sound">声音效果</span>
+      <label class="toggle-sw"><input type="checkbox" id="soundToggle" checked onchange="updateSettings()"><span class="toggle-slider"></span></label>
     </div>
-
-    <!-- ====== SIM VIEW ====== -->
-    <div class="view" id="simView">
-      <div class="sim-toolbar" id="simToolbar">
-        <button class="tb-btn" onclick="navTo('home')"><i class="fa-solid fa-arrow-left"></i></button>
-        <span id="simModeLabel" style="font-size:13px;font-weight:700;margin:0 6px;white-space:nowrap;">家庭电路</span>
-        <button class="tb-btn" id="simToggleBtn" onclick="toggleSimulation()"><i class="fa-solid fa-play"></i> <span data-i18n="startSim">启动仿真</span></button>
-        <button class="tb-btn" onclick="undo()" id="undoBtn" disabled><i class="fa-solid fa-rotate-left"></i></button>
-        <button class="tb-btn danger" onclick="clearCanvas()"><i class="fa-solid fa-trash"></i></button>
-        <button class="tb-btn" onclick="toggleCompPanel()"><i class="fa-solid fa-box"></i></button>
-        <button class="tb-btn" onclick="zoomFit()"><i class="fa-solid fa-compress"></i></button>
-      </div>
-      <div class="sim-main">
-        <div class="comp-panel" id="compPanel">
-          <div class="comp-panel-header"><i class="fa-solid fa-microchip"></i> <span data-i18n="components">元件库</span></div>
-          <div class="comp-grid" id="compGrid"></div>
-        </div>
-        <div class="canvas-wrap" id="canvasWrap">
-          <canvas id="simCanvas"></canvas>
-          <div class="short-flash" id="shortFlash"></div>
-          <div class="canvas-info" id="canvasInfo">Zoom: 100% | Grid: ON</div>
-        </div>
-      </div>
+    <div class="setting-row">
+      <span class="setting-label" data-i18n="vibration">触觉震动</span>
+      <label class="toggle-sw"><input type="checkbox" id="vibeToggle" checked onchange="updateSettings()"><span class="toggle-slider"></span></label>
     </div>
-
-    <!-- 短路告警弹窗 -->
-    <div class="alert-overlay" id="shortAlert">
-      <div class="alert-box">
-        <i class="fa-solid fa-triangle-exclamation"></i>
-        <h4 data-i18n="shortCircuit">短路告警</h4>
-        <p data-i18n="shortCircuitMsg">检测到电源短路！请立即检查电路连接。</p>
-        <button onclick="closeAlert()" data-i18n="confirm">确认</button>
-      </div>
-    </div>
-
-    <!-- ====== PRACTICE VIEW ====== -->
-    <div class="view" id="practiceView">
-      <div class="practice-header">
-        <button class="tb-btn" onclick="navTo('home')" style="margin-bottom:12px;"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="back">返回</span></button>
-        <h2 data-i18n="practiceModeTitle">接线练习</h2>
-        <p data-i18n="practiceModeSub">标准电路模拟训练 · Standard Circuit Drills</p>
-      </div>
-      <div class="practice-list" id="practiceList"></div>
-    </div>
-
-    <!-- ====== SETTINGS OVERLAY ====== -->
-    <div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
-      <div class="settings-sheet">
-        <h3><i class="fa-solid fa-gear"></i> <span data-i18n="settings">我的设置</span></h3>
-        <div class="setting-row">
-          <span class="setting-label" data-i18n="language">语言 / Language / ភាសា</span>
-          <div class="lang-chips" id="langChips">
-            <button class="lang-chip active" data-lang="zh">中文</button>
-            <button class="lang-chip" data-lang="en">EN</button>
-            <button class="lang-chip" data-lang="km">ខ្មែរ</button>
-          </div>
-        </div>
-        <div class="setting-row">
-          <span class="setting-label" data-i18n="sound">声音效果</span>
-          <label class="toggle-sw"><input type="checkbox" id="soundToggle" checked onchange="updateSettings()"><span class="toggle-slider"></span></label>
-        </div>
-        <div class="setting-row">
-          <span class="setting-label" data-i18n="vibration">触觉震动</span>
-          <label class="toggle-sw"><input type="checkbox" id="vibeToggle" checked onchange="updateSettings()"><span class="toggle-slider"></span></label>
-        </div>
-        <button class="settings-close" onclick="closeSettings()" data-i18n="close">关闭</button>
-      </div>
-    </div>
-    <script>
-// ====== TMA INIT ======
+    <button class="settings-close" onclick="closeSettings()" data-i18n="close">关闭</button>
+  </div>
+</div>
+<script>
+// ============================================================
+//  TMA INIT
+// ============================================================
 const tg = window.Telegram?.WebApp;
 if (tg) { tg.ready(); tg.expand(); }
 
-// ====== GLOBAL STATE ======
+// ============================================================
+//  GLOBAL STATE
+// ============================================================
 let currentView = 'home';
-let currentMode = 'home220v'; // 'home220v' | 'industrial380v'
-let lang = 'zh';             // 'zh' | 'en' | 'km'
+let currentMode = 'home220v';
+let lang = 'zh';
 let soundOn = true;
 let vibeOn = true;
+let activeExerciseId = null; // track which exercise we're doing
 
-// ====== I18N DICTIONARY ======
+// ============================================================
+//  I18N — EXPANDED DICTIONARY
+// ============================================================
 const i18n = {
-  home220v:       { zh:'家庭电路', en:'Home 220V', km:'សៀគ្វីផ្ទះ' },
-  home220vDesc:   { zh:'220V 单相自由接线', en:'220V Single-Phase Wiring', km:'ខ្សែ ២២០V មួយហ្វាស' },
-  industrial380v: { zh:'工业电路', en:'Industrial 380V', km:'សៀគ្វីឧស្សាហកម្ម' },
-  industrial380vDesc:{ zh:'380V 三相自由接线', en:'380V Three-Phase Wiring', km:'ខ្សែ ៣៨០V បីហ្វាស' },
-  practiceMode:   { zh:'接线练习', en:'Practice Mode', km:'លំហាត់ខ្សែ' },
-  practiceModeDesc:{ zh:'标准电路模拟训练', en:'Standard Circuit Drills', km:'លំហាត់សៀគ្វីស្តង់ដារ' },
-  settings:       { zh:'我的设置', en:'Settings', km:'ការកំណត់' },
-  settingsDesc:   { zh:'语言 · 声音 · 震动', en:'Language · Sound · Vibe', km:'ភាសា · សំឡេង · ញ័រ' },
-  support:        { zh:'技术支持', en:'Support', km:'ជំនួយបច្ចេកទេស' },
-  startSim:       { zh:'启动仿真', en:'Start Sim', km:'ចាប់ផ្តើម' },
-  stopSim:        { zh:'停止仿真', en:'Stop Sim', km:'បញ្ឈប់' },
-  components:     { zh:'元件库', en:'Components', km:'គ្រឿងបន្លាស់' },
-  shortCircuit:   { zh:'短路告警', en:'Short Circuit!', km:'សៀគ្វីខ្លី!' },
-  shortCircuitMsg:{ zh:'检测到电源短路！请立即检查电路连接。', en:'Short circuit detected! Check wiring immediately.', km:'រកឃើញសៀគ្វីខ្លី! សូមពិនិត្យខ្សែភ្លើង។' },
-  confirm:        { zh:'确认', en:'OK', km:'យល់ព្រម' },
-  language:       { zh:'语言 / Language / ភាសា', en:'Language / ភាសា / 语言', km:'ភាសា / Language / 语言' },
-  sound:          { zh:'声音效果', en:'Sound Effects', km:'សំឡេង' },
-  vibration:      { zh:'触觉震动', en:'Haptic Vibration', km:'ញ័រ' },
-  close:          { zh:'关闭', en:'Close', km:'បិទ' },
-  back:           { zh:'返回', en:'Back', km:'ត្រឡប់' },
-  practiceModeTitle:{ zh:'接线练习', en:'Practice Mode', km:'លំហាត់ខ្សែភ្លើង' },
-  practiceModeSub: { zh:'标准电路模拟训练 · Standard Circuit Drills', en:'Standard Circuit Drills', km:'លំហាត់សៀគ្វីស្តង់ដារ' },
-  systemReady:    { zh:'系统就绪', en:'System Ready', km:'ប្រព័ន្ធរួចរាល់' },
-  simRunning:     { zh:'仿真运行中', en:'Simulation Running', km:'កំពុងដំណើរការ' },
-  clearConfirm:   { zh:'确定清空画布？此操作可撤销。', en:'Clear canvas? This can be undone.', km:'លុបផ្ទាំង? អាចត្រឡប់វិញបាន។' },
+  home220v:       {zh:'家庭电路',en:'Home 220V',km:'សៀគ្វីផ្ទះ'},
+  home220vDesc:   {zh:'220V 单相自由接线',en:'220V Single-Phase Wiring',km:'ខ្សែ ២២០V មួយហ្វាស'},
+  industrial380v: {zh:'工业电路',en:'Industrial 380V',km:'សៀគ្វីឧស្សាហកម្ម'},
+  industrial380vDesc:{zh:'380V 三相自由接线',en:'380V Three-Phase Wiring',km:'ខ្សែ ៣៨០V បីហ្វាស'},
+  practiceMode:   {zh:'接线练习',en:'Practice Mode',km:'លំហាត់ខ្សែ'},
+  practiceModeDesc:{zh:'标准电路模拟训练',en:'Standard Circuit Drills',km:'លំហាត់សៀគ្វីស្តង់ដារ'},
+  settings:       {zh:'我的设置',en:'Settings',km:'ការកំណត់'},
+  settingsDesc:   {zh:'语言 · 声音 · 震动',en:'Language · Sound · Vibe',km:'ភាសា · សំឡេង · ញ័រ'},
+  support:        {zh:'技术支持',en:'Support',km:'ជំនួយបច្ចេកទេស'},
+  startSim:       {zh:'启动仿真',en:'Start Sim',km:'ចាប់ផ្តើម'},
+  stopSim:        {zh:'停止仿真',en:'Stop Sim',km:'បញ្ឈប់'},
+  components:     {zh:'元件库',en:'Components',km:'គ្រឿងបន្លាស់'},
+  shortCircuit:   {zh:'短路告警!',en:'SHORT CIRCUIT!',km:'សៀគ្វីខ្លី!'},
+  shortCircuitMsg:{zh:'检测到相线/零线短路！断路器已自动跳闸保护。',en:'Phase-to-neutral short detected! Breaker tripped.',km:'រកឃើញសៀគ្វីខ្លី! ឧបករណ៍បិទដោយស្វ័យប្រវត្តិ។'},
+  confirm:        {zh:'确认',en:'OK',km:'យល់ព្រម'},
+  language:       {zh:'语言 / Language / ភាសា',en:'Language / ភាសា / 语言',km:'ភាសា / Language / 语言'},
+  sound:          {zh:'声音效果',en:'Sound Effects',km:'សំឡេង'},
+  vibration:      {zh:'触觉震动',en:'Haptic Vibration',km:'ញ័រ'},
+  close:          {zh:'关闭',en:'Close',km:'បិទ'},
+  back:           {zh:'返回',en:'Back',km:'ត្រឡប់'},
+  practiceModeTitle:{zh:'接线练习',en:'Practice Mode',km:'លំហាត់ខ្សែភ្លើង'},
+  practiceModeSub:{zh:'标准电路模拟训练 · Standard Circuit Drills',en:'Standard Circuit Drills',km:'លំហាត់សៀគ្វីស្តង់ដារ'},
+  systemReady:    {zh:'系统就绪',en:'System Ready',km:'ប្រព័ន្ធរួចរាល់'},
+  simRunning:     {zh:'仿真运行中',en:'Simulation Running',km:'កំពុងដំណើរការ'},
+  clearConfirm:   {zh:'确定清空画布？此操作可撤销。',en:'Clear canvas? This can be undone.',km:'លុបផ្ទាំង? អាចត្រឡប់វិញបាន។'},
+  exercisePassed: {zh:'通关成功!',en:'Exercise Passed!',km:'ប្រលងជាប់!'},
+  exercisePassedMsg:{zh:'电路连接正确，关卡通过！',en:'Circuit is correct — well done!',km:'សៀគ្វីត្រឹមត្រូវ — ធ្វើបានល្អ!'},
+  wireSelected:   {zh:'导线已选中',en:'Wire Selected',km:'បានជ្រើសខ្សែ'},
+  deleteWire:     {zh:'删除导线',en:'Delete Wire',km:'លុបខ្សែ'},
+  rotate90:       {zh:'旋转90°',en:'Rotate 90°',km:'បង្វិល90°'},
+  rotate180:      {zh:'旋转180°',en:'Rotate 180°',km:'បង្វិល180°'},
+  deleteComp:     {zh:'删除元件',en:'Delete',km:'លុប'},
+  compParams:     {zh:'参数',en:'Params',km:'ប៉ារ៉ាម៉ែត្រ'},
 };
 
-function t(key) { return (i18n[key] && i18n[key][lang]) || key; }
+function t(key) { return (i18n[key]&&i18n[key][lang]) || key; }
 function applyI18N() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.getAttribute('data-i18n');
-    if (i18n[k] && i18n[k][lang]) { el.textContent = i18n[k][lang]; }
+    if (i18n[k]&&i18n[k][lang]) el.textContent = i18n[k][lang];
   });
   document.getElementById('tmaTitle').querySelector('span').textContent =
-    { zh:'接线大师', en:'Wiring Master', km:'មេខ្សែភ្លើង' }[lang] || '接线大师';
+    {zh:'接线大师',en:'Wiring Master',km:'មេខ្សែភ្លើង'}[lang]||'接线大师';
   updateSimModeLabel();
+  updateExerciseBadge();
+  renderPracticeList();
 }
 
-// ====== HAPTIC & AUDIO ======
+// ============================================================
+//  HAPTIC & AUDIO
+// ============================================================
 let audioCtx = null;
-function initAudio() { if (!audioCtx) { audioCtx = new (window.AudioContext||window.webkitAudioContext)(); } }
+function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }
 function beep(freq, dur, vol=.08, type='sine') {
   if (!soundOn) return;
   try { initAudio(); if (audioCtx.state==='suspended') audioCtx.resume();
-    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
     o.type=type; o.frequency.value=freq; g.gain.value=vol;
     o.connect(g); g.connect(audioCtx.destination);
     o.start(); o.stop(audioCtx.currentTime+dur);
   } catch(e){}
 }
 function haptic(style) {
-  if (!vibeOn || !tg?.HapticFeedback) return;
+  if (!vibeOn||!tg?.HapticFeedback) return;
   if (style==='impact') tg.HapticFeedback.impactOccurred('medium');
   else if (style==='success') tg.HapticFeedback.notificationOccurred('success');
   else if (style==='error') tg.HapticFeedback.notificationOccurred('error');
   else if (style==='warning') tg.HapticFeedback.notificationOccurred('warning');
   else if (style==='light') tg.HapticFeedback.impactOccurred('light');
+  else if (style==='selection') tg.HapticFeedback.selectionChanged();
 }
 
-// ====== SPA ROUTING ======
-function navTo(view, mode) {
+// ============================================================
+//  SPA ROUTING
+// ============================================================
+function navTo(view, mode, exerciseId) {
   currentView = view;
   if (mode) currentMode = mode;
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  if (exerciseId !== undefined) activeExerciseId = exerciseId; else activeExerciseId = null;
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   const target = document.getElementById(view+'View');
   if (target) target.classList.add('active');
-
   const hdr = document.getElementById('tmaHeader');
-  hdr.className = (view==='home') ? 'home' : (view==='practice') ? 'practice' : 'sim';
-  if (tg?.setHeaderColor) {
-    tg.setHeaderColor(view==='home' ? '#1e69ff' : '#151d2a');
-  }
-  updateSimModeLabel();
-  if (view==='sim') { resizeCanvas(); render(); }
+  hdr.className = (view==='home')?'home':(view==='practice')?'practice':'sim';
+  if (tg?.setHeaderColor) tg.setHeaderColor(view==='home'?'#1e69ff':'#151d2a');
+  updateSimModeLabel(); updateExerciseBadge();
+  if (view==='sim') { resizeCanvas(); renderComponentPanel(); renderDrawerGrid(); resizeCanvas(); render(); }
   if (view==='practice') renderPracticeList();
+  // if entering sim with an exercise, init it
+  if (view==='sim' && activeExerciseId) {
+    setTimeout(() => initExercise(activeExerciseId), 100);
+  }
 }
 
 function updateSimModeLabel() {
@@ -524,7 +544,18 @@ function updateSimModeLabel() {
   else lbl.textContent = t('industrial380v');
 }
 
-// ====== SETTINGS ======
+function updateExerciseBadge() {
+  const badge = document.getElementById('exerciseBadge');
+  if (!badge) return;
+  if (activeExerciseId) {
+    const ex = exercises.find(e=>e.id===activeExerciseId);
+    if (ex) { badge.style.display='inline'; badge.textContent = '🎯 '+(ex.title[lang]||ex.title.zh); }
+  } else { badge.style.display='none'; }
+}
+
+// ============================================================
+//  SETTINGS
+// ============================================================
 function openSettings() { document.getElementById('settingsOverlay').classList.add('show'); haptic('light'); }
 function closeSettings() { document.getElementById('settingsOverlay').classList.remove('show'); }
 function updateSettings() {
@@ -532,23 +563,56 @@ function updateSettings() {
   vibeOn = document.getElementById('vibeToggle').checked;
   beep(800,.05); haptic('light');
 }
-document.getElementById('langChips').addEventListener('click', e => {
+document.getElementById('langChips').addEventListener('click', e=>{
   if (!e.target.classList.contains('lang-chip')) return;
-  document.querySelectorAll('.lang-chip').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.lang-chip').forEach(c=>c.classList.remove('active'));
   e.target.classList.add('active');
   lang = e.target.dataset.lang;
   applyI18N();
+  renderComponentPanel(); renderDrawerGrid(); // re-render component names
   beep(600,.06); haptic('selection');
 });
 document.getElementById('btnLang').addEventListener('click', openSettings);
 document.getElementById('btnSettings').addEventListener('click', openSettings);
 
-// ====== SIM CANVAS ENGINE ======
+// ============================================================
+//  PHASE COLOR SYSTEM
+// ============================================================
+const PHASE_COLOR = {
+  'L':  '#ef4444',  // Red — Line/Hot
+  'N':  '#3b82f6',  // Blue — Neutral
+  'PE': '#eab308',  // Yellow-green — Earth
+  'L1': '#eab308',  // Yellow — Phase 1
+  'L2': '#22c55e',  // Green  — Phase 2
+  'L3': '#ef4444',  // Red    — Phase 3
+};
+const PHASE_LABEL = {
+  'L':  {zh:'L 火线', en:'L', km:'L'},
+  'N':  {zh:'N 零线', en:'N', km:'N'},
+  'PE': {zh:'PE 地线', en:'PE', km:'PE'},
+  'L1': {zh:'L1', en:'L1', km:'L1'},
+  'L2': {zh:'L2', en:'L2', km:'L2'},
+  'L3': {zh:'L3', en:'L3', km:'L3'},
+};
+
+// Incompatible phase pairs -> short circuit
+const PHASE_INCOMPATIBLE = {
+  'L':  ['N','PE','L1','L2','L3'],
+  'N':  ['L','L1','L2','L3'],
+  'PE': ['L','L1','L2','L3'],
+  'L1': ['L2','L3','N','PE'],
+  'L2': ['L1','L3','N','PE'],
+  'L3': ['L1','L2','N','PE'],
+};
+
+// ============================================================
+//  CANVAS ENGINE
+// ============================================================
 const canvas = document.getElementById('simCanvas');
 const ctx = canvas.getContext('2d');
 const canvasWrap = document.getElementById('canvasWrap');
 let zoomLevel = 1.0;
-let panOffset = { x:0, y:0 };
+let panOffset = {x:0,y:0};
 let showGrid = true;
 const GRID_SIZE = 20;
 const PIN_SNAP_RADIUS = 15;
@@ -556,230 +620,394 @@ let isSimulating = false;
 let components = [];
 let wires = [];
 let selectedComp = null;
+let selectedWire = null;
+let hoveredWire = null;
 let undoStack = [], redoStack = [];
 const MAX_HISTORY = 30;
 let isDragging = false, isPanning = false;
-let dragTarget = null, dragOff = { x:0, y:0 };
-let panStart = { x:0, y:0 };
+let dragTarget = null, dragOff = {x:0,y:0};
+let panStart = {x:0,y:0};
 let wireStart = null, tempWire = null;
 let hoveredPin = null;
+let touchStartTime = 0;
+let touchStartPos = {x:0,y:0};
+let pinchStartDist = 0, pinchStartZoom = 1;
+let pinchMidX = 0, pinchMidY = 0;
 
-// Component definitions
+// ============================================================
+//  COMPONENT LIBRARY — WITH PHASE MAPPING
+// ============================================================
 const COMP_LIB = {
   home220v: [
-    { type:'breaker1p', name:{ zh:'单极空开 QF', en:'1P Breaker', km:'ឧបករណ៍' }, icon:'fa-toggle-on', pins:2, cat:'home', v:220 },
-    { type:'switch1p', name:{ zh:'单联开关 S', en:'1P Switch', km:'កុងតាក់' }, icon:'fa-toggle-off', pins:2, cat:'home', v:220 },
-    { type:'socket', name:{ zh:'插座 XS', en:'Socket', km:'រន្ធ' }, icon:'fa-plug', pins:2, cat:'home', v:220 },
-    { type:'lamp', name:{ zh:'节能灯 EL', en:'Lamp', km:'អំពូល' }, icon:'fa-lightbulb', pins:2, cat:'home', v:220 },
-    { type:'bell', name:{ zh:'门铃 HA', en:'Bell', km:'កណ្តឹង' }, icon:'fa-bell', pins:2, cat:'home', v:220 },
-    { type:'indicator', name:{ zh:'指示灯 HL', en:'Indicator', km:'ភ្លើងសញ្ញា' }, icon:'fa-lightbulb', pins:2, cat:'home', v:220 },
+    {type:'breaker1p',name:{zh:'单极空开 QF',en:'1P Breaker',km:'ឧបករណ៍'},icon:'fa-toggle-on',pins:2,phases:['L','N'],v:220, defaultState:true},
+    {type:'switch1p',name:{zh:'单联开关 S',en:'1P Switch',km:'កុងតាក់'},icon:'fa-toggle-off',pins:2,phases:['L','N'],v:220},
+    {type:'socket',name:{zh:'插座 XS',en:'Socket',km:'រន្ធ'},icon:'fa-plug',pins:3,phases:['L','N','PE'],v:220},
+    {type:'lamp',name:{zh:'节能灯 EL',en:'Lamp',km:'អំពូល'},icon:'fa-lightbulb',pins:2,phases:['L','N'],v:220},
+    {type:'bell',name:{zh:'门铃 HA',en:'Bell',km:'កណ្តឹង'},icon:'fa-bell',pins:2,phases:['L','N'],v:220},
+    {type:'indicator',name:{zh:'指示灯 HL',en:'Indicator',km:'ភ្លើងសញ្ញា'},icon:'fa-lightbulb',pins:2,phases:['L','N'],v:220},
+    {type:'contactor1p',name:{zh:'接触器 KM',en:'1P Contactor',km:'កុងតាក់ទ័រ'},icon:'fa-box-archive',pins:4,phases:['L','N','L','N'],v:220, contactor:true},
   ],
   industrial380v: [
-    { type:'breaker3p', name:{ zh:'三相空开 QF', en:'3P Breaker', km:'ឧបករណ៍3ហ្វាស' }, icon:'fa-toggle-on', pins:3, cat:'industrial', v:380 },
-    { type:'contactor', name:{ zh:'交流接触器 KM', en:'Contactor', km:'កុងតាក់ទ័រ' }, icon:'fa-box-archive', pins:3, cat:'industrial', v:380 },
-    { type:'thermal_relay', name:{ zh:'热继电器 FR', en:'Thermal Relay', km:'រ៉េឡេកម្តៅ' }, icon:'fa-temperature-high', pins:3, cat:'industrial', v:380 },
-    { type:'motor3p', name:{ zh:'三相电机 M', en:'3P Motor', km:'ម៉ូទ័រ3ហ្វាស' }, icon:'fa-fan', pins:3, cat:'industrial', v:380 },
-    { type:'fuse', name:{ zh:'熔断器 FU', en:'Fuse', km:'ហ្វុយស៍' }, icon:'fa-fire', pins:2, cat:'industrial', v:380 },
-    { type:'indicator380', name:{ zh:'指示灯 HL', en:'Indicator', km:'ភ្លើងសញ្ញា' }, icon:'fa-lightbulb', pins:2, cat:'industrial', v:380 },
+    {type:'breaker3p',name:{zh:'三相空开 QF',en:'3P Breaker',km:'ឧបករណ៍3ហ្វាស'},icon:'fa-toggle-on',pins:5,phases:['L1','L2','L3','N','PE'],v:380, defaultState:true},
+    {type:'contactor',name:{zh:'交流接触器 KM',en:'Contactor',km:'កុងតាក់ទ័រ'},icon:'fa-box-archive',pins:5,phases:['L1','L2','L3','N','PE'],v:380, contactor:true},
+    {type:'thermal_relay',name:{zh:'热继电器 FR',en:'Thermal Relay',km:'រ៉េឡេកម្តៅ'},icon:'fa-temperature-high',pins:3,phases:['L1','L2','L3'],v:380},
+    {type:'motor3p',name:{zh:'三相电机 M',en:'3P Motor',km:'ម៉ូទ័រ3ហ្វាស'},icon:'fa-fan',pins:3,phases:['L1','L2','L3'],v:380},
+    {type:'fuse',name:{zh:'熔断器 FU',en:'Fuse',km:'ហ្វុយស៍'},icon:'fa-fire',pins:2,phases:['L1','N'],v:380},
+    {type:'indicator380',name:{zh:'指示灯 HL',en:'Indicator',km:'ភ្លើងសញ្ញា'},icon:'fa-lightbulb',pins:2,phases:['L1','N'],v:380},
   ]
 };
 
-function getCompName(comp) { return (comp.name && comp.name[lang]) || comp.name?.zh || comp.type; }
+function getCompName(comp) {
+  if (comp.name && comp.name[lang]) return comp.name[lang];
+  if (comp.name && comp.name.zh) return comp.name.zh;
+  return comp.type;
+}
 
 function renderComponentPanel() {
   const grid = document.getElementById('compGrid');
-  const lib = COMP_LIB[currentMode] || COMP_LIB['home220v'];
+  const lib = COMP_LIB[currentMode]||COMP_LIB['home220v'];
   grid.innerHTML = '';
-  lib.forEach(c => {
+  lib.forEach(c=>{
     const div = document.createElement('div');
     div.className = 'comp-item';
     div.innerHTML = `<i class="fa-solid ${c.icon}"></i><span>${getCompName(c)}</span>`;
-    div.addEventListener('click', () => { spawnComponent(c.type); haptic('impact'); beep(800,.05); });
+    div.addEventListener('click',()=>{ spawnComponent(c.type); haptic('impact'); beep(800,.05); });
     grid.appendChild(div);
   });
 }
 
+function renderDrawerGrid() {
+  const grid = document.getElementById('drawerGrid');
+  const lib = COMP_LIB[currentMode]||COMP_LIB['home220v'];
+  grid.innerHTML = '';
+  lib.forEach(c=>{
+    const div = document.createElement('div');
+    div.className = 'comp-item';
+    div.innerHTML = `<i class="fa-solid ${c.icon}"></i><span>${getCompName(c)}</span>`;
+    div.addEventListener('click',()=>{ spawnComponent(c.type); haptic('impact'); beep(800,.05); });
+    grid.appendChild(div);
+  });
+}
+
+function toggleDrawer() {
+  document.getElementById('compDrawer').classList.toggle('open');
+}
+
 function findTemplate(type) {
   for (const mode in COMP_LIB) {
-    const f = COMP_LIB[mode].find(c => c.type===type);
+    const f = COMP_LIB[mode].find(c=>c.type===type);
     if (f) return f;
   }
   return null;
 }
 
-function spawnComponent(type) {
+function spawnComponent(type, atX, atY) {
   saveUndo();
   const tpl = findTemplate(type); if (!tpl) return;
   const id = 'c'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+  const x = atX !== undefined ? atX : (canvas.width/2 - panOffset.x)/zoomLevel;
+  const y = atY !== undefined ? atY : (canvas.height/2 - panOffset.y)/zoomLevel;
   const comp = {
-    id, type, name:tpl.name, icon:tpl.icon, pins:[],
-    x:(canvas.width/2 - panOffset.x)/zoomLevel,
-    y:(canvas.height/2 - panOffset.y)/zoomLevel,
-    w:110, h:90, voltage:tpl.v||220, current:10, state:false
+    id, type, name:tpl.name, icon:tpl.icon, pins:[], rotation: 0,
+    x, y, w:(tpl.pins>=5?150:110), h:(tpl.pins>=4?100:90),
+    voltage:tpl.v||220, current:10, state:tpl.defaultState||false,
+    contactor:tpl.contactor||false
   };
-  // generate pins
-  const pinPositions = {
-    2:[{rx:30,ry:0},{rx:70,ry:0},{rx:30,ry:90},{rx:70,ry:90}],
-    3:[{rx:50,ry:0},{rx:20,ry:80},{rx:80,ry:80}],
-    4:[{rx:20,ry:0},{rx:80,ry:0},{rx:20,ry:80},{rx:80,ry:80}]
-  };
-  const positions = pinPositions[Math.min(tpl.pins,4)] || pinPositions[2];
-  for (let i=0; i<tpl.pins; i++) {
-    comp.pins.push({ id:comp.id+'_p'+i, label:'P'+(i+1), rx:positions[i].rx, ry:positions[i].ry, voltage:0 });
+  // generate pins with phase labels
+  const phases = tpl.phases||[];
+  const pinCount = tpl.pins;
+  // compute pin positions based on count and rotation
+  const rawPos = computePinPositions(pinCount);
+  for (let i=0; i<pinCount; i++) {
+    comp.pins.push({
+      id:comp.id+'_p'+i,
+      label: (phases[i]) ? (PHASE_LABEL[phases[i]]?PHASE_LABEL[phases[i]][lang]:phases[i]) : ('P'+(i+1)),
+      phase: phases[i]||null,
+      rx:rawPos[i].rx, ry:rawPos[i].ry, voltage:0, phaseActive:null
+    });
   }
   components.push(comp);
   selectComponent(comp);
   render(); updateStatus();
+  hideFloatBar();
 }
 
-function selectComponent(comp) { selectedComp = comp; render(); }
-function deleteSelected() {
+function computePinPositions(count) {
+  // Standard positions (rx = % of width, ry = % of height)
+  const positions = {
+    2: [{rx:30,ry:0},{rx:70,ry:0}],
+    3: [{rx:30,ry:0},{rx:70,ry:0},{rx:50,ry:100}],
+    4: [{rx:20,ry:0},{rx:80,ry:0},{rx:20,ry:100},{rx:80,ry:100}],
+    5: [{rx:10,ry:0},{rx:30,ry:0},{rx:50,ry:0},{rx:70,ry:0},{rx:90,ry:0}],
+  };
+  return positions[Math.min(count,5)] || positions[2];
+}
+
+function selectComponent(comp) {
+  selectedComp = comp;
+  selectedWire = null; hoveredWire = null;
+  if (comp) showFloatBar(comp);
+  else hideFloatBar();
+  render();
+}
+
+function selectWire(w) {
+  selectedWire = w;
+  selectedComp = null;
+  hideFloatBar();
+  render();
+}
+
+function deleteSelectedComp() {
   if (!selectedComp) return;
   saveUndo();
-  wires = wires.filter(w => w.fromC !== selectedComp.id && w.toC !== selectedComp.id);
-  components = components.filter(c => c.id !== selectedComp.id);
+  wires = wires.filter(w=>w.fromC!==selectedComp.id&&w.toC!==selectedComp.id);
+  components = components.filter(c=>c.id!==selectedComp.id);
   selectedComp = null;
+  hideFloatBar();
   beep(300,.1); haptic('impact');
   render(); updateStatus();
 }
 
-// ====== UNDO/REDO ======
+function deleteCompFromBar() { deleteSelectedComp(); }
+
+function deleteSelectedWire() {
+  if (!selectedWire) return;
+  saveUndo();
+  wires = wires.filter(w=>w.id!==selectedWire.id);
+  selectedWire = null;
+  beep(300,.1); haptic('impact');
+  render(); updateStatus();
+}
+
+function rotateComp(deg) {
+  if (!selectedComp) return;
+  saveUndo();
+  selectedComp.rotation = (selectedComp.rotation + deg) % 360;
+  // Rotate pin positions
+  selectedComp.pins.forEach(p=>{
+    const cx=50,cy=50; // center percentages
+    const dx=p.rx-cx, dy=p.ry-cy;
+    const rad = deg*Math.PI/180;
+    const ndx = dx*Math.cos(rad)-dy*Math.sin(rad);
+    const ndy = dx*Math.sin(rad)+dy*Math.cos(rad);
+    p.rx = ndx+cx; p.ry = ndy+cy;
+  });
+  // Update wire endpoints
+  wires.filter(w=>w.fromC===selectedComp.id||w.toC===selectedComp.id).forEach(w=>{
+    updateWireEndpoints(w);
+  });
+  beep(500,.06); haptic('light');
+  render();
+}
+
+function updateWireEndpoints(w) {
+  const fromComp = components.find(c=>c.id===w.fromC);
+  const toComp = components.find(c=>c.id===w.toC);
+  if (fromComp) {
+    const fp = fromComp.pins.find(p=>p.id===w.fromP);
+    if (fp) { w.x1 = fromComp.x + fp.rx; w.y1 = fromComp.y + fp.ry; }
+  }
+  if (toComp) {
+    const tp = toComp.pins.find(p=>p.id===w.toP);
+    if (tp) { w.x2 = toComp.x + tp.rx; w.y2 = toComp.y + tp.ry; }
+  }
+}
+
+// ============================================================
+//  FLOATING TOOLBAR
+// ============================================================
+function showFloatBar(comp) {
+  const bar = document.getElementById('floatBar');
+  const scrX = comp.x * zoomLevel + panOffset.x;
+  const scrY = comp.y * zoomLevel + panOffset.y;
+  bar.style.left = Math.max(10, scrX + comp.w*zoomLevel + 8) + 'px';
+  bar.style.top = Math.max(10, scrY - 10) + 'px';
+  bar.classList.add('show');
+}
+function hideFloatBar() { document.getElementById('floatBar').classList.remove('show'); }
+
+// ============================================================
+//  UNDO/REDO
+// ============================================================
 function saveUndo() {
-  undoStack.push({ components:JSON.parse(JSON.stringify(components)), wires:JSON.parse(JSON.stringify(wires)) });
-  if (undoStack.length > MAX_HISTORY) undoStack.shift();
-  redoStack = [];
-  document.getElementById('undoBtn').disabled = false;
+  undoStack.push({components:JSON.parse(JSON.stringify(components)),wires:JSON.parse(JSON.stringify(wires))});
+  if (undoStack.length>MAX_HISTORY) undoStack.shift();
+  redoStack=[];
+  document.getElementById('undoBtn').disabled=false;
 }
 function undo() {
   if (undoStack.length===0) return;
-  redoStack.push({ components:JSON.parse(JSON.stringify(components)), wires:JSON.parse(JSON.stringify(wires)) });
-  const st = undoStack.pop();
-  components = st.components; wires = st.wires;
-  selectedComp = null;
-  document.getElementById('undoBtn').disabled = undoStack.length===0;
+  redoStack.push({components:JSON.parse(JSON.stringify(components)),wires:JSON.parse(JSON.stringify(wires))});
+  const st=undoStack.pop();
+  components=st.components; wires=st.wires;
+  selectedComp=null; selectedWire=null; hideFloatBar();
+  document.getElementById('undoBtn').disabled=undoStack.length===0;
   beep(400,.05); render(); updateStatus();
 }
 function clearCanvas() {
-  if (components.length===0) return;
+  if (components.length===0&&wires.length===0) return;
   if (!confirm(t('clearConfirm'))) return;
   saveUndo();
-  components = []; wires = []; selectedComp = null; wireStart = null; tempWire = null;
+  components=[]; wires=[]; selectedComp=null; selectedWire=null; wireStart=null; tempWire=null;
+  hideFloatBar();
   beep(200,.15); haptic('impact');
   render(); updateStatus();
 }
 
-// ====== CANVAS RENDERING ======
+// ============================================================
+//  RENDERING
+// ============================================================
 function resizeCanvas() {
-  const w = canvasWrap.clientWidth;
-  const h = canvasWrap.clientHeight;
-  if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+  const w=canvasWrap.clientWidth, h=canvasWrap.clientHeight;
+  if (canvas.width!==w||canvas.height!==h) { canvas.width=w; canvas.height=h; }
+  if (selectedComp) showFloatBar(selectedComp);
   render();
 }
 
 function render() {
-  if (!ctx || currentView!=='sim') return;
+  if (!ctx||currentView!=='sim') return;
   ctx.clearRect(0,0,canvas.width,canvas.height);
   ctx.save();
-  ctx.translate(panOffset.x, panOffset.y);
-  ctx.scale(zoomLevel, zoomLevel);
+  ctx.translate(panOffset.x,panOffset.y);
+  ctx.scale(zoomLevel,zoomLevel);
 
   if (showGrid) drawGrid();
-
-  // draw wires
-  wires.forEach(w => drawWire(w));
+  wires.forEach(w=>drawWire(w));
   if (tempWire) drawTempWire();
-
-  // draw components
-  components.forEach(c => drawComponent(c));
-
-  if (hoveredPin && wireStart) drawSnapIndicator(hoveredPin);
+  components.forEach(c=>drawComponent(c));
+  if (hoveredPin&&wireStart) drawSnapIndicator(hoveredPin);
 
   ctx.restore();
 
-  document.getElementById('canvasInfo').textContent =
-    `Zoom: ${Math.round(zoomLevel*100)}% | Grid: ${showGrid?'ON':'OFF'} | ${t('components')}: ${components.length}`;
+  let info = `Zoom:${Math.round(zoomLevel*100)}% | Grid:${showGrid?'ON':'OFF'} | ${t('components')}:${components.length}`;
+  if (selectedWire) info += ' | '+t('wireSelected');
+  document.getElementById('canvasInfo').textContent = info;
 }
 
 function drawGrid() {
-  ctx.strokeStyle = '#1e293b'; ctx.lineWidth = .5;
-  const sx = Math.floor(-panOffset.x/zoomLevel/GRID_SIZE)*GRID_SIZE;
-  const sy = Math.floor(-panOffset.y/zoomLevel/GRID_SIZE)*GRID_SIZE;
-  const ex = sx + canvas.width/zoomLevel + GRID_SIZE*2;
-  const ey = sy + canvas.height/zoomLevel + GRID_SIZE*2;
+  ctx.strokeStyle='#1e293b'; ctx.lineWidth=.5;
+  const sx=Math.floor(-panOffset.x/zoomLevel/GRID_SIZE)*GRID_SIZE;
+  const sy=Math.floor(-panOffset.y/zoomLevel/GRID_SIZE)*GRID_SIZE;
+  const ex=sx+canvas.width/zoomLevel+GRID_SIZE*2, ey=sy+canvas.height/zoomLevel+GRID_SIZE*2;
   ctx.beginPath();
-  for (let x=sx; x<ex; x+=GRID_SIZE) { ctx.moveTo(x,sy); ctx.lineTo(x,ey); }
-  for (let y=sy; y<ey; y+=GRID_SIZE) { ctx.moveTo(sx,y); ctx.lineTo(ex,y); }
+  for (let x=sx;x<ex;x+=GRID_SIZE){ctx.moveTo(x,sy);ctx.lineTo(x,ey);}
+  for (let y=sy;y<ey;y+=GRID_SIZE){ctx.moveTo(sx,y);ctx.lineTo(ex,y);}
   ctx.stroke();
 }
 
+function getWireColor(w) {
+  if (isSimulating && w.powered && w.activePhase) {
+    return PHASE_COLOR[w.activePhase] || '#22c55e';
+  }
+  const fromComp = components.find(c=>c.id===w.fromC);
+  if (fromComp) {
+    const fp = fromComp.pins.find(p=>p.id===w.fromP);
+    if (fp && fp.phase && PHASE_COLOR[fp.phase]) return PHASE_COLOR[fp.phase];
+  }
+  return '#1e69ff';
+}
+
 function drawWire(w) {
+  const isSel = selectedWire && selectedWire.id===w.id;
+  const isHov = hoveredWire && hoveredWire.id===w.id;
+
   ctx.beginPath();
-  ctx.moveTo(w.x1, w.y1);
-  ctx.bezierCurveTo(w.x1, w.y1+50, w.x2, w.y2-50, w.x2, w.y2);
-  ctx.lineWidth = isSimulating ? 5 : 3.5;
-  ctx.strokeStyle = isSimulating && w.powered ? '#22c55e' : '#1e69ff';
-  if (isSimulating && w.powered) {
-    ctx.shadowColor = '#22c55e'; ctx.shadowBlur = 12;
-  } else { ctx.shadowBlur = 0; }
+  ctx.moveTo(w.x1,w.y1);
+  ctx.bezierCurveTo(w.x1,w.y1+50,w.x2,w.y2-50,w.x2,w.y2);
+
+  if (isSel) {
+    ctx.lineWidth=isSimulating?7:5.5;
+    ctx.strokeStyle='#eab308';
+    ctx.shadowColor='#eab308'; ctx.shadowBlur=16;
+  } else if (isHov) {
+    ctx.lineWidth=isSimulating?6:4.5;
+    ctx.strokeStyle='#f59e0b';
+    ctx.shadowColor='#f59e0b'; ctx.shadowBlur=10;
+  } else {
+    ctx.lineWidth=isSimulating?5:3.5;
+    if (isSimulating && w.powered) {
+      ctx.strokeStyle = getWireColor(w);
+      ctx.shadowColor = w.activePhase ? PHASE_COLOR[w.activePhase] : '#22c55e';
+      ctx.shadowBlur = 12;
+    } else {
+      ctx.strokeStyle = getWireColor(w);
+      ctx.shadowBlur = 0;
+    }
+  }
   ctx.stroke();
-  ctx.shadowBlur = 0;
-  // endpoints
-  [{x:w.x1,y:w.y1},{x:w.x2,y:w.y2}].forEach(pt => {
-    ctx.beginPath(); ctx.arc(pt.x,pt.y,5,0,Math.PI*2); ctx.fillStyle = ctx.strokeStyle; ctx.fill();
+  ctx.shadowBlur=0;
+
+  [{x:w.x1,y:w.y1},{x:w.x2,y:w.y2}].forEach(pt=>{
+    ctx.beginPath(); ctx.arc(pt.x,pt.y,5,0,Math.PI*2);
+    ctx.fillStyle=ctx.strokeStyle; ctx.fill();
   });
 }
 
 function drawTempWire() {
   ctx.beginPath(); ctx.moveTo(tempWire.x1,tempWire.y1); ctx.lineTo(tempWire.x2,tempWire.y2);
-  ctx.strokeStyle = '#eab308'; ctx.lineWidth = 2; ctx.setLineDash([5,5]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.strokeStyle='#eab308'; ctx.lineWidth=2; ctx.setLineDash([5,5]); ctx.stroke(); ctx.setLineDash([]);
 }
 
 function drawComponent(comp) {
-  const sel = selectedComp && selectedComp.id===comp.id;
-  const powered = isSimulating && comp.state;
-  ctx.shadowColor = powered ? 'rgba(34,197,94,.5)' : 'transparent';
-  ctx.shadowBlur = powered ? 14 : 0;
-  ctx.fillStyle = sel ? '#1e3a5f' : (powered ? '#1a3a2a' : '#151d2a');
-  ctx.strokeStyle = sel ? '#1e69ff' : (powered ? '#22c55e' : '#334155');
-  ctx.lineWidth = sel ? 3 : 2;
-  roundRect(ctx, comp.x, comp.y, comp.w, comp.h, 8);
+  const sel=selectedComp&&selectedComp.id===comp.id;
+  const powered=isSimulating && comp.state;
+
+  ctx.save();
+  if (comp.rotation) {
+    const cx=comp.x+comp.w/2, cy=comp.y+comp.h/2;
+    ctx.translate(cx,cy); ctx.rotate(comp.rotation*Math.PI/180); ctx.translate(-cx,-cy);
+  }
+
+  ctx.shadowColor=powered?'rgba(34,197,94,.5)':'transparent';
+  ctx.shadowBlur=powered?14:0;
+  ctx.fillStyle=sel?'#1e3a5f':(powered?'#1a3a2a':'#151d2a');
+  ctx.strokeStyle=sel?'#1e69ff':(powered?'#22c55e':'#334155');
+  ctx.lineWidth=sel?3:2;
+  roundRect(ctx,comp.x,comp.y,comp.w,comp.h,8);
   ctx.fill(); ctx.stroke();
-  ctx.shadowBlur = 0;
+  ctx.shadowBlur=0;
 
-  // icon + name
-  ctx.fillStyle = powered ? '#22c55e' : '#f1f5f9';
-  ctx.font = 'bold 11px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-  ctx.fillText(getCompName(comp), comp.x+comp.w/2, comp.y+comp.h/2);
+  ctx.fillStyle=powered?'#22c55e':'#f1f5f9';
+  ctx.font='bold 11px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(getCompName(comp),comp.x+comp.w/2,comp.y+comp.h/2);
 
-  // pins
-  comp.pins.forEach((p,i) => {
-    const px = comp.x + p.rx, py = comp.y + p.ry;
-    const hovered = hoveredPin && hoveredPin.id===p.id;
-    const live = isSimulating && p.voltage>0;
+  comp.pins.forEach((p,i)=>{
+    const px=comp.x+p.rx, py=comp.y+p.ry;
+    const hovered=hoveredPin&&hoveredPin.id===p.id;
+    const live=isSimulating&&p.voltage>0&&p.phaseActive;
+    const pinColor = live ? (PHASE_COLOR[p.phaseActive]||'#22c55e') :
+                     (hovered?'#eab308':
+                     (p.phase&&PHASE_COLOR[p.phase]?PHASE_COLOR[p.phase]:'#ef4444'));
     ctx.beginPath(); ctx.arc(px,py,hovered?8:6,0,Math.PI*2);
-    ctx.fillStyle = live ? '#22c55e' : (hovered ? '#eab308' : '#ef4444');
-    ctx.fill();
-    ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
-    ctx.fillStyle='#fff'; ctx.font='bold 7px sans-serif';
-    ctx.fillText(i+1, px, py);
+    ctx.fillStyle=pinColor; ctx.fill();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.font='bold 7px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(p.label,px,py);
   });
 
-  // motor animation
-  if (comp.type==='motor3p' && isSimulating && comp.state) {
-    const cx=comp.x+comp.w/2, cy=comp.y+comp.h/2, t=Date.now()/80;
-    ctx.save(); ctx.translate(cx,cy); ctx.rotate(t);
+  if (comp.type==='motor3p'&&isSimulating&&comp.state) {
+    const cx=comp.x+comp.w/2, cy=comp.y+comp.h/2, time=Date.now()/80;
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(time);
     ctx.strokeStyle='#22c55e'; ctx.lineWidth=2;
-    for (let i=0;i<3;i++) { ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(18,0); ctx.stroke(); ctx.rotate(Math.PI*2/3); }
+    for (let i=0;i<3;i++){ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(18,0);ctx.stroke();ctx.rotate(Math.PI*2/3);}
     ctx.restore();
   }
+
+  if (sel) {
+    ctx.fillStyle='#1e69ff'; ctx.font='10px FontAwesome';
+    ctx.fillText('',comp.x+comp.w-14,comp.y+14);
+  }
+
+  ctx.restore();
 }
 
 function drawSnapIndicator(pin) {
-  ctx.beginPath(); ctx.arc(pin.x, pin.y, PIN_SNAP_RADIUS, 0, Math.PI*2);
+  ctx.beginPath(); ctx.arc(pin.x,pin.y,PIN_SNAP_RADIUS,0,Math.PI*2);
   ctx.strokeStyle='#eab308'; ctx.lineWidth=2; ctx.setLineDash([3,3]); ctx.stroke(); ctx.setLineDash([]);
 }
 
-function roundRect(c, x,y,w,h,r) {
+function roundRect(c,x,y,w,h,r) {
   c.beginPath(); c.moveTo(x+r,y); c.lineTo(x+w-r,y);
   c.quadraticCurveTo(x+w,y,x+w,y+r); c.lineTo(x+w,y+h-r);
   c.quadraticCurveTo(x+w,y+h,x+w-r,y+h); c.lineTo(x+r,y+h);
@@ -787,123 +1015,264 @@ function roundRect(c, x,y,w,h,r) {
   c.quadraticCurveTo(x,y,x+r,y); c.closePath();
 }
 
-// ====== INTERACTION ======
-canvas.addEventListener('mousedown', e => {
-  const r = canvas.getBoundingClientRect();
-  const mx = (e.clientX-r.left - panOffset.x)/zoomLevel;
-  const my = (e.clientY-r.top - panOffset.y)/zoomLevel;
+// ============================================================
+//  INTERACTION — MOUSE & TOUCH
+// ============================================================
 
-  if (e.button===1 || (e.button===0 && e.shiftKey)) {
-    isPanning=true; panStart={x:e.clientX-panOffset.x, y:e.clientY-panOffset.y};
+function distToWire(mx, my, w) {
+  const pts = [];
+  for (let t=0; t<=1; t+=0.05) {
+    const x = bezierPt(w.x1, w.x1, w.x2, w.x2, t);
+    const y = bezierPt(w.y1, w.y1+50, w.y2-50, w.y2, t);
+    pts.push({x,y});
+  }
+  let minD = Infinity;
+  for (let i=0; i<pts.length-1; i++) {
+    const d = distToSegment(mx, my, pts[i].x, pts[i].y, pts[i+1].x, pts[i+1].y);
+    if (d<minD) minD=d;
+  }
+  return minD;
+}
+
+function bezierPt(p0, p1, p2, p3, t) {
+  const mt=1-t;
+  return mt*mt*mt*p0 + 3*mt*mt*t*p1 + 3*mt*t*t*p2 + t*t*t*p3;
+}
+
+function distToSegment(px, py, x1, y1, x2, y2) {
+  const dx=x2-x1, dy=y2-y1, len2=dx*dx+dy*dy;
+  if (len2===0) return Math.sqrt((px-x1)**2+(py-y1)**2);
+  let t=((px-x1)*dx+(py-y1)*dy)/len2;
+  t=Math.max(0,Math.min(1,t));
+  const nx=x1+t*dx, ny=y1+t*dy;
+  return Math.sqrt((px-nx)**2+(py-ny)**2);
+}
+
+canvas.addEventListener('mousedown', e=>{
+  const r=canvas.getBoundingClientRect();
+  const mx=(e.clientX-r.left-panOffset.x)/zoomLevel;
+  const my=(e.clientY-r.top-panOffset.y)/zoomLevel;
+
+  if (e.button===1||(e.button===0&&e.shiftKey)) {
+    isPanning=true; panStart={x:e.clientX-panOffset.x,y:e.clientY-panOffset.y};
     canvas.style.cursor='grabbing'; e.preventDefault(); return;
   }
 
   if (e.button===0) {
-    const pinHit = findPinAt(mx,my);
-    if (pinHit && wireStart) {
-      createWire(wireStart, pinHit); wireStart=null; tempWire=null; beep(1000,.08); haptic('success'); return;
-    } else if (pinHit) {
-      wireStart=pinHit; tempWire={x1:pinHit.x,y1:pinHit.y,x2:mx,y2:my}; canvas.style.cursor='crosshair'; return;
+    // Wire hit check first
+    let closestW=null, closestD=Infinity;
+    wires.forEach(w=>{ const d=distToWire(mx,my,w); if(d<10/zoomLevel&&d<closestD){closestD=d;closestW=w;} });
+    if (closestW) {
+      selectWire(closestW);
+      if (wireStart) { wireStart=null; tempWire=null; }
+      return;
     }
-    const compHit = findCompAt(mx,my);
-    if (compHit) { isDragging=true; dragTarget=compHit; dragOff={x:mx-compHit.x, y:my-compHit.y}; selectComponent(compHit); }
-    else { selectComponent(null); wireStart=null; tempWire=null; }
+
+    const pinHit=findPinAt(mx,my);
+    if (pinHit && wireStart) {
+      createWire(wireStart,pinHit); wireStart=null; tempWire=null;
+      beep(1000,.08); haptic('success'); return;
+    } else if (pinHit) {
+      wireStart=pinHit; tempWire={x1:pinHit.x,y1:pinHit.y,x2:mx,y2:my};
+      canvas.style.cursor='crosshair'; return;
+    }
+
+    // Sim-mode: click on breaker/switch to toggle
+    if (isSimulating) {
+      const compHit=findCompAt(mx,my);
+      if (compHit && (compHit.type==='breaker1p'||compHit.type==='breaker3p'||compHit.type==='switch1p'||compHit.contactor)) {
+        saveUndo(); compHit.state=!compHit.state;
+        beep(600,.08); haptic('light');
+        selectComponent(compHit); analyzeCircuit(); return;
+      }
+    }
+
+    const compHit=findCompAt(mx,my);
+    if (compHit) { isDragging=true; dragTarget=compHit; dragOff={x:mx-compHit.x,y:my-compHit.y}; selectComponent(compHit); }
+    else { selectComponent(null); wireStart=null; tempWire=null; hideFloatBar(); }
   }
 });
-canvas.addEventListener('mousemove', e => {
-  const r = canvas.getBoundingClientRect();
-  const mx = (e.clientX-r.left - panOffset.x)/zoomLevel;
-  const my = (e.clientY-r.top - panOffset.y)/zoomLevel;
+
+canvas.addEventListener('mousemove', e=>{
+  const r=canvas.getBoundingClientRect();
+  const mx=(e.clientX-r.left-panOffset.x)/zoomLevel;
+  const my=(e.clientY-r.top-panOffset.y)/zoomLevel;
+
   if (isPanning) { panOffset.x=e.clientX-panStart.x; panOffset.y=e.clientY-panStart.y; render(); return; }
   if (isDragging && dragTarget) {
-    dragTarget.x = Math.round(mx - dragOff.x);
-    dragTarget.y = Math.round(my - dragOff.y);
+    dragTarget.x=Math.round(mx-dragOff.x); dragTarget.y=Math.round(my-dragOff.y);
+    wires.filter(w=>w.fromC===dragTarget.id||w.toC===dragTarget.id).forEach(w=>updateWireEndpoints(w));
+    showFloatBar(dragTarget);
+    if (isSimulating) analyzeCircuit();
     render(); return;
   }
   if (tempWire) { tempWire.x2=mx; tempWire.y2=my; render(); return; }
-  hoveredPin = findPinAt(mx,my);
-  canvas.style.cursor = hoveredPin ? 'pointer' : 'crosshair';
-  if (hoveredPin) render();
+
+  hoveredPin=findPinAt(mx,my);
+  hoveredWire=null;
+  if (!hoveredPin) {
+    let closestW=null, closestD=Infinity;
+    wires.forEach(w=>{ const d=distToWire(mx,my,w); if(d<8/zoomLevel&&d<closestD){closestD=d;closestW=w;} });
+    hoveredWire=closestW;
+  }
+  canvas.style.cursor=hoveredPin?'pointer':hoveredWire?'pointer':'crosshair';
+  if (hoveredPin||hoveredWire) render();
 });
-window.addEventListener('mouseup', () => {
+
+window.addEventListener('mouseup',()=>{
   isDragging=false; isPanning=false; dragTarget=null;
-  canvas.style.cursor = wireStart ? 'crosshair' : 'crosshair';
+  canvas.style.cursor=wireStart?'crosshair':'crosshair';
 });
-canvas.addEventListener('wheel', e => {
+
+canvas.addEventListener('wheel', e=>{
   e.preventDefault();
-  const r = canvas.getBoundingClientRect();
-  const mx = e.clientX-r.left, my = e.clientY-r.top;
-  const zf = e.deltaY>0 ? .9 : 1.1;
-  const nz = Math.max(.15, Math.min(5, zoomLevel*zf));
-  const wx = (mx-panOffset.x)/zoomLevel, wy = (my-panOffset.y)/zoomLevel;
-  zoomLevel = nz;
-  panOffset.x = mx - wx*zoomLevel; panOffset.y = my - wy*zoomLevel;
+  const r=canvas.getBoundingClientRect();
+  const mx=e.clientX-r.left, my=e.clientY-r.top;
+  const zf=e.deltaY>0?.9:1.1;
+  const nz=Math.max(.15,Math.min(5,zoomLevel*zf));
+  const wx=(mx-panOffset.x)/zoomLevel, wy=(my-panOffset.y)/zoomLevel;
+  zoomLevel=nz;
+  panOffset.x=mx-wx*zoomLevel; panOffset.y=my-wy*zoomLevel;
+  if (selectedComp) showFloatBar(selectedComp);
   render();
 });
-// Touch support for mobile
-canvas.addEventListener('touchstart', e => {
-  if (e.touches.length===2) { isPanning=true; panStart={x:0,y:0}; return; }
-  const t = e.touches[0];
-  const mx = (t.clientX-canvas.getBoundingClientRect().left-panOffset.x)/zoomLevel;
-  const my = (t.clientY-canvas.getBoundingClientRect().top-panOffset.y)/zoomLevel;
-  const pinHit = findPinAt(mx,my);
+
+// Touch events
+canvas.addEventListener('touchstart', e=>{
+  if (e.touches.length===2) {
+    const t0=e.touches[0], t1=e.touches[1];
+    pinchStartDist=Math.hypot(t1.clientX-t0.clientX,t1.clientY-t0.clientY);
+    pinchStartZoom=zoomLevel;
+    pinchMidX=(t0.clientX+t1.clientX)/2;
+    pinchMidY=(t0.clientY+t1.clientY)/2;
+    isPanning=false; isDragging=false; return;
+  }
+  const t=e.touches[0];
+  touchStartTime=Date.now();
+  touchStartPos={x:t.clientX, y:t.clientY};
+  const mx=(t.clientX-canvas.getBoundingClientRect().left-panOffset.x)/zoomLevel;
+  const my=(t.clientY-canvas.getBoundingClientRect().top-panOffset.y)/zoomLevel;
+
+  const pinHit=findPinAt(mx,my);
   if (pinHit && wireStart) { createWire(wireStart,pinHit); wireStart=null; tempWire=null; beep(1000,.08); haptic('success'); e.preventDefault(); return; }
   else if (pinHit) { wireStart=pinHit; tempWire={x1:pinHit.x,y1:pinHit.y,x2:mx,y2:my}; return; }
-  const compHit = findCompAt(mx,my);
-  if (compHit) { isDragging=true; dragTarget=compHit; dragOff={x:mx-compHit.x, y:my-compHit.y}; selectComponent(compHit); }
+
+  let closestW=null, closestD=Infinity;
+  wires.forEach(w=>{ const d=distToWire(mx,my,w); if(d<12/zoomLevel&&d<closestD){closestD=d;closestW=w;} });
+  if (closestW) { selectWire(closestW); e.preventDefault(); return; }
+
+  if (isSimulating) {
+    const compHit=findCompAt(mx,my);
+    if (compHit && (compHit.type==='breaker1p'||compHit.type==='breaker3p'||compHit.type==='switch1p'||compHit.contactor)) {
+      saveUndo(); compHit.state=!compHit.state; beep(600,.08); haptic('light');
+      selectComponent(compHit); analyzeCircuit(); e.preventDefault(); return;
+    }
+  }
+
+  const compHit=findCompAt(mx,my);
+  if (compHit) { isDragging=true; dragTarget=compHit; dragOff={x:mx-compHit.x,y:my-compHit.y}; selectComponent(compHit); }
+  else { selectComponent(null); wireStart=null; tempWire=null; hideFloatBar(); }
 });
-canvas.addEventListener('touchmove', e => {
-  if (e.touches.length===2) { e.preventDefault(); return; }
+
+canvas.addEventListener('touchmove', e=>{
+  if (e.touches.length===2) {
+    e.preventDefault();
+    const t0=e.touches[0], t1=e.touches[1];
+    const newDist=Math.hypot(t1.clientX-t0.clientX,t1.clientY-t0.clientY);
+    const scale=newDist/pinchStartDist;
+    const nz=Math.max(.15,Math.min(5,pinchStartZoom*scale));
+    const newMidX=(t0.clientX+t1.clientX)/2, newMidY=(t0.clientY+t1.clientY)/2;
+    const r=canvas.getBoundingClientRect();
+    const wx=(newMidX-r.left-panOffset.x)/zoomLevel;
+    const wy=(newMidY-r.top-panOffset.y)/zoomLevel;
+    zoomLevel=nz;
+    panOffset.x=newMidX-r.left-wx*zoomLevel;
+    panOffset.y=newMidY-r.top-wy*zoomLevel;
+    if (selectedComp) showFloatBar(selectedComp);
+    render(); return;
+  }
+  const t=e.touches[0];
+  const dx=t.clientX-touchStartPos.x, dy=t.clientY-touchStartPos.y;
+  if (!isDragging && !wireStart && Math.abs(dx)+Math.abs(dy)>10) {
+    isPanning=true; panStart={x:t.clientX-panOffset.x,y:t.clientY-panOffset.y};
+    isDragging=false; dragTarget=null;
+  }
+  if (isPanning) { panOffset.x=t.clientX-panStart.x; panOffset.y=t.clientY-panStart.y; render(); e.preventDefault(); return; }
   if (isDragging && dragTarget) {
-    const t = e.touches[0];
-    const mx = (t.clientX-canvas.getBoundingClientRect().left-panOffset.x)/zoomLevel;
-    const my = (t.clientY-canvas.getBoundingClientRect().top-panOffset.y)/zoomLevel;
-    dragTarget.x = Math.round(mx - dragOff.x); dragTarget.y = Math.round(my - dragOff.y);
+    const mx=(t.clientX-canvas.getBoundingClientRect().left-panOffset.x)/zoomLevel;
+    const my=(t.clientY-canvas.getBoundingClientRect().top-panOffset.y)/zoomLevel;
+    dragTarget.x=Math.round(mx-dragOff.x); dragTarget.y=Math.round(my-dragOff.y);
+    wires.filter(w=>w.fromC===dragTarget.id||w.toC===dragTarget.id).forEach(w=>updateWireEndpoints(w));
+    showFloatBar(dragTarget);
+    if (isSimulating) analyzeCircuit();
     render(); e.preventDefault();
   }
   if (tempWire) {
-    const t = e.touches[0];
-    tempWire.x2 = (t.clientX-canvas.getBoundingClientRect().left-panOffset.x)/zoomLevel;
-    tempWire.y2 = (t.clientY-canvas.getBoundingClientRect().top-panOffset.y)/zoomLevel;
-    render(); e.preventDefault();
+    const mx=(t.clientX-canvas.getBoundingClientRect().left-panOffset.x)/zoomLevel;
+    const my=(t.clientY-canvas.getBoundingClientRect().top-panOffset.y)/zoomLevel;
+    tempWire.x2=mx; tempWire.y2=my; render(); e.preventDefault();
   }
 });
-canvas.addEventListener('touchend', () => { isDragging=false; isPanning=false; dragTarget=null; });
 
-// Keyboard
-document.addEventListener('keydown', e => {
+canvas.addEventListener('touchend',()=>{ isDragging=false; isPanning=false; dragTarget=null; });
+
+document.addEventListener('keydown', e=>{
   if (currentView!=='sim') return;
   if ((e.ctrlKey||e.metaKey) && e.key==='z') { e.preventDefault(); undo(); }
   else if (e.key==='Delete'||e.key==='Backspace') {
-    if (selectedComp && document.activeElement===document.body) { e.preventDefault(); deleteSelected(); }
+    if (document.activeElement===document.body) {
+      e.preventDefault();
+      if (selectedWire) deleteSelectedWire();
+      else if (selectedComp) deleteSelectedComp();
+    }
+  } else if (e.key==='Escape') {
+    selectedComp=null; selectedWire=null; wireStart=null; tempWire=null;
+    hideFloatBar(); render();
   }
 });
 
 function findPinAt(x,y) {
   for (const comp of components) {
     for (const pin of comp.pins) {
-      const px = comp.x+pin.rx, py = comp.y+pin.ry;
-      if (Math.sqrt((x-px)**2+(y-py)**2) < PIN_SNAP_RADIUS/zoomLevel) {
-        return { ...pin, x:px, y:py, compId:comp.id, comp };
+      let rx=pin.rx, ry=pin.ry;
+      if (comp.rotation) {
+        const cx=50,cy=50, dx=rx-cx, dy=ry-cy;
+        const rad=comp.rotation*Math.PI/180;
+        rx=cx+dx*Math.cos(rad)-dy*Math.sin(rad);
+        ry=cy+dx*Math.sin(rad)+dy*Math.cos(rad);
+      }
+      const px=comp.x+rx, py=comp.y+ry;
+      if (Math.sqrt((x-px)**2+(y-py)**2)<PIN_SNAP_RADIUS/zoomLevel) {
+        return {...pin, x:px, y:py, compId:comp.id, comp};
       }
     }
   }
   return null;
 }
+
 function findCompAt(x,y) {
-  return components.find(c => x>=c.x && x<=c.x+c.w && y>=c.y && y<=c.y+c.h);
+  return components.find(c=>x>=c.x&&x<=c.x+c.w&&y>=c.y&&y<=c.y+c.h);
 }
-function createWire(from, to) {
+
+function createWire(from,to) {
   if (from.compId===to.compId) return;
+  const exists=wires.find(w=>
+    (w.fromC===from.compId&&w.fromP===from.id&&w.toC===to.compId&&w.toP===to.id)||
+    (w.fromC===to.compId&&w.fromP===to.id&&w.toC===from.compId&&w.toP===from.id)
+  );
+  if (exists) return;
   saveUndo();
-  wires.push({
+  const w = {
     id:'w'+Date.now(), fromC:from.compId, fromP:from.id, toC:to.compId, toP:to.id,
-    x1:from.x, y1:from.y, x2:to.x, y2:to.y, powered:false
-  });
+    x1:from.x, y1:from.y, x2:to.x, y2:to.y, powered:false, activePhase:null
+  };
+  wires.push(w);
   render(); updateStatus();
 }
 
-// ====== SIMULATION ======
+// ============================================================
+//  REAL NODE POTENTIAL SIMULATION ENGINE
+// ============================================================
 function toggleSimulation() {
   isSimulating = !isSimulating;
   const btn = document.getElementById('simToggleBtn');
@@ -915,151 +1284,415 @@ function toggleSimulation() {
   } else {
     btn.innerHTML = '<i class="fa-solid fa-play"></i> '+t('startSim');
     btn.classList.remove('active-btn');
-    wires.forEach(w => w.powered=false);
-    components.forEach(c => { c.state=false; c.pins.forEach(p=>p.voltage=0); });
+    wires.forEach(w=>{w.powered=false; w.activePhase=null;});
+    components.forEach(c=>{c.state=false; c.pins.forEach(p=>{p.voltage=0; p.phaseActive=null;});});
     render();
   }
 }
 
 function analyzeCircuit() {
   if (!isSimulating) return;
-  // reset
-  wires.forEach(w => w.powered=false);
-  components.forEach(c => { c.state=false; c.pins.forEach(p=>p.voltage=0); });
 
-  // find power sources (closed breakers/switches) and propagate
-  const sources = components.filter(c => c.state && (c.type==='breaker1p'||c.type==='breaker3p'||c.type==='switch1p'));
+  // Reset all voltages and phases
+  wires.forEach(w=>{w.powered=false; w.activePhase=null;});
+  components.forEach(c=>{
+    // Only reset non-power-source states; keep breaker/switch state
+    if (c.type==='lamp'||c.type==='indicator'||c.type==='indicator380'||c.type==='motor3p'||c.type==='bell') c.state=false;
+    c.pins.forEach(p=>{p.voltage=0; p.phaseActive=null;});
+  });
+
+  // Find closed power sources (breakers in ON state)
+  const sources = components.filter(c =>
+    c.state && (c.type==='breaker1p'||c.type==='breaker3p')
+  );
   if (sources.length===0) { render(); return; }
 
-  // BFS power propagation
-  const energized = new Set(sources.map(s => s.id));
-  sources.forEach(s => s.pins.forEach(p => p.voltage = s.voltage));
+  // Seed: each source energizes its own pins with matching phases
+  sources.forEach(src => {
+    src.pins.forEach(p => {
+      if (p.phase) {
+        p.voltage = src.voltage;
+        p.phaseActive = p.phase;
+      }
+    });
+  });
 
+  // BFS propagation through wires
   let changed = true;
-  while (changed) {
+  let iterations = 0;
+  const MAX_ITER = 200;
+  while (changed && iterations < MAX_ITER) {
     changed = false;
+    iterations++;
     wires.forEach(w => {
-      const fromPow = energized.has(w.fromC);
-      const toPow = energized.has(w.toC);
-      if (fromPow && !toPow) {
-        const tc = components.find(c => c.id===w.toC);
-        if (tc && tc.state) {
-          energized.add(w.toC); w.powered=true;
-          tc.pins.forEach(p => p.voltage = tc.voltage);
-          changed=true;
-          // check for load activation
-          if (tc.type==='lamp'||tc.type==='indicator'||tc.type==='indicator380'||tc.type==='motor3p') tc.state=true;
+      const fromComp = components.find(c=>c.id===w.fromC);
+      const toComp = components.find(c=>c.id===w.toC);
+      const fromPin = fromComp?.pins.find(p=>p.id===w.fromP);
+      const toPin = toComp?.pins.find(p=>p.id===w.toP);
+
+      if (!fromPin||!toPin) return;
+
+      // Propagate FROM -> TO
+      if (fromPin.voltage>0 && fromPin.phaseActive && toPin.voltage===0) {
+        const tcClosed = toComp.state || (toComp.type==='lamp'||toComp.type==='indicator'||toComp.type==='indicator380'||toComp.type==='motor3p'||toComp.type==='bell'||toComp.type==='socket'||toComp.type==='fuse'||toComp.type==='thermal_relay');
+        // For contactors: propagate A1/A2 (coil) to all pins, or propagate through main contacts
+        if (toComp.contactor && toComp.state) {
+          // Contactor energized: pass through all pins
+          toPin.voltage = fromPin.voltage;
+          toPin.phaseActive = fromPin.phaseActive;
+          changed = true;
+          // Energize all pins of the contactor with same phase
+          toComp.pins.forEach(p=>{ if(p.voltage===0){p.voltage=fromPin.voltage; p.phaseActive=fromPin.phaseActive;} });
+        } else if (tcClosed) {
+          // SHORT CIRCUIT CHECK: does the receiving pin already have a different phase?
+          if (toPin.phaseActive && toPin.phaseActive !== fromPin.phaseActive &&
+              PHASE_INCOMPATIBLE[fromPin.phaseActive]?.includes(toPin.phaseActive)) {
+            triggerShortCircuit(fromPin, toPin);
+            return;
+          }
+          toPin.voltage = fromPin.voltage;
+          toPin.phaseActive = fromPin.phaseActive;
+          w.powered = true;
+          w.activePhase = fromPin.phaseActive;
+          changed = true;
+          // Activate loads
+          if (toComp.type==='lamp'||toComp.type==='indicator'||toComp.type==='indicator380'||toComp.type==='motor3p'||toComp.type==='bell') {
+            toComp.state = true;
+          }
         }
-      } else if (toPow && !fromPow) {
-        const fc = components.find(c => c.id===w.fromC);
-        if (fc && fc.state) {
-          energized.add(w.fromC); w.powered=true;
-          fc.pins.forEach(p => p.voltage = fc.voltage);
-          changed=true;
-          if (fc.type==='lamp'||fc.type==='indicator'||fc.type==='indicator380'||fc.type==='motor3p') fc.state=true;
+      }
+
+      // Propagate TO -> FROM
+      if (toPin.voltage>0 && toPin.phaseActive && fromPin.voltage===0) {
+        const fcClosed = fromComp.state || (fromComp.type==='lamp'||fromComp.type==='indicator'||fromComp.type==='indicator380'||fromComp.type==='motor3p'||fromComp.type==='bell'||fromComp.type==='socket'||fromComp.type==='fuse'||fromComp.type==='thermal_relay');
+        if (fromComp.contactor && fromComp.state) {
+          fromPin.voltage = toPin.voltage;
+          fromPin.phaseActive = toPin.phaseActive;
+          changed = true;
+          fromComp.pins.forEach(p=>{ if(p.voltage===0){p.voltage=toPin.voltage; p.phaseActive=toPin.phaseActive;} });
+        } else if (fcClosed) {
+          if (fromPin.phaseActive && fromPin.phaseActive !== toPin.phaseActive &&
+              PHASE_INCOMPATIBLE[toPin.phaseActive]?.includes(fromPin.phaseActive)) {
+            triggerShortCircuit(toPin, fromPin);
+            return;
+          }
+          fromPin.voltage = toPin.voltage;
+          fromPin.phaseActive = toPin.phaseActive;
+          w.powered = true;
+          w.activePhase = toPin.phaseActive;
+          changed = true;
+          if (fromComp.type==='lamp'||fromComp.type==='indicator'||fromComp.type==='indicator380'||fromComp.type==='motor3p'||fromComp.type==='bell') {
+            fromComp.state = true;
+          }
         }
       }
     });
   }
 
-  // Short circuit detection: any energized source has a wire path to another energized source
-  // Simplified: check if two different breaker sources are energized and connected via wires
-  const sourceIds = sources.filter(s => energized.has(s.id)).map(s => s.id);
-  let short = false;
-  if (sourceIds.length >= 2) {
-    // Check connectivity between sources via wires
-    const adj = {}; wires.forEach(w => { (adj[w.fromC]=adj[w.fromC]||[]).push(w.toC); (adj[w.toC]=adj[w.toC]||[]).push(w.fromC); });
-    const visited = new Set();
-    const dfs = (id) => { visited.add(id); (adj[id]||[]).forEach(n => { if (!visited.has(n)) dfs(n); }); };
-    dfs(sourceIds[0]);
-    for (let i=1;i<sourceIds.length;i++) { if (visited.has(sourceIds[i])) { short=true; break; } }
+  // POST-PROPAGATION SHORT CIRCUIT CHECK:
+  // Any pin that has conflicting phases from multiple wires -> short
+  let globalShort = false;
+  components.forEach(comp => {
+    comp.pins.forEach(pin => {
+      const incomingPhases = new Set();
+      wires.forEach(w => {
+        if (w.toC===comp.id && w.toP===pin.id && w.activePhase) incomingPhases.add(w.activePhase);
+        if (w.fromC===comp.id && w.fromP===pin.id && w.activePhase) incomingPhases.add(w.activePhase);
+      });
+      if (incomingPhases.size >= 2) {
+        const phasesArr = [...incomingPhases];
+        for (let i=0;i<phasesArr.length;i++) {
+          for (let j=i+1;j<phasesArr.length;j++) {
+            if (PHASE_INCOMPATIBLE[phasesArr[i]]?.includes(phasesArr[j])) {
+              globalShort = true;
+              break;
+            }
+          }
+        }
+      }
+    });
+    if (globalShort) return;
+  });
+
+  if (globalShort) {
+    triggerShortCircuitGeneral();
+    return;
   }
 
-  if (short) {
-    triggerShortCircuit();
-  } else {
-    render();
+  // Exercise goal check
+  if (activeExerciseId && !globalShort) {
+    if (checkExerciseGoal(activeExerciseId)) {
+      setTimeout(() => showSuccessAlert(), 500);
+    }
   }
+
+  render();
 }
 
-function triggerShortCircuit() {
+function triggerShortCircuit(pinA, pinB) {
+  const phaseA = pinA.phaseActive||pinA.phase||'?';
+  const phaseB = pinB.phaseActive||pinB.phase||'?';
+  triggerShortCircuitGeneral(phaseA, phaseB);
+}
+
+function triggerShortCircuitGeneral(phaseA, phaseB) {
   isSimulating = false;
   const btn = document.getElementById('simToggleBtn');
   btn.innerHTML = '<i class="fa-solid fa-play"></i> '+t('startSim');
   btn.classList.remove('active-btn');
+
+  // Auto-trip all closed breakers
+  components.forEach(c=>{
+    if ((c.type==='breaker1p'||c.type==='breaker3p') && c.state) {
+      c.state = false;
+      saveUndo();
+    }
+  });
+
   document.getElementById('shortAlert').classList.add('show');
-  document.getElementById('shortFlash').classList.add('active');
-  setTimeout(() => document.getElementById('shortFlash').classList.remove('active'), 600);
-  haptic('error'); beep(150,.3,'sawtooth');
-  wires.forEach(w => w.powered=false);
-  components.forEach(c => { c.state=false; c.pins.forEach(p=>p.voltage=0); });
+  const flash = document.getElementById('shortFlash');
+  flash.classList.add('active');
+  setTimeout(()=>flash.classList.remove('active'), 800);
+  setTimeout(()=>flash.classList.add('active'), 900);
+  setTimeout(()=>flash.classList.remove('active'), 1400);
+
+  haptic('error'); beep(150,.35,'sawtooth');
+
+  wires.forEach(w=>{w.powered=false;w.activePhase=null;});
+  components.forEach(c=>{c.state=false;c.pins.forEach(p=>{p.voltage=0;p.phaseActive=null;});});
   render();
 }
 
-function closeAlert() {
-  document.getElementById('shortAlert').classList.remove('show');
+function closeAlert(type) {
+  if (type==='short') document.getElementById('shortAlert').classList.remove('show');
+  else document.getElementById('successAlert').classList.remove('show');
 }
 
-// ====== TOOL ACTIONS ======
-function toggleCompPanel() {
-  document.getElementById('compPanel').classList.toggle('collapsed');
+function showSuccessAlert() {
+  document.getElementById('successAlert').classList.add('show');
+  haptic('success'); beep(800,.12); setTimeout(()=>beep(1200,.12),150);
 }
+
+// ============================================================
+//  TOOL ACTIONS
+// ============================================================
 function zoomFit() {
-  panOffset = { x:0, y:0 }; zoomLevel = 1.0; render(); haptic('light');
+  panOffset={x:0,y:0}; zoomLevel=1.0; render(); haptic('light');
 }
+function updateStatus() {}
 
-function updateStatus() { /* simplified - status shown in canvas info */ }
-
-// ====== PRACTICE MODE ======
+// ============================================================
+//  PRACTICE MODE — EXERCISE DEFINITIONS
+// ============================================================
 const exercises = [
-  { id:'p1', title:{ zh:'单联开关控制一盏灯', en:'1-Way Switch + Lamp', km:'កុងតាក់ + អំពូល' }, level:'easy', desc:{ zh:'连接单联开关与灯泡，实现基本照明控制', en:'Wire a 1-way switch to control a lamp', km:'ភ្ជាប់កុងតាក់ទៅអំពូល' } },
-  { id:'p2', title:{ zh:'插座接线练习', en:'Socket Wiring', km:'ខ្សែរន្ធ' }, level:'easy', desc:{ zh:'L (火线) / N (零线) / E (地线) 位置识别', en:'Identify L/N/E positions', km:'ស្គាល់ L/N/E' } },
-  { id:'p3', title:{ zh:'空气开关保护电路', en:'Breaker Protection', km:'ឧបករណ៍ការពារ' }, level:'medium', desc:{ zh:'断路器→接触器→负载的标准连接顺序', en:'Standard breaker-contactor-load chain', km:'ខ្សែរស្តង់ដារ' } },
-  { id:'p4', title:{ zh:'三相电机正转控制', en:'3P Motor Forward', km:'ម៉ូទ័រទៅមុខ' }, level:'hard', desc:{ zh:'断路器→接触器→热继电器→电机接线', en:'Breaker→Contactor→Thermal→Motor', km:'ឧបករណ៍→កុងតាក់ទ័រ→កម្តៅ→ម៉ូទ័រ' } },
-  { id:'p5', title:{ zh:'指示灯并联电路', en:'Parallel Indicators', km:'ភ្លើងសញ្ញាស្រប' }, level:'medium', desc:{ zh:'多个指示灯并联接线', en:'Wire multiple indicators in parallel', km:'ភ្ជាប់ភ្លើងសញ្ញាស្របគ្នា' } },
+  {
+    id:'p1', title:{zh:'单联开关控制一盏灯',en:'1-Way Switch + Lamp',km:'កុងតាក់ + អំពូល'},
+    level:'easy', mode:'home220v',
+    desc:{zh:'连接单联开关与灯泡，实现基本照明控制',en:'Wire a 1-way switch to control a lamp',km:'ភ្ជាប់កុងតាក់ទៅអំពូល'},
+    // Goal: switch closed => lamp ON, no short
+    goal(comps,wires) {
+      const br = comps.find(c=>c.type==='breaker1p');
+      const sw = comps.find(c=>c.type==='switch1p');
+      const lp = comps.find(c=>c.type==='lamp');
+      return br&&sw&&lp && br.state && sw.state && lp.state && !isSimulating; // isSimulating already false=safe
+    }
+  },
+  {
+    id:'p2', title:{zh:'插座接线练习',en:'Socket Wiring',km:'ខ្សែរន្ធ'},
+    level:'easy', mode:'home220v',
+    desc:{zh:'L/N/PE 正确对应接线',en:'Wire L/N/PE correctly',km:'ភ្ជាប់ L/N/PE ឲ្យត្រូវ'},
+    goal(comps,wires) {
+      const br = comps.find(c=>c.type==='breaker1p');
+      const sk = comps.find(c=>c.type==='socket');
+      if (!br||!sk||!br.state) return false;
+      // Check socket pins all energized with correct phases
+      const phases = sk.pins.map(p=>p.phaseActive).filter(Boolean);
+      return phases.includes('L') && phases.includes('N') && phases.includes('PE');
+    }
+  },
+  {
+    id:'p3', title:{zh:'断路器保护电路',en:'Breaker + Contactor + Lamp',km:'ឧបករណ៍ + កុងតាក់ទ័រ + អំពូល'},
+    level:'medium', mode:'home220v',
+    desc:{zh:'断路器→接触器→负载的标准连接',en:'Standard breaker-contactor-load chain',km:'ខ្សែរស្តង់ដារ'},
+    goal(comps,wires) {
+      const br = comps.find(c=>c.type==='breaker1p');
+      const ct = comps.find(c=>c.contactor);
+      const lp = comps.find(c=>c.type==='lamp');
+      return br&&ct&&lp && br.state && ct.state && lp.state;
+    }
+  },
+  {
+    id:'p4', title:{zh:'三相电机正转控制',en:'3P Motor Forward',km:'ម៉ូទ័រទៅមុខ'},
+    level:'hard', mode:'industrial380v',
+    desc:{zh:'断路器→接触器→热继电器→电机',en:'Breaker→Contactor→Thermal→Motor',km:'ឧបករណ៍→កុងតាក់ទ័រ→កម្តៅ→ម៉ូទ័រ'},
+    goal(comps,wires) {
+      const br = comps.find(c=>c.type==='breaker3p');
+      const ct = comps.find(c=>c.contactor);
+      const tr = comps.find(c=>c.type==='thermal_relay');
+      const mt = comps.find(c=>c.type==='motor3p');
+      return br&&ct&&tr&&mt && br.state && ct.state && tr.state && mt.state;
+    }
+  },
+  {
+    id:'p5', title:{zh:'指示灯并联电路',en:'Parallel Indicators',km:'ភ្លើងសញ្ញាស្រប'},
+    level:'medium', mode:'home220v',
+    desc:{zh:'多个指示灯并联接线',en:'Wire indicators in parallel',km:'ភ្ជាប់ភ្លើងសញ្ញាស្របគ្នា'},
+    goal(comps,wires) {
+      const indicators = comps.filter(c=>c.type==='indicator');
+      const br = comps.find(c=>c.type==='breaker1p');
+      if (!br||indicators.length<2||!br.state) return false;
+      return indicators.every(i=>i.state);
+    }
+  },
 ];
 
 function renderPracticeList() {
   const list = document.getElementById('practiceList');
   list.innerHTML = '';
-  exercises.forEach(ex => {
+  exercises.forEach(ex=>{
     const div = document.createElement('div');
     div.className = 'exercise-card';
+    const icon = ex.level==='easy'?'circle-check':ex.level==='medium'?'circle-half-stroke':'triangle-exclamation';
     div.innerHTML = `
-      <div class="ex-badge ${ex.level}"><i class="fa-solid fa-${ex.level==='easy'?'circle-check':ex.level==='medium'?'circle-half-stroke':'triangle-exclamation'}"></i></div>
+      <div class="ex-badge ${ex.level}"><i class="fa-solid fa-${icon}"></i></div>
       <div class="ex-info">
         <h4>${ex.title[lang]||ex.title.zh}</h4>
         <span>${ex.desc[lang]||ex.desc.zh}</span>
         <div class="stars">${ex.level==='easy'?'★☆☆':ex.level==='medium'?'★★☆':'★★★'}</div>
       </div>
       <div class="ex-arrow"><i class="fa-solid fa-chevron-right"></i></div>`;
-    div.addEventListener('click', () => {
-      currentMode = ex.id.startsWith('p4')||ex.id.startsWith('p5') ? 'industrial380v' : 'home220v';
-      navTo('sim', currentMode);
+    div.addEventListener('click',()=>{
       haptic('impact');
+      const mode = ex.mode||'home220v';
+      navTo('sim', mode, ex.id);
     });
     list.appendChild(div);
   });
 }
 
-// ====== INIT ======
+function initExercise(exId) {
+  const ex = exercises.find(e=>e.id===exId);
+  if (!ex) return;
+
+  // Clear canvas
+  components=[]; wires=[]; selectedComp=null; selectedWire=null;
+  undoStack=[]; redoStack=[];
+  document.getElementById('undoBtn').disabled=true;
+  if (isSimulating) isSimulating=false;
+  const btn = document.getElementById('simToggleBtn');
+  btn.innerHTML = '<i class="fa-solid fa-play"></i> '+t('startSim');
+  btn.classList.remove('active-btn');
+
+  // Set mode
+  currentMode = ex.mode||'home220v';
+  updateSimModeLabel();
+  renderComponentPanel();
+  renderDrawerGrid();
+
+  // Place preset components
+  const startX = 100, startY = 80;
+  let idx = 0;
+
+  switch(exId) {
+    case 'p1': // Switch + Lamp with a breaker for power
+      spawnCompAt('breaker1p', startX, startY);
+      spawnCompAt('switch1p', startX, startY+180);
+      spawnCompAt('lamp', startX+250, startY+100);
+      // Breaker defaults to ON
+      const br1 = components.find(c=>c.type==='breaker1p');
+      if (br1) br1.state = true;
+      break;
+
+    case 'p2': // Socket with breaker
+      spawnCompAt('breaker1p', startX, startY);
+      spawnCompAt('socket', startX+200, startY+60);
+      const br2 = components.find(c=>c.type==='breaker1p');
+      if (br2) br2.state = true;
+      break;
+
+    case 'p3': // Breaker + Contactor + Lamp
+      spawnCompAt('breaker1p', startX, startY);
+      spawnCompAt('contactor1p', startX+200, startY+50);
+      spawnCompAt('lamp', startX+400, startY+50);
+      const br3 = components.find(c=>c.type==='breaker1p');
+      if (br3) br3.state = true;
+      // Note: km contactor doesn't exist in home lib; spawn from industrial
+      // Workaround: spawn a special 1P contactor via directly adding
+      break;
+
+    case 'p4': // Industrial 380V chain
+      spawnCompAt('breaker3p', startX, startY);
+      spawnCompAt('contactor', startX+250, startY+50);
+      spawnCompAt('thermal_relay', startX+500, startY+50);
+      spawnCompAt('motor3p', startX+380, startY+250);
+      const br4 = components.find(c=>c.type==='breaker3p');
+      if (br4) br4.state = true;
+      break;
+
+    case 'p5': // Multiple indicators parallel
+      spawnCompAt('breaker1p', startX, startY);
+      spawnCompAt('indicator', startX+180, startY+30);
+      spawnCompAt('indicator', startX+350, startY+30);
+      spawnCompAt('indicator', startX+180, startY+180);
+      const br5 = components.find(c=>c.type==='breaker1p');
+      if (br5) br5.state = true;
+      break;
+  }
+
+  resizeCanvas(); render(); updateStatus();
+}
+
+function spawnCompAt(type, x, y) {
+  const tpl = findTemplate(type); if (!tpl) return;
+  const id = 'c'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+  const comp = {
+    id, type, name:tpl.name, icon:tpl.icon, pins:[], rotation:0,
+    x, y, w:(tpl.pins>=5?150:110), h:(tpl.pins>=4?100:90),
+    voltage:tpl.v||220, current:10, state:tpl.defaultState||false,
+    contactor:tpl.contactor||false
+  };
+  const phases = tpl.phases||[];
+  const pinCount = tpl.pins;
+  const rawPos = computePinPositions(pinCount);
+  for (let i=0; i<pinCount; i++) {
+    comp.pins.push({
+      id:comp.id+'_p'+i,
+      label: (phases[i])?(PHASE_LABEL[phases[i]]?PHASE_LABEL[phases[i]][lang]:phases[i]):('P'+(i+1)),
+      phase: phases[i]||null,
+      rx:rawPos[i].rx, ry:rawPos[i].ry, voltage:0, phaseActive:null
+    });
+  }
+  components.push(comp);
+}
+
+// Exercise goal checker — runs post-simulation
+function checkExerciseGoal(exId) {
+  const ex = exercises.find(e=>e.id===exId);
+  if (!ex||!ex.goal) return false;
+  return ex.goal(components, wires);
+}
+
+// ============================================================
+//  INITIALIZATION
+// ============================================================
 function init() {
   applyI18N();
   renderComponentPanel();
+  renderDrawerGrid();
   resizeCanvas();
   render();
-  document.getElementById('undoBtn').disabled = true;
+  document.getElementById('undoBtn').disabled=true;
 
-  // animation loop
+  // Animation loop
   function loop() {
     if (currentView==='sim') render();
     requestAnimationFrame(loop);
   }
   loop();
 
-  window.addEventListener('resize', () => { if (currentView==='sim') resizeCanvas(); });
+  window.addEventListener('resize',()=>{ if (currentView==='sim') resizeCanvas(); });
 }
 init();
-    </script>
-  </body>
+</script>
+</body>
 </html>
