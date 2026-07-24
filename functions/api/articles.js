@@ -55,7 +55,7 @@ export async function onRequest(context) {
       const authHeader = request.headers.get('Authorization') || '';
       const token = authHeader.replace('Bearer ', '').trim();
 
-      if (token !== 'bw_admin_authenticated_session') {
+      if (token !== 'bw_auth_ok') {
         return new Response(JSON.stringify({ success: false, message: '未授权访问 (Unauthorized)' }), {
           status: 401,
           headers: { 'Content-Type': 'application/json' }

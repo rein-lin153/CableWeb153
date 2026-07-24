@@ -1,0 +1,10 @@
+{
+	"name": "bw-cable",
+	"pages_build_output_dir": "/",
+	"kv_namespaces": [
+		{
+			"binding": "ARTICLES_KV",
+			"id": "e2be011e49fc4854b1090c1dd0575f85"
+		}
+	]
+}

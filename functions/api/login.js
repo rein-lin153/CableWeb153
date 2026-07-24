@@ -18,7 +18,7 @@ export async function onRequestPost(context) {
     }
 
     // Read admin password from env var or use default
-    const adminPassword = env.ADMIN_PASSWORD || 'admin123';
+    const adminPassword = env.ADMIN_PASSWORD || 'BwCable2026!';
 
     if (password !== adminPassword) {
       return new Response(JSON.stringify({ success: false, message: '密码错误，请重试 (Invalid password)' }), {
@@ -30,7 +30,7 @@ export async function onRequestPost(context) {
     // Return session token for frontend auth verification
     return new Response(JSON.stringify({
       success: true,
-      token: 'bw_admin_authenticated_session'
+      token: 'bw_auth_ok'
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
