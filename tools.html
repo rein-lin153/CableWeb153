@@ -920,10 +920,10 @@ function computeWireSegments(w) {
   // We infer pin-facing direction from the source/to pin position relative to component center
   const fromComp = components.find(c=>c.id===w.fromC);
   const toComp = components.find(c=>c.id===w.toC);
-  if (!fromComp||!toComp) { w._pts=[{x:w.x1,y:w.y1},{x:w.x2,y:w.y2}]; return; }
+  if (!fromComp||!toComp) { w._g=[{x:w.x1,y:w.y1},{x:w.x2,y:w.y2}]; return; }
   const fp = fromComp.pins.find(p=>p.id===w.fromP);
   const tp = toComp.pins.find(p=>p.id===w.toP);
-  if (!fp||!tp) { w._pts=[{x:w.x1,y:w.y1},{x:w.x2,y:w.y2}]; return; }
+  if (!fp||!tp) { w._g=[{x:w.x1,y:w.y1},{x:w.x2,y:w.y2}]; return; }
 
   // Determine exit direction (from pin's position on component)
   const fromDX = outDir(fp.rx, fp.ry, fromComp.rotation);
@@ -964,7 +964,7 @@ function computeWireSegments(w) {
       pts.push({x:w.x1+fx*margin,y:w.y2+ty*margin});
       pts.push({x:w.x2+tx*margin,y:w.y2+ty*margin});
     }
-  } else if (fx===0 && ty===0===TX->) {
+  } else if (fx===0 && tx===0) {
     // Both vertical
     const midY=(w.y1+w.y2)/2;
     pts.push({x:w.x1,y:midY+fy*margin*0.3});
