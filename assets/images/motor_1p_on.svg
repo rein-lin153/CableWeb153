@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130">
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d1d5db"/>
+      <stop offset="1" stop-color="#6b7280"/>
+    </linearGradient>
+    <radialGradient id="spin" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#22c55e" stop-opacity="0.55"/>
+      <stop offset="0.6" stop-color="#22c55e" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#22c55e" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- 运转辉光 -->
+  <circle cx="50" cy="60" r="44" fill="url(#spin)"/>
+  <circle cx="50" cy="60" r="38" fill="url(#body)" stroke="#15803d" stroke-width="2"/>
+  <circle cx="50" cy="60" r="30" fill="#a7f3d0" stroke="#16a34a" stroke-width="1.5"/>
+  <g stroke="#0f5132" stroke-width="1.2">
+    <line x1="50" y1="22" x2="50" y2="30"/>
+    <line x1="50" y1="90" x2="50" y2="98"/>
+    <line x1="12" y1="60" x2="20" y2="60"/>
+    <line x1="80" y1="60" x2="88" y2="60"/>
+    <line x1="23" y1="33" x2="29" y2="39"/>
+    <line x1="71" y1="33" x2="77" y2="39"/>
+    <line x1="23" y1="87" x2="29" y2="81"/>
+    <line x1="71" y1="87" x2="77" y2="81"/>
+  </g>
+  <!-- 运转箭头(旋转方向) -->
+  <path d="M 64 48 A 18 18 0 0 1 64 72" stroke="#15803d" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M 64 72 L 60 68 M 64 72 L 68 68" stroke="#15803d" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <text x="50" y="64" text-anchor="middle" font-family="Arial" font-size="16" font-weight="700" fill="#064e3b">M</text>
+  <text x="80" y="100" text-anchor="middle" font-family="Arial" font-size="8" font-weight="700" fill="#064e3b">~</text>
+  <line x1="34" y1="8" x2="34" y2="24" stroke="#dc2626" stroke-width="2.4" stroke-linecap="round"/>
+  <text x="34" y="6" text-anchor="middle" font-family="Arial" font-size="8" font-weight="700" fill="#dc2626">L</text>
+  <line x1="66" y1="8" x2="66" y2="24" stroke="#3b82f6" stroke-width="2.4" stroke-linecap="round"/>
+  <text x="66" y="6" text-anchor="middle" font-family="Arial" font-size="8" font-weight="700" fill="#3b82f6">N</text>
+</svg>

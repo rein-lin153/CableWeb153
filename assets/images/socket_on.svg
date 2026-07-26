@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120">
+  <!-- 国标三孔插座(通电态): 左 N、右 L、上 PE -->
+  <defs>
+    <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fafafa"/>
+      <stop offset="1" stop-color="#e5e7eb"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fde68a" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#fde68a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="6" y="6" width="88" height="108" rx="8" fill="url(#face)" stroke="#78350f" stroke-width="2"/>
+  <rect x="12" y="14" width="76" height="92" rx="6" fill="#fffef7" stroke="#cbd5e1" stroke-width="1"/>
+  <ellipse cx="50" cy="58" rx="34" ry="32" fill="url(#glow)"/>
+  <!-- PE 孔(通电黄) -->
+  <rect x="46" y="26" width="8" height="12" rx="1" fill="#eab308"/>
+  <text x="50" y="22" text-anchor="middle" font-family="Arial" font-size="7" font-weight="700" fill="#eab308">PE</text>
+  <!-- 左 N 孔(通电蓝) -->
+  <circle cx="36" cy="58" r="7" fill="#3b82f6"/>
+  <circle cx="36" cy="58" r="4" fill="#eff6ff"/>
+  <text x="36" y="72" text-anchor="middle" font-family="Arial" font-size="7" font-weight="700" fill="#3b82f6">N</text>
+  <!-- 右 L 孔(通电红) -->
+  <circle cx="64" cy="58" r="7" fill="#dc2626"/>
+  <circle cx="64" cy="58" r="4" fill="#fef2f2"/>
+  <text x="64" y="72" text-anchor="middle" font-family="Arial" font-size="7" font-weight="700" fill="#dc2626">L</text>
+  <!-- L 引线 -->
+  <line x1="20" y1="8" x2="20" y2="14" stroke="#dc2626" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M 20 12 L 20 18 L 64 18 L 64 51" fill="none" stroke="#dc2626" stroke-width="2.4" stroke-linecap="round"/>
+  <text x="20" y="6" text-anchor="middle" font-family="Arial" font-size="7" fill="#dc2626" font-weight="700">L</text>
+  <line x1="50" y1="8" x2="50" y2="14" stroke="#3b82f6" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M 50 12 L 50 22 L 36 22 L 36 51" fill="none" stroke="#3b82f6" stroke-width="2.4" stroke-linecap="round"/>
+  <text x="50" y="6" text-anchor="middle" font-family="Arial" font-size="7" fill="#3b82f6" font-weight="700">N</text>
+  <line x1="80" y1="8" x2="80" y2="14" stroke="#eab308" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M 80 12 L 80 18 L 54 18 L 54 26" fill="none" stroke="#eab308" stroke-width="2.4" stroke-linecap="round"/>
+  <text x="80" y="6" text-anchor="middle" font-family="Arial" font-size="7" fill="#eab308" font-weight="700">PE</text>
+</svg>

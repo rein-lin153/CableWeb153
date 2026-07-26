@@ -195,6 +195,18 @@ input:checked+.toggle-slider:before { transform:translateX(22px); }
 .short-flash { position:absolute; inset:0; pointer-events:none; background:rgba(239,68,68,0); transition:background .15s; z-index:50; }
 .short-flash.active { background:rgba(239,68,68,.25); }
 
+/* SVG element layer — overlays <img> elements on top of the canvas.
+   pointer-events:none so the canvas still receives all hit-testing/drag. */
+#svgCompLayer {
+  position:absolute; inset:0; pointer-events:none; overflow:visible;
+  z-index:20; /* below short-flash(50) and float-bar(60), above canvas */
+}
+#svgCompLayer .svg-comp-img {
+  position:absolute; transform-origin:center center; pointer-events:none;
+  /* will-change lets the browser optimize per-frame transforms */
+  will-change:transform;
+}
+
 /* Floating component toolbar */
 .comp-float-bar {
   position:absolute; z-index:60; display:none;
@@ -350,6 +362,7 @@ input:checked+.toggle-slider:before { transform:translateX(22px); }
     </div>
     <div class="canvas-wrap" id="canvasWrap">
       <canvas id="simCanvas"></canvas>
+      <div id="svgCompLayer"></div>
       <div class="short-flash" id="shortFlash"></div>
       <div class="canvas-info" id="canvasInfo">Zoom: 100% | Grid: ON</div>
       <div class="comp-float-bar" id="floatBar">
@@ -531,7 +544,7 @@ function navTo(view, mode, exerciseId) {
   hdr.className = (view==='home')?'home':(view==='practice')?'practice':'sim';
   if (tg?.setHeaderColor) tg.setHeaderColor(view==='home'?'#1e69ff':'#151d2a');
   updateSimModeLabel(); updateExerciseBadge();
-  if (view==='sim') { resizeCanvas(); renderComponentPanel(); renderDrawerGrid(); resizeCanvas(); render(); }
+  if (view==='sim') { setupPowerSource(currentMode); resizeCanvas(); renderComponentPanel(); renderDrawerGrid(); resizeCanvas(); render(); }
   if (view==='practice') renderPracticeList();
   // if entering sim with an exercise, init it
   if (view==='sim' && activeExerciseId) {
@@ -608,6 +621,47 @@ const PHASE_INCOMPATIBLE = {
 };
 
 // ============================================================
+//  COMPONENT ROLE BY CATEGORY (取代散落的 type 名枚举)
+//  由 components.json 的 category 字段 / 老 COMP_LIB type 映射决定。
+// ============================================================
+const CLICKABLE_CATS = new Set(['switch','protect','control']);   // 仿真时点击可切换 state
+const LOAD_CATS      = new Set(['load','sensor']);                 // 灯/指示灯/铃/电机 等耗电器
+const LINE_PHASES    = new Set(['L','L1','L2','L3']);
+function isLinePhase(ph){ return !!ph && LINE_PHASES.has(ph); }
+
+// 老 COMP_LIB 里那些尚未 SVG 化的元件按 type→category 兜底（保持旧仿真兼容）
+const TYPE_CATEGORY_FALLBACK = {
+  breaker1p:'protect', breaker3p:'protect',
+  switch1p:'switch',
+  contactor:'control', contactor1p:'control',
+  thermal_relay:'control',
+  motor3p:'load',
+  lamp:'load', indicator:'load', indicator380:'sensor',
+  socket:'misc', fuse:'misc', bell:'sensor',
+};
+
+function compCategory(comp) {
+  if (!comp) return null;
+  if (comp.category) return comp.category;
+  return TYPE_CATEGORY_FALLBACK[comp.type] || 'misc';
+}
+function isClickableSwitch(comp) {
+  if (!comp || comp.fixed) return false;
+  if (comp.subtype==='contactor_km') return false;  // KM 通断由线圈得电驱动，不可手点
+  if (comp.contactor) return true;
+  return CLICKABLE_CATS.has(compCategory(comp));
+}
+function isLoadComp(comp) {
+  if (!comp) return false;
+  return LOAD_CATS.has(compCategory(comp));
+}
+function compIsPassive(comp) {   // 插座/熔断器/热继 等直通无开关
+  if (!comp) return false;
+  const c = compCategory(comp);
+  return c==='misc';
+}
+
+// ============================================================
 //  CANVAS ENGINE
 // ============================================================
 const canvas = document.getElementById('simCanvas');
@@ -635,6 +689,16 @@ let touchStartTime = 0;
 let touchStartPos = {x:0,y:0};
 let pinchStartDist = 0, pinchStartZoom = 1;
 let pinchMidX = 0, pinchMidY = 0;
+// 自复位按钮：mousedown/touchstart 按下时记录元件，mouseup/touchend 判定是否需回弹
+let lastPressedComp = null;
+// 仿真态是否含延时/自复位型元件 — 为真才在 RAF 每帧重算 analyzeCircuit（避免常规电路空转）
+function _hasTimedComponents() {
+  for (let i=0;i<components.length;i++) {
+    const s = components[i].subtype;
+    if (s==='relay_kt' || s==='momentary_no' || s==='momentary_nc') return true;
+  }
+  return false;
+}
 
 // ============================================================
 //  COMPONENT LIBRARY — WITH PHASE MAPPING
@@ -659,43 +723,289 @@ const COMP_LIB = {
   ]
 };
 
+// ============================================================
+//  SVG COMPONENT LIBRARY (assets/config/components.json + assets/images/*.svg)
+//  元件本体用 SVG 图片渲染（叠加在 canvas 之上的 DOM 层）；
+//  引脚与导线仍由 Canvas 绘制 / 命中。
+//  本地坐标系：以 off 图 viewBox 为基准，pin 坐标 = SVG 像素。
+// ============================================================
+//  SVG COMPONENT LIBRARY — 配置驱动
+//  运行时 fetch assets/config/components.json 并构建 SVG_LIB；
+//  components.json 字段：id / name / category / modes / width / height /
+//  defaultState / voltage / images{state:{src,vw,vh,dx,dy}} / terminals{id,label,phase,x,y}
+//  说明：terminals.x/y 以「设计尺寸 width×height」为基准；工具侧按 width→off 图
+//  viewBox 比例换算到本地像素 pin。（要求 width:height == off 图 viewBox 比例。）
+//  后续加元件：把 SVG 放进 assets/images/ 并在 components.json 加一条即可，无需改本文件。
+// ============================================================
+const SVG_LIB = {};        // id -> normalized config (运行时填充)
+const SVG_LIB_BY_TYPE = SVG_LIB; // 兼容旧名：type 即 id
+let SVG_LIB_READY = false;
+
+// 运行时加载配置。fetch 失败（如 file:// 下的 CORS）则回退到内嵌最小灯泡配置
+// 并 console.warn，以便用户用本地服务器访问时能正常运作。
+const FALLBACK_COMP_JSON = {
+  components: [
+    {
+      id:'lamp', name:{zh:'节能灯 EL',en:'Lamp',km:'អំពូល'}, category:'load',
+      modes:['home220v','industrial380v'],
+      width:90.75, height:156.35, defaultState:false, voltage:220,
+      images:{
+        off:{ src:'assets/images/light_bulb_el_off.svg', vw:90.75, vh:156.35, dx:0,    dy:0 },
+        on: { src:'assets/images/light_bulb_el_on.svg',  vw:116,    vh:173.35, dx:-8.25, dy:-17 }
+      },
+      terminals:[
+        { id:'N', label:'N', phase:'N', x:7.75,  y:103 },
+        { id:'L', label:'L', phase:'L', x:49.75, y:140 }
+      ]
+    }
+  ]
+};
+
+// 把 components.json 的原始项规范化为内部 cfg
+function normalizeCompCfg(raw) {
+  const off = raw.images && (raw.images.off || raw.images.on || Object.values(raw.images)[0]);
+  if (!off) return null;
+  const offvw = off.vw, offvh = off.vh;
+  // 终端坐标：设计尺寸 -> 本地像素（按 off 图 viewBox 比例）
+  const sx = raw.width  ? offvw/raw.width  : 1;
+  const sy = raw.height ? offvh/raw.height : 1;
+  const terminals = (raw.terminals||[]).map(t => ({
+    id:t.id, label:t.label||t.id, phase:t.phase||null,
+    // 新增：触点语义字段（旧元件这些为 null/false，行为不变）
+    role: t.role||null,            // 'coil' | 'contact' | null
+    inverted: !!t.inverted,         // 仅 contact：true=NC 常闭
+    contactGroup: t.contactGroup||null, // 同组两枚触点构成一对
+    x: t.x * sx, y: t.y * sy
+  }));
+  // images：每个状态图归一化（dx/dy 默认 0）
+  const images = {};
+  for (const k in raw.images) {
+    const im = raw.images[k];
+    images[k] = { src:im.src, vw:im.vw, vh:im.vh, dx:im.dx||0, dy:im.dy||0 };
+  }
+  return {
+    configId: raw.id,
+    name: (typeof raw.name==='string') ? {zh:raw.name,en:raw.name,km:raw.name} : raw.name,
+    category: raw.category || 'misc',
+    modes: raw.modes || ['home220v','industrial380v'],
+    voltage: raw.voltage || 220,
+    defaultState: raw.defaultState || false,
+    contactor: !!raw.contactor,
+    // 新增：控制元件语义（旧元件为 null/false/0，行为不变）
+    subtype: raw.subtype || null,    // momentary_no/nc | emergency_stop | relay_ka | relay_kt | thermal_aux
+    delayMs: raw.delayMs || 0,       // 仅 KT 通电延时
+    latched: !!raw.latched,          // 仅急停：true 自锁不复位
+    icon: raw.icon || '',
+    baseW: offvw, baseH: offvh,    // 本地坐标系尺寸 = off 图 viewBox
+    images, terminals
+  };
+}
+
+async function loadComponentLib() {
+  let data = null;
+  try {
+    const res = await fetch('assets/config/components.json', { cache:'no-cache' });
+    if (res.ok) data = await res.json();
+  } catch (e) { /* file:// CORS 等 */ }
+  if (!data || !Array.isArray(data.components) || data.components.length===0) {
+    console.warn('[tools] components.json 加载失败，回退到内嵌默认配置。请用本地服务器（npx wrangler pages dev . 或 python -m http.server）访问以加载完整元件库。');
+    data = FALLBACK_COMP_JSON;
+  }
+  for (const raw of data.components) {
+    const cfg = normalizeCompCfg(raw);
+    if (cfg) SVG_LIB[cfg.configId] = cfg;
+  }
+  SVG_LIB_READY = true;
+  loadSvgImages();
+  renderComponentPanel();
+  renderDrawerGrid();
+  render();
+}
+
+// 统一接口：按 type(=config id) 取配置
+function svgCfgForType(type) { return SVG_LIB[type] || null; }
+function svgCfgForComp(comp) { return comp && comp.svg ? (SVG_LIB[comp.svg]||null) : svgCfgForType(comp && comp.type); }
+
+// SVG 图片加载器
+const svgImages = {}; // svgImages[configId][stateKey] = HTMLImageElement
+function loadSvgImages() {
+  for (const id in SVG_LIB) {
+    const cfg = SVG_LIB[id];
+    svgImages[id] = svgImages[id] || {};
+    for (const stateKey in cfg.images) {
+      if (svgImages[id][stateKey]) continue;
+      const img = new Image();
+      img.onload = () => render();   // 加载完成后重绘一次
+      img.src = cfg.images[stateKey].src;
+      svgImages[id][stateKey] = img;
+    }
+  }
+}
+
+// 元件库按 category 分组。返回 [{category, items:[cfg,...]}, ...]
+function getLibGroupsForMode(mode) {
+  const byCat = new Map();
+  for (const id in SVG_LIB) {
+    const cfg = SVG_LIB[id];
+    if (!cfg.modes || !cfg.modes.includes(mode)) continue;
+    if (!byCat.has(cfg.category)) byCat.set(cfg.category, []);
+    byCat.get(cfg.category).push(cfg);
+  }
+  // 固定分组顺序见 CATEGORY_ORDER；其余按字母
+  const order = ['source','protect','switch','control','load','sensor','misc'];
+  const cats = Array.from(byCat.keys()).sort((a,b)=>{
+    const ia=order.indexOf(a), ib=order.indexOf(b);
+    return (ia<0?99:ia)-(ib<0?99:ib) || a.localeCompare(b);
+  });
+  return cats.map(c=>({category:c, items:byCat.get(c)}));
+}
+
+// 兼容旧脚本的小图标回退（无图元件用 fa-microchip）
+const CATEGORY_ICONS = {
+  source:'fa-plug-circle-bolt', protect:'fa-shield-halved', switch:'fa-toggle-off',
+  control:'fa-box-archive', load:'fa-lightbulb', sensor:'fa-bell', misc:'fa-microchip'
+};
+function catIcon(cat){ return CATEGORY_ICONS[cat]||'fa-microchip'; }
+
+// ============================================================
+//  FIXED POWER SOURCE — 画布左上角固定电源接线端子（Canvas 手绘）
+//  家用 220V：L / N / PE 三端子；工业 380V：L1/L2/L3/N/PE 五端子。
+//  不可拖动/旋转/删除/选中；作为仿真的唯一电势源头。
+// ============================================================
+let powerSource = null;
+const POWER_SOURCE_POS = { x: 40, y: 40 };      // 世界坐标
+const POWER_SOURCE_W   = 64;
+const POWER_V_PER_PIN   = 22;                      // 端子纵向间距
+
+function setupPowerSource(mode) {
+  const isHome = mode !== 'industrial380v';
+  const phases = isHome ? ['L','N','PE'] : ['L1','L2','L3','N','PE'];
+  const v = isHome ? 220 : 380;
+  const h = phases.length * POWER_V_PER_PIN + 28;
+  const x = POWER_SOURCE_POS.x, y = POWER_SOURCE_POS.y;
+  const id = 'psrc';
+  const pins = phases.map((ph,i)=>({
+    id: id+'_p'+i,
+    label: ph,
+    phase: ph,
+    role: isLinePhase(ph) ? 'line' : (ph==='PE' ? 'earth' : 'neutral'),  // L/L1..=相线源, N=零线被动, PE=地被动
+    // 端子排在电源块右侧边缘（固定 x = W-6），纵向均布
+    rx: POWER_SOURCE_W + 4,
+    ry: 18 + i * POWER_V_PER_PIN,
+    voltage:0, phaseActive:null
+  }));
+  powerSource = {
+    id, type:'power_source', name:{zh:'电源',en:'Power',km:'ភ្លើង'},
+    pins, rotation:0, x, y,
+    w: POWER_SOURCE_W, h,
+    voltage:v, current:0, state:true,
+    fixed:true, isSource:true
+  };
+}
+
+function drawPowerSource() {
+  const ps = powerSource; if (!ps) return;
+  const x=ps.x, y=ps.y, w=ps.w, h=ps.h;
+  // 跟随 pan/zoom（世界坐标），渲染由 render() 的 tr/world 变换统一处理
+  // 本体：深蓝机箱
+  ctx.fillStyle='#1d4ed8'; ctx.strokeStyle='#1e3a8a'; ctx.lineWidth=2;
+  roundRect(ctx,x,y,w,h,8); ctx.fill(); ctx.stroke();
+  // 顶部标签条
+  ctx.fillStyle='#0b1f4d';
+  ctx.fillRect(x+4, y+4, w-8, 12);
+  ctx.fillStyle='#fff'; ctx.font='bold 8px sans-serif'; ctx.textAlign='center';
+  ctx.fillText(`${ps.voltage}V`, x+w/2, y+13);
+  ctx.textAlign='left';
+  // 左上角锁定标记
+  ctx.fillStyle='#bfdbfe'; ctx.font='8px sans-serif';
+  ctx.fillText('⏻ IN', x+6, y+24);
+  // 端子排（pin 走既有 pin 绘制风格，但更显眼的端子）
+  ps.pins.forEach(p=>{
+    const px=ps.x+p.rx, py=ps.y+p.ry;
+    const live=isSimulating&&p.voltage>0&&p.phaseActive;
+    const pinColor = live ? (PHASE_COLOR[p.phaseActive]||'#22c55e')
+                           : (PHASE_COLOR[p.phase]||'#5a6a7e');
+    // 端子座
+    ctx.beginPath(); ctx.arc(px,py,9,0,Math.PI*2);
+    ctx.fillStyle='#cbd5e1'; ctx.fill();
+    ctx.strokeStyle='#64748b'; ctx.lineWidth=1; ctx.stroke();
+    // 端子点（相位色）
+    ctx.beginPath(); ctx.arc(px,py,6,0,Math.PI*2);
+    ctx.fillStyle=pinColor; ctx.fill();
+    ctx.strokeStyle='#1f2937'; ctx.lineWidth=.8; ctx.stroke();
+    if (live) {
+      ctx.shadowColor=pinColor; ctx.shadowBlur=12;
+      ctx.beginPath(); ctx.arc(px,py,6,0,Math.PI*2); ctx.fillStyle=pinColor; ctx.fill();
+      ctx.shadowBlur=0;
+    }
+    // 相位标签
+    ctx.fillStyle='#fff'; ctx.font='bold 8px sans-serif'; ctx.textAlign='right';
+    ctx.fillText(p.label, px-12, py+3);
+    ctx.textAlign='left';
+  });
+  // 不可选中提示：画一圈虚边
+  ctx.strokeStyle='#1e40af'; ctx.lineWidth=1.5; ctx.setLineDash([2,3]);
+  roundRect(ctx,x-3,y-3,w+6,h+6,10); ctx.stroke(); ctx.setLineDash([]);
+}
+
 function getCompName(comp) {
   if (comp.name && comp.name[lang]) return comp.name[lang];
   if (comp.name && comp.name.zh) return comp.name.zh;
-  return comp.type;
+  return comp.type || comp.id || '';
 }
 
 function renderComponentPanel() {
   const grid = document.getElementById('compGrid');
-  const lib = COMP_LIB[currentMode]||COMP_LIB['home220v'];
+  if (!SVG_LIB_READY) { grid.innerHTML = '<div style="padding:12px;color:#888;font-size:12px;">元件库加载中…</div>'; return; }
   grid.innerHTML = '';
-  lib.forEach(c=>{
-    const div = document.createElement('div');
-    div.className = 'comp-item';
-    div.innerHTML = `<i class="fa-solid ${c.icon}"></i><span>${getCompName(c)}</span>`;
-    div.addEventListener('click',()=>{ spawnComponent(c.type); haptic('impact'); beep(800,.05); });
-    grid.appendChild(div);
+  const groups = getLibGroupsForMode(currentMode);
+  if (groups.length===0) grid.innerHTML = '<div style="padding:12px;color:#888;font-size:12px;">（无元件配置）</div>';
+  groups.forEach(g=>{
+    const head = document.createElement('div');
+    head.style.cssText = 'grid-column:1/-1;font-size:11px;font-weight:700;color:#2c3e50;padding:4px 2px 2px;border-bottom:1px solid #d5dce6;margin-bottom:4px;display:flex;align-items:center;gap:6px;';
+    head.innerHTML = `<i class="fa-solid ${catIcon(g.category)}"></i> ${g.category}`;
+    grid.appendChild(head);
+    g.items.forEach(cfg=>grid.appendChild(buildCompItem(cfg)));
   });
 }
 
 function renderDrawerGrid() {
   const grid = document.getElementById('drawerGrid');
-  const lib = COMP_LIB[currentMode]||COMP_LIB['home220v'];
+  if (!SVG_LIB_READY) { grid.innerHTML = '<div style="padding:12px;color:#888;font-size:12px;">元件库加载中…</div>'; return; }
   grid.innerHTML = '';
-  lib.forEach(c=>{
-    const div = document.createElement('div');
-    div.className = 'comp-item';
-    div.innerHTML = `<i class="fa-solid ${c.icon}"></i><span>${getCompName(c)}</span>`;
-    div.addEventListener('click',()=>{ spawnComponent(c.type); haptic('impact'); beep(800,.05); });
-    grid.appendChild(div);
+  const groups = getLibGroupsForMode(currentMode);
+  groups.forEach(g=>{
+    const head = document.createElement('div');
+    head.style.cssText = 'grid-column:1/-1;font-size:11px;font-weight:700;color:#2c3e50;padding:4px 2px 2px;';
+    head.innerHTML = `<i class="fa-solid ${catIcon(g.category)}"></i> ${g.category}`;
+    grid.appendChild(head);
+    g.items.forEach(cfg=>grid.appendChild(buildCompItem(cfg)));
   });
+}
+
+// 构造单个元件库项（SVG 缩略图优先，无图回退 fa 图标）
+function buildCompItem(cfg) {
+  const div = document.createElement('div');
+  div.className = 'comp-item';
+  const off = cfg.images.off || Object.values(cfg.images)[0];
+  const name = (cfg.name && cfg.name[lang]) || cfg.configId;
+  if (off && off.src) {
+    const icon = cfg.icon ? `<i class="fa-solid ${cfg.icon}" style="font-size:16px;color:var(--blue-600);margin-bottom:2px;"></i>` : '';
+    div.innerHTML = `${icon}<img src="${off.src}" alt="" style="max-height:42px;max-width:100%;object-fit:contain;margin-bottom:4px;"><span>${name}</span>`;
+  } else {
+    div.innerHTML = `<i class="fa-solid ${cfg.icon||catIcon(cfg.category)}"></i><span>${name}</span>`;
+  }
+  div.addEventListener('click',()=>{ spawnComponent(cfg.configId); haptic('impact'); beep(800,.05); });
+  return div;
 }
 
 function toggleDrawer() {
   document.getElementById('compDrawer').classList.toggle('open');
 }
 
+// findTemplate：优先查 SVG_LIB（按 config id），回退到 COMP_LIB（按 type）以兼容历史调用
 function findTemplate(type) {
+  if (SVG_LIB[type]) return SVG_LIB[type];
   for (const mode in COMP_LIB) {
     const f = COMP_LIB[mode].find(c=>c.type===type);
     if (f) return f;
@@ -703,35 +1013,73 @@ function findTemplate(type) {
   return null;
 }
 
+// 构建一个 SVG 元件对象（按配置换算 pin 坐标）
+function buildSvgComp(cfg, x, y) {
+  const id = 'c'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
+  const comp = {
+    id, type:cfg.configId, name:cfg.name, icon:cfg.icon||'', pins:[], rotation:0,
+    x, y, w:cfg.baseW, h:cfg.baseH,
+    voltage:cfg.voltage||220, current:10, state: (cfg.defaultState==='on') || false,
+    contactor:cfg.contactor||false, svg:cfg.configId,
+    category:cfg.category||'misc',
+    // 新增：控制元件运行时量（缺省即不激活，旧元件零成本）
+    subtype:cfg.subtype||null, delayMs:cfg.delayMs||0, latched:cfg.latched||false,
+    driveState:false,       // 线圈驱动状态（KA/KT/FR_aux 触点据此通断）
+    _energizedSince:0        // KT 得电时刻（perf.now），用于延时
+  };
+  cfg.terminals.forEach(t=>{
+    comp.pins.push({
+      id: comp.id+'_'+t.id, label:t.label, phase:t.phase||null,
+      role:t.role||null, inverted:!!t.inverted, contactGroup:t.contactGroup||null,
+      rx:t.x, ry:t.y, voltage:0, phaseActive:null
+    });
+  });
+  return comp;
+}
+
 function spawnComponent(type, atX, atY) {
   saveUndo();
-  const tpl = findTemplate(type); if (!tpl) return;
-  const id = 'c'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
   const x = atX !== undefined ? atX : (canvas.width/2 - panOffset.x)/zoomLevel;
   const y = atY !== undefined ? atY : (canvas.height/2 - panOffset.y)/zoomLevel;
-  const comp = {
-    id, type, name:tpl.name, icon:tpl.icon, pins:[], rotation: 0,
-    x, y, w:(tpl.pins>=5?150:110), h:(tpl.pins>=4?100:90),
-    voltage:tpl.v||220, current:10, state:tpl.defaultState||false,
-    contactor:tpl.contactor||false
-  };
-  // generate pins with phase labels
-  const phases = tpl.phases||[];
-  const pinCount = tpl.pins;
-  // compute pin positions based on count and rotation
-  const rawPos = computePinPositions(pinCount);
-  for (let i=0; i<pinCount; i++) {
-    comp.pins.push({
-      id:comp.id+'_p'+i,
-      label: (phases[i]) ? (PHASE_LABEL[phases[i]]?PHASE_LABEL[phases[i]][lang]:phases[i]) : ('P'+(i+1)),
-      phase: phases[i]||null,
-      rx:rawPos[i].rx, ry:rawPos[i].ry, voltage:0, phaseActive:null
-    });
-  }
-  components.push(comp);
+  const comp = spawnCompAt(type, x, y);
+  if (!comp) return;
   selectComponent(comp);
   render(); updateStatus();
   hideFloatBar();
+}
+
+// 统一建元件入口（练习题预置时调用）—— 仅建元件入栈，不选中、不 saveUndo。
+// 优先用 SVG_LIB 配置；否则回退到老 COMP_LIB 的 type（无 SVG 元件）。
+function spawnCompAt(type, x, y, opts) {
+  const sv = SVG_LIB[type];
+  let comp;
+  if (sv) {
+    comp = buildSvgComp(sv, x, y);
+  } else {
+    const tpl = findTemplate(type);
+    if (!tpl) return null;
+    comp = {
+      id:'c'+Date.now()+'_'+Math.random().toString(36).substr(2,5),
+      type, name:tpl.name, icon:tpl.icon, pins:[], rotation:0,
+      x, y, w:(tpl.pins>=5?150:110), h:(tpl.pins>=4?100:90),
+      voltage:tpl.v||220, current:10, state:tpl.defaultState||false,
+      contactor:tpl.contactor||false,
+      category: TYPE_CATEGORY_FALLBACK[type] || 'misc'
+    };
+    const phases = tpl.phases||[];
+    const pinCount = tpl.pins;
+    const rawPos = computePinPositions(pinCount);
+    for (let i=0; i<pinCount; i++) {
+      comp.pins.push({
+        id:comp.id+'_p'+i,
+        label: (phases[i])?(PHASE_LABEL[phases[i]]?PHASE_LABEL[phases[i]][lang]:phases[i]):('P'+(i+1)),
+        phase: phases[i]||null,
+        rx:rawPos[i].rx, ry:rawPos[i].ry, voltage:0, phaseActive:null
+      });
+    }
+  }
+  components.push(comp);
+  return comp;
 }
 
 function computePinPositions(count) {
@@ -786,14 +1134,18 @@ function rotateComp(deg) {
   if (!selectedComp) return;
   saveUndo();
   selectedComp.rotation = (selectedComp.rotation + deg) % 360;
-  // Rotate pin positions
+  // Rotate pin positions around component center.
+  // - 非 SVG 元件：rx/ry 是 0-100 百分比，中心 (50,50)。
+  // - SVG 元件：rx/ry 是 comp.w/h 本地像素，中心 (comp.w/2, comp.h/2)。
+  const isSvg = !!svgCfgForComp(selectedComp);
+  const cx = isSvg ? selectedComp.w/2 : 50;
+  const cy = isSvg ? selectedComp.h/2 : 50;
+  const rad = deg*Math.PI/180;
+  const cos=Math.cos(rad), sin=Math.sin(rad);
   selectedComp.pins.forEach(p=>{
-    const cx=50,cy=50; // center percentages
     const dx=p.rx-cx, dy=p.ry-cy;
-    const rad = deg*Math.PI/180;
-    const ndx = dx*Math.cos(rad)-dy*Math.sin(rad);
-    const ndy = dx*Math.sin(rad)+dy*Math.cos(rad);
-    p.rx = ndx+cx; p.ry = ndy+cy;
+    p.rx = dx*cos - dy*sin + cx;
+    p.ry = dx*sin + dy*cos + cy;
   });
   // Update wire endpoints
   wires.filter(w=>w.fromC===selectedComp.id||w.toC===selectedComp.id).forEach(w=>{
@@ -804,8 +1156,8 @@ function rotateComp(deg) {
 }
 
 function updateWireEndpoints(w) {
-  const fromComp = components.find(c=>c.id===w.fromC);
-  const toComp = components.find(c=>c.id===w.toC);
+  const fromComp = findCompById(w.fromC);
+  const toComp = findCompById(w.toC);
   if (fromComp) {
     const fp = fromComp.pins.find(p=>p.id===w.fromP);
     if (fp) { w.x1 = fromComp.x + fp.rx; w.y1 = fromComp.y + fp.ry; }
@@ -875,6 +1227,7 @@ function render() {
   ctx.scale(zoomLevel,zoomLevel);
 
   if (showGrid) drawGrid();
+  if (powerSource) drawPowerSource();          // 固定电源（Canvas 手绘，唯一源头）
   wires.forEach(w=>{ computeWireSegments(w); drawWire(w); });
   if (tempWire) drawTempWire();
   components.forEach(c=>drawComponent(c));
@@ -885,6 +1238,87 @@ function render() {
   let info = `Zoom:${Math.round(zoomLevel*100)}% | Grid:${showGrid?'ON':'OFF'} | ${t('components')}:${components.length}`;
   if (selectedWire) info += ' | '+t('wireSelected');
   document.getElementById('canvasInfo').textContent = info;
+
+  renderSvgLayer();
+}
+
+// ============================================================
+//  SVG COMPONENT LAYER — position <img> nodes over the canvas
+//  仅渲染接入 SVG 框架的元件（comp.svg 配置存在）。每帧 diff：复用已有
+//  <img> 节点、更新样式；删除已不存在的元件节点。
+// ============================================================
+const svgLayer = document.getElementById('svgCompLayer');
+const svgLayerNodes = new Map(); // comp.id -> HTMLImageElement
+
+function renderSvgLayer() {
+  if (!svgLayer || currentView!=='sim') {
+    if (svgLayer) svgLayer.innerHTML = '';
+    svgLayerNodes.clear();
+    return;
+  }
+  const z = zoomLevel, px = panOffset.x, py = panOffset.y;
+  const seen = new Set();
+  for (const comp of components) {
+    const sv = svgCfgForComp(comp);
+    if (!sv) continue;
+    seen.add(comp.id);
+    // 状态键派生：线圈型按 driveState（KA/KT/KM），含 KT 三态(off/pending/on)与
+    // FR_aux/FR_main tripped；其余沿用 comp.state 二态。非仿真态全部取 off。
+    let stateKey = 'off';
+    if (isSimulating) {
+      if (comp.subtype==='relay_kt') {
+        // 线圈得电但延时未到 → pending；延时到 → on；未得电 → off
+        stateKey = comp.driveState ? 'on' : (comp._energizedSince ? 'pending' : 'off');
+      } else if (comp.subtype==='thermal_aux' || comp.subtype==='thermal_main') {
+        // FR aux / FR main：跳闸(state=true)用专门 tripped 图，常态 off
+        stateKey = comp.state ? 'tripped' : 'off';
+      } else if (comp.subtype==='relay_ka' || comp.subtype==='contactor_km') {
+        // KA / KM：线圈驱动 — driveState 决定吸合显示
+        stateKey = comp.driveState ? 'on' : 'off';
+      } else {
+        // 旧元件(含按钮/老接触器/断路器/灯/电机M等)：沿用 comp.state
+        stateKey = comp.state ? 'on' : 'off';
+      }
+    }
+    const imgCfg = sv.images[stateKey] || sv.images['off'];
+    const img = (svgImages[sv.configId] && (svgImages[sv.configId][stateKey] || svgImages[sv.configId]['off'])) || null;
+    let node = svgLayerNodes.get(comp.id);
+    // (Re)create node when first time or state image switched
+    if (!node) {
+      node = document.createElement('img');
+      node.className = 'svg-comp-img';
+      svgLayer.appendChild(node);
+      svgLayerNodes.set(comp.id, node);
+    }
+    // Only swap src when needed so the browser doesn't reload every frame
+    if (node.dataset.state !== stateKey) {
+      node.src = img ? img.src : '';
+      node.dataset.state = stateKey;
+    }
+    if (!img || !img.complete || img.naturalWidth===0) {
+      node.style.display = 'none';
+      continue;
+    }
+    node.style.display = '';
+    // Screen rect of this state image (local [dx,dy .. dx+vw, dy+vh] * zoom + pan)
+    const left = px + (comp.x + imgCfg.dx) * z;
+    const top  = py + (comp.y + imgCfg.dy) * z;
+    const w = imgCfg.vw * z, h = imgCfg.vh * z;
+    // Rotation center = component local-frame center, expressed in screen px
+    // relative to the image's top-left: ((comp.w/2 - dx), (comp.h/2 - dy)) * z
+    const ox = (comp.w/2 - imgCfg.dx) * z;
+    const oy = (comp.h/2 - imgCfg.dy) * z;
+    node.style.left = left + 'px';
+    node.style.top = top + 'px';
+    node.style.width = w + 'px';
+    node.style.height = h + 'px';
+    node.style.transformOrigin = ox + 'px ' + oy + 'px';
+    node.style.transform = comp.rotation ? `rotate(${comp.rotation}deg)` : 'none';
+  }
+  // Prune removed components
+  for (const [id, node] of svgLayerNodes) {
+    if (!seen.has(id)) { node.remove(); svgLayerNodes.delete(id); }
+  }
 }
 
 function drawGrid() {
@@ -912,76 +1346,197 @@ function drawGrid() {
 }
 
 // ============================================================
-//  ORTHOGONAL MANHATTAN WIRE ROUTING
+//  ORTHOGONAL MANHATTAN WIRE ROUTING (A* avoidance + rounded corners)
 // ============================================================
+const ROUTE_GRID = 10;      // 路由网格步长（世界像素）
+const ROUTE_LEAD  = 14;      // 引脚出线直线段长度
+const ROUTE_OBS_PAD = 4;     // 障碍本体外扩
+const ROUTE_BOUNDS_PAD = 240;// 搜索域外扩（防 A* 飞太远）
+
+// 收集所有元件（含固定电源）的障碍矩形，排除 from/to 自身
+function collectObstacles(excludeA, excludeB) {
+  const all = powerSource ? [powerSource, ...components] : components;
+  const list = [];
+  for (const c of all) {
+    if (c===excludeA || c===excludeB) continue;     // 自身不算障碍（引脚走廊会开）
+    list.push({ x:c.x-ROUTE_OBS_PAD, y:c.y-ROUTE_OBS_PAD,
+                w:c.w+ROUTE_OBS_PAD*2, h:c.h+ROUTE_OBS_PAD*2 });
+  }
+  return list;
+}
+
+// 某点是否落在任一障碍矩形内
+function pointInObstacles(x, y, obs) {
+  for (const o of obs) {
+    if (x>=o.x && x<=o.x+o.w && y>=o.y && y<=o.y+o.h) return true;
+  }
+  return false;
+}
+
+// 把障碍矩形的内部格标记为 blocked；引脚走廊（出线方向上一段）强制可走
+function buildBlockedSet(obs, corridors, bounds) {
+  const s = new Set();
+  const mark = (gx, gy) => s.add(gx+','+gy);
+  // 障碍：遍历每个障碍覆盖的网格（裁剪到 bounds）
+  for (const o of obs) {
+    const gx0 = Math.floor(o.x / ROUTE_GRID), gy0 = Math.floor(o.y / ROUTE_GRID);
+    const gx1 = Math.ceil((o.x+o.w) / ROUTE_GRID), gy1 = Math.ceil((o.y+o.h) / ROUTE_GRID);
+    for (let gx=Math.max(bounds.gx0,gx0); gx<=Math.min(bounds.gx1,gx1); gx++)
+      for (let gy=Math.max(bounds.gy0,gy0); gy<=Math.min(bounds.gy1,gy1); gy++)
+        mark(gx,gy);
+  }
+  // 走廊：强制清除（可走）
+  for (const cor of corridors) {
+    for (const [gx,gy] of cor) s.delete(gx+','+gy);
+  }
+  return s;
+}
+
+// 从引脚沿出线方向生成走廊格列表（宽 ~2 格）
+function pinCorridor(comp, pin, dir) {
+  const cells = [];
+  const px = comp.x + pin.rx, py = comp.y + pin.ry;
+  const steps = Math.ceil(ROUTE_LEAD / ROUTE_GRID) + 1;
+  for (let i=0; i<=steps; i++) {
+    const cx = px + dir.x * i * ROUTE_GRID;
+    const cy = py + dir.y * i * ROUTE_GRID;
+    // 沿出线方向左右各扩一格宽
+    if (dir.x !== 0) {
+      cells.push([Math.round(cx/ROUTE_GRID), Math.round((cy-ROUTE_GRID)/ROUTE_GRID)]);
+      cells.push([Math.round(cx/ROUTE_GRID), Math.round(cy/ROUTE_GRID)]);
+      cells.push([Math.round(cx/ROUTE_GRID), Math.round((cy+ROUTE_GRID)/ROUTE_GRID)]);
+    } else if (dir.y !== 0) {
+      cells.push([Math.round((cx-ROUTE_GRID)/ROUTE_GRID), Math.round(cy/ROUTE_GRID)]);
+      cells.push([Math.round(cx/ROUTE_GRID), Math.round(cy/ROUTE_GRID)]);
+      cells.push([Math.round((cx+ROUTE_GRID)/ROUTE_GRID), Math.round(cy/ROUTE_GRID)]);
+    } else {
+      cells.push([Math.round(cx/ROUTE_GRID), Math.round(cy/ROUTE_GRID)]);
+    }
+  }
+  return cells;
+}
+
+// A* 4 邻在网格上找 (sx,sy)->(ex,ey) 的最短横竖路径，blocked 为不可走格集合
+function routeAStar(sx, sy, ex, ey, blocked, bounds) {
+  const gx0=bounds.gx0, gy0=bounds.gy0, gx1=bounds.gx1, gy1=bounds.gy1;
+  const sgx = Math.round(sx/ROUTE_GRID), sgy = Math.round(sy/ROUTE_GRID);
+  const egx = Math.round(ex/ROUTE_GRID), egy = Math.round(ey/ROUTE_GRID);
+  // 起点/终点强制可走
+  const key = (x,y)=>x+','+y;
+  const inBounds = (x,y)=> x>=gx0&&x<=gx1&&y>=gy0&&y<=gy1;
+  const isOpen = (x,y)=> inBounds(x,y) && !blocked.has(key(x,y));
+
+  const came = new Map();
+  const gScore = new Map([[key(sgx,sgy), 0]]);
+  const fScore = new Map([[key(sgx,sgy), Math.abs(sgx-egx)+Math.abs(sgy-egy)]]);
+  const open = [{x:sgx, y:sgy, f:Math.abs(sgx-egx)+Math.abs(sgy-egy)}];
+  const closed = new Set();
+  let guard = 0;
+  const MAX = (gx1-gx0+1)*(gy1-gy0+1) + 10;
+
+  while (open.length && guard++ < MAX) {
+    // 取 f 最小（小规模用线性扫，元件少够用）
+    let bi = 0;
+    for (let i=1;i<open.length;i++) if (open[i].f < open[bi].f) bi = i;
+    const cur = open.splice(bi,1)[0];
+    const ck = key(cur.x, cur.y);
+    if (closed.has(ck)) continue;
+    closed.add(ck);
+    if (cur.x===egx && cur.y===egy) {
+      // 回溯
+      const path = [{x:cur.x, y:cur.y}];
+      let k = ck;
+      while (came.has(k)) {
+        const p = came.get(k);
+        path.push({x:p.x, y:p.y});
+        k = key(p.x, p.y);
+      }
+      path.reverse();
+      // 反量化到世界坐标
+      return path.map(p=>({x:p.x*ROUTE_GRID, y:p.y*ROUTE_GRID}));
+    }
+    const ng = gScore.get(ck) || 0;
+    const neigh = [[1,0],[-1,0],[0,1],[0,-1]];
+    for (const [dx,dy] of neigh) {
+      const nx=cur.x+dx, ny=cur.y+dy;
+      const nk = key(nx,ny);
+      if (!isOpen(nx,ny) && !(nx===egx&&ny===egy)) continue;  // 终点强制可达
+      const tg = ng + 1;
+      if (tg < (gScore.get(nk) ?? Infinity)) {
+        came.set(nk, {x:cur.x, y:cur.y});
+        gScore.set(nk, tg);
+        const f = tg + Math.abs(nx-egx)+Math.abs(ny-egy);
+        fScore.set(nk, f);
+        open.push({x:nx, y:ny, f});
+      }
+    }
+  }
+  return null;   // 找不到
+}
+
+// 合并共线点（相邻三点同 x 或同 y 时去掉中点）
+function dedupeCollinear(pts) {
+  if (pts.length < 3) return pts.slice();
+  const out = [pts[0]];
+  for (let i=1; i<pts.length-1; i++) {
+    const a=out[out.length-1], b=pts[i], c=pts[i+1];
+    const sameXY = (a.x===b.x && b.x===c.x) || (a.y===b.y && b.y===c.y);
+    if (sameXY) continue;   // a-b-c 共线，跳过 b
+    out.push(b);
+  }
+  out.push(pts[pts.length-1]);
+  // 去掉重复相邻点
+  for (let i=1;i<out.length;) { if (out[i].x===out[i-1].x && out[i].y===out[i-1].y) out.splice(i,1); else i++; }
+  return out;
+}
+
 function computeWireSegments(w) {
-  // Compute orthogonal Manhattan path from (x1,y1) to (x2,y2)
-  // Determine pin directions: is pin on top (ry<20), bottom (ry>80), left (rx<20), right (rx>80)?
-  // We infer pin-facing direction from the source/to pin position relative to component center
-  const fromComp = components.find(c=>c.id===w.fromC);
-  const toComp = components.find(c=>c.id===w.toC);
+  // Compute orthogonal Manhattan path from (x1,y1) to (x2,y2) with A* obstacle avoidance.
+  const fromComp = findCompById(w.fromC);
+  const toComp = findCompById(w.toC);
   if (!fromComp||!toComp) { w._g=[{x:w.x1,y:w.y1},{x:w.x2,y:w.y2}]; return; }
   const fp = fromComp.pins.find(p=>p.id===w.fromP);
   const tp = toComp.pins.find(p=>p.id===w.toP);
   if (!fp||!tp) { w._g=[{x:w.x1,y:w.y1},{x:w.x2,y:w.y2}]; return; }
 
-  // Determine exit direction (from pin's position on component)
-  const fromDX = outDir(fp.rx, fp.ry, fromComp.rotation);
-  const toDX = outDir(tp.rx, tp.ry, toComp.rotation);
-  // Reverse the "to" direction since the wire enters, not exits
-  const toDN = {x:-toDX.x, y:-toDX.y};
+  // 出/入线方向
+  const fd = outDirFor(fromComp, fp);
+  const td = outDirFor(toComp, tp);
+  const tdN = { x:-td.x, y:-td.y };
 
-  const margin = 30; // minimum straight segment before first bend
-  const pts = [{x:w.x1, y:w.y1}];
+  // 起终离体点（沿出/入方向先走一段直线）
+  const sx = w.x1 + fd.x*ROUTE_LEAD, sy = w.y1 + fd.y*ROUTE_LEAD;
+  const ex = w.x2 + tdN.x*ROUTE_LEAD, ey = w.y2 + tdN.y*ROUTE_LEAD;
 
-  const dx=w.x2-w.x1, dy=w.y2-w.y1;
-  const absDx=Math.abs(dx), absDy=Math.abs(dy);
+  // 障碍：所有元件本体（排除 from/to），引脚走廊强制开通
+  const obs = collectObstacles(fromComp, toComp);
+  const corA = pinCorridor(fromComp, fp, fd);
+  const corB = pinCorridor(toComp,   tp, tdN);
+  // 搜索域：起终外扩
+  const minx = Math.min(sx, ex), maxx = Math.max(sx, ex);
+  const miny = Math.min(sy, ey), maxy = Math.max(sy, ey);
+  const bounds = {
+    gx0: Math.floor((minx - ROUTE_BOUNDS_PAD)/ROUTE_GRID),
+    gy0: Math.floor((miny - ROUTE_BOUNDS_PAD)/ROUTE_GRID),
+    gx1: Math.ceil ((maxx + ROUTE_BOUNDS_PAD)/ROUTE_GRID),
+    gy1: Math.ceil ((maxy + ROUTE_BOUNDS_PAD)/ROUTE_GRID),
+  };
+  const blocked = buildBlockedSet(obs, [corA, corB], bounds);
 
-  // Direction from pin
-  const fx = fromDX.x, fy = fromDX.y;
-  const tx = toDN.x, ty = toDN.y;
-
-  if (fx===0 && ty===0) {
-    // Vertical out, horizontal in => zigzag horizontally then vertically (or vice versa)
-    if (absDx < margin*2) {
-      // Close enough: do simple L-bend midway
-      const midX=(w.x1+w.x2)/2;
-      pts.push({x:midX,y:w.y1+fy*margin});
-      pts.push({x:midX,y:w.y2+ty*margin});
-    } else {
-      pts.push({x:w.x1+fx*margin*0.3,y:w.y1+fy*margin});
-      pts.push({x:w.x2+tx*margin*0.3,y:w.y1+fy*margin});
-      pts.push({x:w.x2+tx*margin*0.3,y:w.y2+ty*margin});
-    }
-  } else if (fy===0 && tx===0) {
-    // Horizontal out, vertical in
-    if (absDy<margin*5) {
-      const midY=(w.y1+w.y2)/2;
-      pts.push({x:w.x1+fx*margin,y:midY});
-      pts.push({x:w.x2+tx*margin,y:midY});
-    } else {
-      pts.push({x:w.x1+fx*margin,y:w.y1+fy*margin*0.3});
-      pts.push({x:w.x1+fx*margin,y:w.y2+ty*margin});
-      pts.push({x:w.x2+tx*margin,y:w.y2+ty*margin});
-    }
-  } else if (fx===0 && tx===0) {
-    // Both vertical
-    const midY=(w.y1+w.y2)/2;
-    pts.push({x:w.x1,y:midY+fy*margin*0.3});
-    pts.push({x:w.x2,y:midY+ty*margin*0.3});
+  let mid = routeAStar(sx, sy, ex, ey, blocked, bounds);
+  let pts;
+  if (mid && mid.length > 1) {
+    pts = [{x:w.x1,y:w.y1}, {x:sx,y:sy}, ...mid, {x:ex,y:ey}, {x:w.x2,y:w.y2}];
   } else {
-    // Both horizontal
-    const midX=(w.x1+w.x2)/2;
-    pts.push({x:midX+fx*margin*0.3,y:w.y1});
-    pts.push({x:midX+tx*margin*0.3,y:w.y2});
+    // 回退：起 → 离体点 → 一个中点直角 → 终离体点 → 终
+    const mx = (sx+ex)/2, my = (sy+ey)/2;
+    pts = [{x:w.x1,y:w.y1},{x:sx,y:sy},{x:mx,y:sy},{x:mx,y:ey},{x:ex,y:ey},{x:w.x2,y:w.y2}];
   }
-
-  pts.push({x:w.x2,y:w.y2});
-  w._g = pts;
+  w._g = dedupeCollinear(pts);
 }
 
 function outDir(rx, ry, rot) {
-  // Normalize rotation to determine actual pin facing direction
+  // 旧元件：rx/ry 是 0-100 百分比，阈值 5/95，中心 (50,50)。
   let nrx=rx, nry=ry;
   if (rot) {
     const cx=50,cy=50, dx=rx-cx, dy=ry-cy, rad=rot*Math.PI/180;
@@ -1001,11 +1556,41 @@ function outDir(rx, ry, rot) {
   return {x:0,y:1};
 }
 
+// SVG 元件版：rx/ry 是 comp.w/h 本地像素，阈值/中心用像素，判引脚朝向哪条边。
+function outDirPx(rx, ry, rot, w, h) {
+  let nrx=rx, nry=ry;
+  const cx=w/2, cy=h/2;
+  if (rot) {
+    const dx=rx-cx, dy=ry-cy, rad=rot*Math.PI/180;
+    nrx=cx+dx*Math.cos(rad)-dy*Math.sin(rad);
+    nry=cy+dx*Math.sin(rad)+dy*Math.cos(rad);
+  }
+  const t = Math.min(w,h)*0.08;  // 边距阈值（~8%短边）
+  if (nrx<=t)      return {x:-1,y:0};
+  if (nrx>=w-t)    return {x:1,y:0};
+  if (nry<=t)      return {x:0,y:-1};
+  if (nry>=h-t)    return {x:0,y:1};
+  // Default: nearest edge
+  const dL=nrx, dR=w-nrx, dT=nry, dB=h-nry;
+  const minD=Math.min(dL,dR,dT,dB);
+  if(minD===dL) return {x:-1,y:0};
+  if(minD===dR) return {x:1,y:0};
+  if(minD===dT) return {x:0,y:-1};
+  return {x:0,y:1};
+}
+
+// 按元件类型派发出线方向
+function outDirFor(comp, pin) {
+  // SVG 元件（含像素坐标引脚）与固定电源（pin 也用像素坐标）都走像素版判边
+  if (svgCfgForComp(comp) || (comp && comp.fixed)) return outDirPx(pin.rx, pin.ry, comp.rotation, comp.w, comp.h);
+  return outDir(pin.rx, pin.ry, comp.rotation);
+}
+
 function getWireColor(w) {
   if (isSimulating && w.powered && w.activePhase) {
     return PHASE_COLOR[w.activePhase]||'#22c55e';
   }
-  const fromComp = components.find(c=>c.id===w.fromC);
+  const fromComp = findCompById(w.fromC);
   if (fromComp) {
     const fp = fromComp.pins.find(p=>p.id===w.fromP);
     if (fp && fp.phase && PHASE_COLOR[fp.phase]) return PHASE_COLOR[fp.phase];
@@ -1019,44 +1604,54 @@ function drawWire(w) {
 
   const pts = w._g || [{x:w.x1,y:w.y1},{x:w.x2,y:w.y2}];
 
+  // 样式（保留既有逻辑）
+  let sw, sc, shc, shb;
+  if (isSel) {
+    sw = isSimulating?7:5.5; sc='#eab308'; shc='#eab308'; shb=16;
+  } else if (isHov) {
+    sw = isSimulating?6:4.5; sc='#f59e0b'; shc='#f59e0b'; shb=10;
+  } else {
+    sw = isSimulating?5:3.5;
+    sc = getWireColor(w);
+    if (isSimulating && w.powered) { shc = w.activePhase?PHASE_COLOR[w.activePhase]:'#22c55e'; shb=12; }
+    else { shc=null; shb=0; }
+  }
+  ctx.lineWidth = sw; ctx.strokeStyle = sc;
+  if (shc) { ctx.shadowColor=shc; ctx.shadowBlur=shb; } else ctx.shadowBlur=0;
+
+  // 圆角横竖直角路径
   ctx.beginPath();
   ctx.moveTo(pts[0].x, pts[0].y);
-  for (let i=1; i<pts.length; i++) {
-    ctx.lineTo(pts[i].x, pts[i].y);
-  }
-
-  if (isSel) {
-    ctx.lineWidth=isSimulating?7:5.5;
-    ctx.strokeStyle='#eab308';
-    ctx.shadowColor='#eab308'; ctx.shadowBlur=16;
-  } else if (isHov) {
-    ctx.lineWidth=isSimulating?6:4.5;
-    ctx.strokeStyle='#f59e0b';
-    ctx.shadowColor='#f59e0b'; ctx.shadowBlur=10;
+  if (pts.length === 2) {
+    ctx.lineTo(pts[1].x, pts[1].y);
   } else {
-    ctx.lineWidth=isSimulating?5:3.5;
-    if (isSimulating && w.powered) {
-      ctx.strokeStyle = getWireColor(w);
-      ctx.shadowColor = w.activePhase?PHASE_COLOR[w.activePhase]:'#22c55e';
-      ctx.shadowBlur=12;
-    } else {
-      ctx.strokeStyle = getWireColor(w);
-      ctx.shadowBlur=0;
+    for (let i=1; i<pts.length-1; i++) {
+      const a = pts[i-1], b = pts[i], c = pts[i+1];
+      const dirAB = (b.x===a.x) ? 'v' : 'h';   // 当前段方向
+      const dirBC = (c.x===b.x) ? 'v' : 'h';   // 下一段方向
+      // 前后两段方向相同（共线，理论已被 dedupe 干掉）→ 直线
+      if (dirAB === dirBC) { ctx.lineTo(b.x, b.y); continue; }
+      // 直角拐角：用 arcTo 圆滑。半径取相邻两段较短者的一半，避免吃掉短线段
+      const lenAB = Math.hypot(b.x-a.x, b.y-a.y);
+      const lenBC = Math.hypot(c.x-b.x, c.y-b.y);
+      const R = Math.min(8, lenAB/2, lenBC/2);
+      if (R < 1) { ctx.lineTo(b.x, b.y); continue; }
+      ctx.arcTo(b.x, b.y, c.x, c.y, R);
     }
+    ctx.lineTo(pts[pts.length-1].x, pts[pts.length-1].y);
   }
   ctx.stroke();
   ctx.shadowBlur=0;
 
-  // Draw junction dots at endpoints
+  // 端点小圆点（接线焊点）。不再画内部 junction dots，避免杂乱
+  ctx.fillStyle = sc;
   [{x:w.x1,y:w.y1},{x:w.x2,y:w.y2}].forEach(pt=>{
-    ctx.beginPath(); ctx.arc(pt.x,pt.y,4,0,Math.PI*2);
-    ctx.fillStyle=ctx.strokeStyle; ctx.fill();
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, Math.max(3.5, sw*0.7), 0, Math.PI*2);
+    // 描白边让焊点在导线上更清晰
+    ctx.fillStyle = '#fff'; ctx.fill();
+    ctx.lineWidth = 1.5; ctx.strokeStyle = sc; ctx.stroke();
   });
-  // Draw small junction dots at internal waypoints
-  for (let i=1; i<pts.length-1; i++) {
-    ctx.beginPath(); ctx.arc(pts[i].x,pts[i].y,3,0,Math.PI*2);
-    ctx.fillStyle='#888b96'; ctx.fill();
-  }
 }
 
 function drawTempWire() {
@@ -1076,9 +1671,13 @@ function drawComponent(comp) {
     ctx.translate(cx,cy); ctx.rotate(comp.rotation*Math.PI/180); ctx.translate(-cx,-cy);
   }
 
-  // Dispatch to type-specific skeuomorphic renderer
+  // Dispatch to type-specific skeuomorphic renderer.
+  // SVG 元件（接入 SVG_LIB）由 DOM 层出本体，Canvas 跳过手绘，仅本函数下半段画 pin / 选中框。
   const t=comp.type;
-  if (t==='breaker1p') drawBreaker(comp,sel,powered,1);
+  const isSvgComp = !!svgCfgForComp(comp);
+  if (isSvgComp) {
+    // 本体由 #svgCompLayer 渲染；这里什么都不画。
+  } else if (t==='breaker1p') drawBreaker(comp,sel,powered,1);
   else if (t==='breaker3p') drawBreaker(comp,sel,powered,3);
   else if (t==='switch1p') drawPushButtonSwitch(comp,sel,powered);
   else if (t==='contactor'||t==='contactor1p') drawContactor(comp,sel,powered);
@@ -1264,7 +1863,7 @@ function drawIndicator(comp,sel,pwr) {
   ctx.beginPath();ctx.arc(icx,icy,14,0,Math.PI*2);ctx.fill();
   if (pwr) {
     ctx.shadowColor='#22c55e';ctx.shadowBlur=18;
-    ctx.beginPath();ctx.arc(ix,wy,16,0,Math.PI*2);ctx.strokeStyle='#22c55e';ctx.stroke();
+    ctx.beginPath();ctx.arc(icx,icy,16,0,Math.PI*2);ctx.strokeStyle='#22c55e';ctx.stroke();
     ctx.shadowBlur=0;
   }
 }
@@ -1364,22 +1963,35 @@ canvas.addEventListener('mousedown', e=>{
       createWire(wireStart,pinHit); wireStart=null; tempWire=null;
       beep(1000,.08); haptic('success'); return;
     } else if (pinHit) {
+      // 仿真模式下：若命中的端子属于可切换开关，优先切换其状态，
+      // 避免把"点击开关本体/端子想切换"误判为画线起点导致开关无响应（Bug 1）。
+      if (isSimulating) {
+        const compHit = findCompById(pinHit.compId);
+        if (compHit && isClickableSwitch(compHit)) {
+          saveUndo(); compHit.state=!compHit.state;
+          lastPressedComp = compHit;
+          beep(600,.08); haptic('light');
+          selectComponent(compHit); analyzeCircuit(); return;
+        }
+      }
       wireStart=pinHit; tempWire={x1:pinHit.x,y1:pinHit.y,x2:mx,y2:my};
       canvas.style.cursor='crosshair'; return;
     }
 
-    // Sim-mode: click on breaker/switch to toggle
+    // Sim-mode: click on a clickable switch/breaker/contactor to toggle its state
     if (isSimulating) {
       const compHit=findCompAt(mx,my);
-      if (compHit && (compHit.type==='breaker1p'||compHit.type==='breaker3p'||compHit.type==='switch1p'||compHit.contactor)) {
+      if (compHit && isClickableSwitch(compHit)) {
         saveUndo(); compHit.state=!compHit.state;
+        lastPressedComp = compHit;
         beep(600,.08); haptic('light');
         selectComponent(compHit); analyzeCircuit(); return;
       }
     }
 
     const compHit=findCompAt(mx,my);
-    if (compHit) { isDragging=true; dragTarget=compHit; dragOff={x:mx-compHit.x,y:my-compHit.y}; selectComponent(compHit); }
+    if (compHit && !compHit.fixed) { isDragging=true; dragTarget=compHit; dragOff={x:mx-compHit.x,y:my-compHit.y}; selectComponent(compHit); }
+    else if (compHit && compHit.fixed) { selectComponent(null); wireStart=null; tempWire=null; hideFloatBar(); } // 命中固定电源：不平移不拖
     else { selectComponent(null); wireStart=null; tempWire=null; hideFloatBar(); }
   }
 });
@@ -1413,6 +2025,17 @@ canvas.addEventListener('mousemove', e=>{
 window.addEventListener('mouseup',()=>{
   isDragging=false; isPanning=false; dragTarget=null;
   canvas.style.cursor=wireStart?'crosshair':'crosshair';
+  // 自复位按钮(NO/NC)松手回弹：仅非自锁型在仿真态复位 state，并重算电路。
+  // 急停(latched)不复位 —— 维持自锁态，再次点击才用现有 state=!state 翻转复位。
+  if (isSimulating && lastPressedComp && !lastPressedComp.latched &&
+      (lastPressedComp.subtype==='momentary_no' || lastPressedComp.subtype==='momentary_nc')) {
+    if (lastPressedComp.state) {
+      lastPressedComp.state = false;
+      analyzeCircuit();
+      haptic('light');
+    }
+  }
+  lastPressedComp = null;
 });
 
 canvas.addEventListener('wheel', e=>{
@@ -1446,7 +2069,18 @@ canvas.addEventListener('touchstart', e=>{
 
   const pinHit=findPinAt(mx,my);
   if (pinHit && wireStart) { createWire(wireStart,pinHit); wireStart=null; tempWire=null; beep(1000,.08); haptic('success'); e.preventDefault(); return; }
-  else if (pinHit) { wireStart=pinHit; tempWire={x1:pinHit.x,y1:pinHit.y,x2:mx,y2:my}; return; }
+  else if (pinHit) {
+    // 仿真模式下：若命中的端子属于可切换开关，优先切换其状态（Bug 1，与 mousedown 一致）
+    if (isSimulating) {
+      const compHit = findCompById(pinHit.compId);
+      if (compHit && isClickableSwitch(compHit)) {
+        saveUndo(); compHit.state=!compHit.state; beep(600,.08); haptic('light');
+        lastPressedComp = compHit;
+        selectComponent(compHit); analyzeCircuit(); e.preventDefault(); return;
+      }
+    }
+    wireStart=pinHit; tempWire={x1:pinHit.x,y1:pinHit.y,x2:mx,y2:my}; return;
+  }
 
   let closestW=null, closestD=Infinity;
   wires.forEach(w=>{ const d=distToWire(mx,my,w); if(d<12/zoomLevel&&d<closestD){closestD=d;closestW=w;} });
@@ -1454,14 +2088,16 @@ canvas.addEventListener('touchstart', e=>{
 
   if (isSimulating) {
     const compHit=findCompAt(mx,my);
-    if (compHit && (compHit.type==='breaker1p'||compHit.type==='breaker3p'||compHit.type==='switch1p'||compHit.contactor)) {
+    if (compHit && isClickableSwitch(compHit)) {
       saveUndo(); compHit.state=!compHit.state; beep(600,.08); haptic('light');
+      lastPressedComp = compHit;
       selectComponent(compHit); analyzeCircuit(); e.preventDefault(); return;
     }
   }
 
   const compHit=findCompAt(mx,my);
-  if (compHit) { isDragging=true; dragTarget=compHit; dragOff={x:mx-compHit.x,y:my-compHit.y}; selectComponent(compHit); }
+  if (compHit && !compHit.fixed) { isDragging=true; dragTarget=compHit; dragOff={x:mx-compHit.x,y:my-compHit.y}; selectComponent(compHit); }
+  else if (compHit && compHit.fixed) { selectComponent(null); wireStart=null; tempWire=null; hideFloatBar(); }
   else { selectComponent(null); wireStart=null; tempWire=null; hideFloatBar(); }
 });
 
@@ -1505,7 +2141,18 @@ canvas.addEventListener('touchmove', e=>{
   }
 });
 
-canvas.addEventListener('touchend',()=>{ isDragging=false; isPanning=false; dragTarget=null; });
+canvas.addEventListener('touchend',()=>{
+  isDragging=false; isPanning=false; dragTarget=null;
+  // 自复位按钮松手回弹（mouseup 同步逻辑）
+  if (isSimulating && lastPressedComp && !lastPressedComp.latched &&
+      (lastPressedComp.subtype==='momentary_no' || lastPressedComp.subtype==='momentary_nc')) {
+    if (lastPressedComp.state) {
+      lastPressedComp.state = false;
+      analyzeCircuit(); haptic('light');
+    }
+  }
+  lastPressedComp = null;
+});
 
 document.addEventListener('keydown', e=>{
   if (currentView!=='sim') return;
@@ -1523,11 +2170,16 @@ document.addEventListener('keydown', e=>{
 });
 
 function findPinAt(x,y) {
-  for (const comp of components) {
+  const all = powerSource ? [powerSource, ...components] : components;
+  for (const comp of all) {
     for (const pin of comp.pins) {
       let rx=pin.rx, ry=pin.ry;
       if (comp.rotation) {
-        const cx=50,cy=50, dx=rx-cx, dy=ry-cy;
+        // 非 SVG：百分比中心(50,50)；SVG：像素中心(comp.w/2,comp.h/2)
+        const isSvg = !!svgCfgForComp(comp);
+        const cx = isSvg ? comp.w/2 : 50;
+        const cy = isSvg ? comp.h/2 : 50;
+        const dx=rx-cx, dy=ry-cy;
         const rad=comp.rotation*Math.PI/180;
         rx=cx+dx*Math.cos(rad)-dy*Math.sin(rad);
         ry=cy+dx*Math.sin(rad)+dy*Math.cos(rad);
@@ -1542,8 +2194,13 @@ function findPinAt(x,y) {
 }
 
 function findCompAt(x,y) {
-  return components.find(c=>x>=c.x&&x<=c.x+c.w&&y>=c.y&&y<=c.y+c.h);
+  // 固定电源可被命中（用于点击高亮提示），但不参与拖拽/选中——调用方按 fixed 跳过
+  const all = powerSource ? [powerSource, ...components] : components;
+  return all.find(c=>x>=c.x&&x<=c.x+c.w&&y>=c.y&&y<=c.y+c.h);
 }
+
+// 是否为可拖动/选中/删除的普通元件（排除固定电源）
+function isMovable(comp) { return comp && !comp.fixed; }
 
 function createWire(from,to) {
   if (from.compId===to.compId) return;
@@ -1568,6 +2225,8 @@ function toggleSimulation() {
   isSimulating = !isSimulating;
   const btn = document.getElementById('simToggleBtn');
   if (isSimulating) {
+    // 电源是唯一源头：仿真前确保电源已就位
+    if (!powerSource) setupPowerSource(currentMode);
     btn.innerHTML = '<i class="fa-solid fa-pause"></i> '+t('stopSim');
     btn.classList.add('active-btn');
     haptic('success'); beep(600,.1);
@@ -1576,9 +2235,22 @@ function toggleSimulation() {
     btn.innerHTML = '<i class="fa-solid fa-play"></i> '+t('startSim');
     btn.classList.remove('active-btn');
     wires.forEach(w=>{w.powered=false; w.activePhase=null;});
-    components.forEach(c=>{c.state=false; c.pins.forEach(p=>{p.voltage=0; p.phaseActive=null;});});
+    components.forEach(c=>{c.state=false; c.pins.forEach(p=>{p.voltage=0; p.phaseActive=null;});
+      // 复位控制型继电器/时间继电器/接触器主/热继主内部驱动量，避免重启动时残留延时
+      if (c.subtype==='relay_ka'||c.subtype==='relay_kt'||c.subtype==='thermal_aux'
+          ||c.subtype==='contactor_km'||c.subtype==='thermal_main') {
+        c.driveState=false; c._energizedSince=0;
+      }
+    });
+    if (powerSource) powerSource.pins.forEach(p=>{p.voltage=0; p.phaseActive=null;});
     render();
   }
+}
+
+// 在 components 与 powerSource 联合范围内查找元件 / 引脚
+function findCompById(id) {
+  if (powerSource && powerSource.id===id) return powerSource;
+  return components.find(c=>c.id===id);
 }
 
 function analyzeCircuit() {
@@ -1587,26 +2259,115 @@ function analyzeCircuit() {
   // Reset all voltages and phases
   wires.forEach(w=>{w.powered=false; w.activePhase=null;});
   components.forEach(c=>{
-    // Only reset non-power-source states; keep breaker/switch state
-    if (c.type==='lamp'||c.type==='indicator'||c.type==='indicator380'||c.type==='motor3p'||c.type==='bell') c.state=false;
+    if (isLoadComp(c)) c.state=false;     // 耗电器每帧重判；开关/断路器/接触器状态由点击维持
     c.pins.forEach(p=>{p.voltage=0; p.phaseActive=null;});
   });
+  if (powerSource) powerSource.pins.forEach(p=>{p.voltage=0; p.phaseActive=null;});
 
-  // Find closed power sources (breakers in ON state)
-  const sources = components.filter(c =>
-    c.state && (c.type==='breaker1p'||c.type==='breaker3p')
-  );
+  // 唯一源头：固定电源（不存在则无电）
+  const sources = powerSource ? [powerSource] : [];
   if (sources.length===0) { render(); return; }
 
-  // Seed: each source energizes its own pins with matching phases
+  // Seed：只给相线端子（role==='line'）主动种电势；N/PE 被动，靠回流灌入。
   sources.forEach(src => {
     src.pins.forEach(p => {
-      if (p.phase) {
+      if (p.role==='line' && p.phase) {
         p.voltage = src.voltage;
         p.phaseActive = p.phase;
       }
     });
   });
+
+  // 元件是否在两端之间导通（基于 category + 通断开关 state）
+  // - 耗电器(load/sensor)与被动直通(misc)元件恒导通（电势能穿到对侧引脚走回路）
+  // - 可点击开关(switch/protect/control)仅当 state=true 时导通
+  // - 接触器特殊：state=true 时所有主触点互通
+  function compConducts(c) {
+    if (!c) return false;
+    if (c.isSource) return false;          // 电源作为端点不"穿通"，仅靠它的端子种电
+    // 控制类继电器/热继辅助/接触器主：线圈端允许相线进入(算得电)，触点端按 internalGroups 决定。
+    // 这里返回 true 让相线进得来，触点实际通断由 internalGroups 不返该 group 即阻断。
+    if (c.subtype==='relay_ka' || c.subtype==='relay_kt' || c.subtype==='thermal_aux'
+        || c.subtype==='contactor_km' || c.subtype==='thermal_main') return true;
+    if (c.contactor) return !!c.state;
+    if (isLoadComp(c) || compIsPassive(c)) return true;   // 灯/插座/熔断器等直通
+    if (isClickableSwitch(c)) return !!c.state;           // 开关/断路器：开则通
+    return !!c.state;
+  }
+
+  // 元件内部"通断成组"：返回元件内部端子的电气通断分组。
+  // 语义：相同 phase 的端子在元件导通时内部直通（模拟多极器件按极独立：如双极开关
+  // L_in↔L_out、N_in↔N_out 各自成极，L 与 N 端不跨极直连）；耗电负载(load/sensor)
+  // 两端是不同电气节点（电流穿过负载但不内部短接），返回空数组（即元件内部不互通）；
+  // 不导通（开关断开）时返回空数组。
+  // 返回数组，每项是该组端子的引用数组；电源作为端点不在其内（其端子只作种电源）。
+  // 触点对有效通断（仅用于 role==='contact' 触点端）：
+  //  - driveState = 线圈得电(KA/KT 延时到) 或 FR 未跳闸；由 analyzeCircuit 内线圈段算出填入
+  //  - inverted(NC): 反相 → !driveState
+  function contactEnergized(c, pin) {
+    const drive = !!c.driveState;
+    return pin.inverted ? !drive : drive;
+  }
+
+  function internalGroups(c) {
+    if (!c || c.isSource) return [];
+
+    // === 线圈型继电器/时间继电器/热继辅助/接触器主/热继主元件：按 contactGroup + inverted 决定每对触点通断 ===
+    // 线圈端(role==='coil')不进任何 group（它是耗电负载语义，不与触点内部短接）。
+    if (c.subtype==='relay_ka' || c.subtype==='relay_kt' || c.subtype==='thermal_aux'
+        || c.subtype==='contactor_km' || c.subtype==='thermal_main') {
+      const byGroup = new Map();
+      c.pins.forEach(p => {
+        if (p.role !== 'contact' || !p.contactGroup) return;
+        if (!byGroup.has(p.contactGroup)) byGroup.set(p.contactGroup, []);
+        byGroup.get(p.contactGroup).push(p);
+      });
+      const out = [];
+      for (const grp of byGroup.values()) {
+        if (grp.length < 2) continue;          // 一对触点需两端
+        // 该组导通与否：取组内任一端的 contactEnergized（同组 inverted 一致）
+        if (contactEnergized(c, grp[0])) out.push(grp);
+      }
+      return out;
+    }
+
+    // === 按钮(NO/NC/急停)：按下 state=true 时切触点行为，按 contactGroup + inverted ===
+    if (c.subtype==='momentary_no' || c.subtype==='momentary_nc' || c.subtype==='emergency_stop') {
+      const byGroup = new Map();
+      c.pins.forEach(p => {
+        if (!p.contactGroup) return;
+        if (!byGroup.has(p.contactGroup)) byGroup.set(p.contactGroup, []);
+        byGroup.get(p.contactGroup).push(p);
+      });
+      const out = [];
+      const pressed = !!c.state;                 // 按下/自锁
+      for (const grp of byGroup.values()) {
+        if (grp.length < 2) continue;
+        // NO: pressed 通；NC(inverted): pressed 断（常态通）—— 与 inverted 复合
+        const conducting = grp[0].inverted ? !pressed : pressed;
+        if (conducting) out.push(grp);
+      }
+      return out;
+    }
+
+    // === 旧逻辑（无 subtype 的 SVG/手绘元件）兜底：保持原 byPhase 行为不变 ===
+    if (isLoadComp(c)) return [];
+    const conducts = c.contactor ? !!c.state
+                   : (compIsPassive(c) ? true
+                   : (isClickableSwitch(c) ? !!c.state : !!c.state));
+    if (!conducts) return [];
+    if (c.contactor) {                                  // 接触器吸合：所有主触点互通成单组
+      return [c.pins.slice()];
+    }
+    // 按 phase 分组（无 phase 或 phase 缺失的端子算"无标签"归到一起，但本工具元件都有 phase）
+    const byPhase = new Map();
+    c.pins.forEach(p => {
+      const key = p.phase || '__nolabel__';
+      if (!byPhase.has(key)) byPhase.set(key, []);
+      byPhase.get(key).push(p);
+    });
+    return [...byPhase.values()];
+  }
 
   // BFS propagation through wires
   let changed = true;
@@ -1616,74 +2377,204 @@ function analyzeCircuit() {
     changed = false;
     iterations++;
     wires.forEach(w => {
-      const fromComp = components.find(c=>c.id===w.fromC);
-      const toComp = components.find(c=>c.id===w.toC);
+      const fromComp = findCompById(w.fromC);
+      const toComp = findCompById(w.toC);
       const fromPin = fromComp?.pins.find(p=>p.id===w.fromP);
       const toPin = toComp?.pins.find(p=>p.id===w.toP);
-
       if (!fromPin||!toPin) return;
 
-      // Propagate FROM -> TO
-      if (fromPin.voltage>0 && fromPin.phaseActive && toPin.voltage===0) {
-        const tcClosed = toComp.state || (toComp.type==='lamp'||toComp.type==='indicator'||toComp.type==='indicator380'||toComp.type==='motor3p'||toComp.type==='bell'||toComp.type==='socket'||toComp.type==='fuse'||toComp.type==='thermal_relay');
-        // For contactors: propagate A1/A2 (coil) to all pins, or propagate through main contacts
-        if (toComp.contactor && toComp.state) {
-          // Contactor energized: pass through all pins
-          toPin.voltage = fromPin.voltage;
-          toPin.phaseActive = fromPin.phaseActive;
-          changed = true;
-          // Energize all pins of the contactor with same phase
-          toComp.pins.forEach(p=>{ if(p.voltage===0){p.voltage=fromPin.voltage; p.phaseActive=fromPin.phaseActive;} });
-        } else if (tcClosed) {
-          // SHORT CIRCUIT CHECK: does the receiving pin already have a different phase?
-          if (toPin.phaseActive && toPin.phaseActive !== fromPin.phaseActive &&
-              PHASE_INCOMPATIBLE[fromPin.phaseActive]?.includes(toPin.phaseActive)) {
-            triggerShortCircuit(fromPin, toPin);
-            return;
-          }
-          toPin.voltage = fromPin.voltage;
-          toPin.phaseActive = fromPin.phaseActive;
-          w.powered = true;
-          w.activePhase = fromPin.phaseActive;
-          changed = true;
-          // Activate loads
-          if (toComp.type==='lamp'||toComp.type==='indicator'||toComp.type==='indicator380'||toComp.type==='motor3p'||toComp.type==='bell') {
-            toComp.state = true;
-          }
+      const propagate = (srcPin, dstPin, dstComp) => {
+        if (srcPin.voltage<=0 || !srcPin.phaseActive) return false;
+        if (dstPin.voltage!==0) return false;        // 已通电不再覆盖
+        // 是否允许进入 dstComp（其通断）
+        if (!compConducts(dstComp)) return false;
+        // 同一 pin 已有不同相 → 短路
+        if (dstPin.phaseActive && dstPin.phaseActive !== srcPin.phaseActive &&
+            PHASE_INCOMPATIBLE[srcPin.phaseActive]?.includes(dstPin.phaseActive)) {
+          triggerShortCircuit(srcPin, dstPin);
+          return false;
         }
-      }
+        dstPin.voltage = srcPin.voltage;
+        dstPin.phaseActive = srcPin.phaseActive;
+        w.powered = true;
+        w.activePhase = srcPin.phaseActive;
+        // 接触器：线圈得电后所有主触点互通（这里 dst 是接触器且 state 假定为已吸合）
+        if (dstComp.contactor && dstComp.state) {
+          dstComp.pins.forEach(p=>{ if(p.voltage===0){p.voltage=srcPin.voltage; p.phaseActive=srcPin.phaseActive;} });
+        }
+        return true;
+      };
 
-      // Propagate TO -> FROM
-      if (toPin.voltage>0 && toPin.phaseActive && fromPin.voltage===0) {
-        const fcClosed = fromComp.state || (fromComp.type==='lamp'||fromComp.type==='indicator'||fromComp.type==='indicator380'||fromComp.type==='motor3p'||fromComp.type==='bell'||fromComp.type==='socket'||fromComp.type==='fuse'||fromComp.type==='thermal_relay');
-        if (fromComp.contactor && fromComp.state) {
-          fromPin.voltage = toPin.voltage;
-          fromPin.phaseActive = toPin.phaseActive;
-          changed = true;
-          fromComp.pins.forEach(p=>{ if(p.voltage===0){p.voltage=toPin.voltage; p.phaseActive=toPin.phaseActive;} });
-        } else if (fcClosed) {
-          if (fromPin.phaseActive && fromPin.phaseActive !== toPin.phaseActive &&
-              PHASE_INCOMPATIBLE[toPin.phaseActive]?.includes(fromPin.phaseActive)) {
-            triggerShortCircuit(toPin, fromPin);
-            return;
-          }
-          fromPin.voltage = toPin.voltage;
-          fromPin.phaseActive = toPin.phaseActive;
-          w.powered = true;
-          w.activePhase = toPin.phaseActive;
-          changed = true;
-          if (fromComp.type==='lamp'||fromComp.type==='indicator'||fromComp.type==='indicator380'||fromComp.type==='motor3p'||fromComp.type==='bell') {
-            fromComp.state = true;
-          }
-        }
-      }
+      let c1 = propagate(fromPin, toPin, toComp);
+      let c2 = propagate(toPin, fromPin, fromComp);
+      if (c1 || c2) changed = true;
+    });
+
+    // 元件内部端子传递（按 phase 分组，多极器件各极独立）：把任一已带相线相的
+    // 端子的相及电压传到该元件同极（同 phase）其余端子。修复"开关控制灯"等串联回路里
+    // 相线穿不过元件内部的缺陷（原 BFS 仅跨 wire 传递 → 相电到不了灯 L 端 → 灯不亮）。
+    // 同时避免不同极（如双极开关的 L 极与 N 极）跨连，符合物理按极独立通断。
+    components.forEach(c => {
+      internalGroups(c).forEach(grp => {
+        const donor = grp.find(p => p.phaseActive && p.voltage>0);
+        if (!donor) return;
+        grp.forEach(p => {
+          if (p===donor || p.voltage!==0) return;
+          if (p.phaseActive && p.phaseActive!==donor.phaseActive &&
+              PHASE_INCOMPATIBLE[donor.phaseActive]?.includes(p.phaseActive)) return; // 由短路检查统一跳闸
+          p.voltage = donor.voltage; p.phaseActive = donor.phaseActive; changed = true;
+        });
+      });
     });
   }
 
+  // ---------------- 电气连通图（并查集） ----------------
+  // 建立"导线 + 导通元件内部端子互通"的电气连通图，用于：
+  //  (a) 灯/耗电器回路判定 —— 回路端是否电气连通到电源 N/PE（修复 Bug 2：
+  //      原 BFS 仅复制"相线相 + voltage>0"传播，电源 N/PE 端无 voltage 故
+  //      回路端永远拿不到 phaseActive='N'/'PE'，导致正常 L+N 接线灯也不亮，
+  //      而 N/PE 错接在退化分支可能误判点亮。改为依连通图判回路，与物理一致：
+  //      N+PE 两端 ΔV=0 不构成回路 → 不点亮。）
+  //  (b) 元件内部端子互通 —— 开关/熔断器/灯等"导通"时其所有端子在电气上相连，
+  //      使"开关控制灯"等串联回路能跑通（原 BFS 缺此内部传递）。
+  const ALL_COMPS = powerSource ? [powerSource, ...components] : components;
+  const unionParent = new Map();
+  const pinKey = (c, p) => c.id + '@' + p.id;
+  function ufFind(k){ if(!unionParent.has(k)) unionParent.set(k,k); let x=k; while(unionParent.get(x)!==x){ unionParent.set(x, unionParent.get(unionParent.get(x))); x=unionParent.get(x);} return x; }
+  function ufUnion(a,b){ const x=ufFind(a), y=ufFind(b); if(x!==y) unionParent.set(x,y); }
+  ALL_COMPS.forEach(c=>c.pins.forEach(p=>ufFind(pinKey(c,p))));
+  // 元件内部：导通元件（含接触器吸合）的端子按 phase 分组互通（多极器件各极独立，
+  // 如双极开关 L 极两端互通、N 极两端互通，但 L 与 N 不跨极直连）；负载(load/sensor)
+  // 两端是不同电气节点，不内部短接——否则灯的相端与零端被并查集视为同节点，回路判定
+  // 失效（"接到相线"与"接到零线"无法区分，N+PE 等错接也会被判同集合）。
+  ALL_COMPS.forEach(c=>{
+    internalGroups(c).forEach(grp => {
+      const ks = grp.map(p=>pinKey(c,p));
+      for (let i=1;i<ks.length;i++) ufUnion(ks[0], ks[i]);
+    });
+  });
+  // 导线两端互通
+  wires.forEach(w=>{
+    const fc=findCompById(w.fromC), tc=findCompById(w.toC);
+    const fp=fc?.pins.find(p=>p.id===w.fromP), tp=tc?.pins.find(p=>p.id===w.toP);
+    if (fp && tp) ufUnion(pinKey(fc,fp), pinKey(tc,tp));
+  });
+  // 标记每个连通集合是否"触及"电源的某相线相 / N / PE
+  const grpLinePhases = new Map(), grpReturnPhases = new Map();
+  ALL_COMPS.forEach(c=>c.pins.forEach(p=>{ const k=ufFind(pinKey(c,p)); if(!grpLinePhases.has(k)){ grpLinePhases.set(k,new Set()); grpReturnPhases.set(k,new Set()); } }));
+  powerSource.pins.forEach(p=>{ const k=ufFind(pinKey(powerSource,p)); if(p.role==='line'&&p.phase) grpLinePhases.get(k).add(p.phase); if(p.role==='neutral'||p.role==='earth') grpReturnPhases.get(k).add(p.phase); });
+
+  // ---------------- 灯/耗电器 严格点亮判定（BFS 之后独立判） ----------------
+  // 灯亮 = 它的「相线引脚」实际收到某个相线相（L/L1/L2/L3，由 BFS 给出 phaseActive）
+  //        ＋ 它的「零/地引脚」所在的电气连通集合也确实电气连通到电源的 N 或 PE 端子
+  //        ＋ 两端未构成短路。家用单相灯（220V）一相一回路即满足。
+  // 物理依据：相线对零/地有电位差 → 形成回路 → 点亮；而 N 与 PE 之间 ΔV=0，
+  //          把它们同时接到灯两端不构成回路 → 不亮。错接（把电源 N 接到灯的 L 引脚、
+  //          PE 接到灯 N 引脚）→ 相端拿不到相线相 → 不亮。
+  function evalLoad(lp) {
+    const pins = lp.pins;
+    // === 三相电机/无N回路负载：3 个相端、0 个 N/PE 端 → 三相端都拿到相线相即运转 ===
+    // 物理依据：三相电机无需 N/PE 回路，三根相线相位差形成旋转磁场即运转。
+    // 短路（不同相被引到同一点）由外层并查集统一跳闸，此处不重复判。
+    const phasePins = pins.filter(p => isLinePhase(p.phase));
+    const retPins   = pins.filter(p => p.phase==='N' || p.phase==='PE');
+    if (phasePins.length >= 3 && retPins.length === 0) {
+      return phasePins.every(p => isLinePhase(p.phaseActive));
+    }
+    let linePin = pins.find(p => isLinePhase(p.phase));       // 设计为相端的引脚
+    let returnPin = pins.find(p => p.phase==='N' || p.phase==='PE');  // 设计为零/地端
+    // 找另一对（若配置只标了部分 phase，退化用"非相端"作回路端）
+    if (!returnPin) returnPin = pins.find(p => p !== linePin && !isLinePhase(p.phase));
+    if (!linePin || !returnPin) {
+      // 没有明确相/零标签：退化到旧"任一引脚有相线相 + 另一引脚有回至中性"
+      const hasLine = pins.some(p => isLinePhase(p.phaseActive));
+      const hasReturn = pins.some(p => p.phaseActive==='N' || p.phaseActive==='PE');
+      return hasLine && hasReturn;
+    }
+    const linePh = linePin.phaseActive;
+    if (!isLinePhase(linePh)) return false;       // 相端没拿到相线相 → 不亮（含错接）
+    // 回路端必须电气连通到电源的 N 或 PE 才算构成回路
+    const retRoot = ufFind(pinKey(lp, returnPin));
+    const returnPhases = grpReturnPhases.get(retRoot);
+    if (!returnPhases || returnPhases.size === 0) return false;  // 未接回 N/PE → 不亮
+    // 若同一连通集合同时触到相线相与 N/PE → 相线直连零/地，属短路；短路在外层统一跳闸，这里不点亮
+    const linePhasesHere = grpLinePhases.get(retRoot);
+    if (linePhasesHere && linePhasesHere.size > 0) return false;
+    return true;
+  }
+
+  // ---------------- 线圈得电判定 + 延时推导（KA.KT.KM.FR_aux.FR_main）----------------
+  // 线圈 A1(相端) 拿到相线相 + A2(零/地端) 所在电气连通集合确实连通到电源 N/PE
+  // → 已得电。driveState 由线圈驱动；触点 internalGroups 据 driveState + inverted 通断。
+  // KT：得电后累计 _energizedSince，超 delayMs 才 driveState=true；失电瞬时复位。
+  // KM：与 KA 同——线圈瞬时驱动主3极 + 辅助NO。
+  // FR_aux/FR_main：无线圈，comp.state=true 表示用户点击模拟跳闸 → driveState=!state →
+  //   inverted 触点反转（主3极断 + NC 95/96 断）。
+  // 注意：必须用 ufFind 连通图判回路，与 evalLoad 同理（电源 N/PE 端 voltage=0 但有连通关系）。
+  const nowMs = performance.now();
+  components.forEach(c => {
+    if (c.subtype!=='relay_ka' && c.subtype!=='relay_kt' && c.subtype!=='thermal_aux'
+        && c.subtype!=='contactor_km' && c.subtype!=='thermal_main') return;
+    let energized = false;
+    if (c.subtype==='thermal_aux' || c.subtype==='thermal_main') {
+      // 无线圈：driveState = !state（state=true=已跳闸 → 触点断）
+      energized = !c.state;
+    } else {
+      // KA / KT / KM：判线圈 A1(相端) 与 A2(回端)
+      const coilPins = c.pins.filter(p => p.role==='coil');
+      const linePin = coilPins.find(p => isLinePhase(p.phase));
+      const returnPin = coilPins.find(p => p.phase==='N' || p.phase==='PE');
+      if (linePin && returnPin) {
+        const linePh = linePin.phaseActive;
+        if (isLinePhase(linePh)) {
+          const retRoot = ufFind(pinKey(c, returnPin));
+          const ret = grpReturnPhases.get(retRoot);
+          const linePhasesHere = grpLinePhases.get(retRoot);
+          // 回路端电气连通到 N/PE 且该集合未同时短路到相线 → 线圈得电
+          energized = ret && ret.size > 0 && (!linePhasesHere || linePhasesHere.size === 0);
+        }
+      }
+    }
+    if (c.subtype==='relay_kt') {
+      if (energized) {
+        if (!c._energizedSince) c._energizedSince = nowMs;
+        c.driveState = (nowMs - c._energizedSince) >= (c.delayMs || 0);
+      } else {
+        c._energizedSince = 0;
+        c.driveState = false;               // 失电瞬时复位
+      }
+    } else if (c.subtype==='relay_ka' || c.subtype==='contactor_km') {
+      c.driveState = energized;             // KA / KM 瞬时（无延时）
+    } else { // thermal_aux / thermal_main
+      c.driveState = energized;             // !state（未跳闸）→ 触点通
+    }
+  });
+
+  components.forEach(c=>{
+    if (isLoadComp(c)) c.state = evalLoad(c);
+  });
+
   // POST-PROPAGATION SHORT CIRCUIT CHECK:
-  // Any pin that has conflicting phases from multiple wires -> short
+  // (1) 任一引脚集齐 ≥2 个互斥相线相（来自多条导线的 activePhase）→ 短路
+  // (2) 任一电气连通集合同时"触及"电源相线相与 N/PE → 相线直连零/地（如把电源 L
+  //     与 N 都接到同一引脚），零/地端虽本身无电压不会在导线上留下 activePhase，
+  //     但依连通图可识别为短路。覆盖用户接线中典型的"L/N 直连同点"漏检场景。
   let globalShort = false;
-  components.forEach(comp => {
+  const allForShort = powerSource ? [powerSource, ...components] : components;
+  // (2) 依并查集分组检查：相线相与 N/PE 同集合即短路
+  if (powerSource) {
+    // 依并查集按 root 聚合：相线相与 N/PE 同集合即短路（相线直连零/地）
+    const rootLine = new Map();
+    const rootReturn = new Map();
+    ALL_COMPS.forEach(c=>c.pins.forEach(p=>{ const k=ufFind(pinKey(c,p)); if(!rootLine.has(k)){rootLine.set(k,new Set());rootReturn.set(k,new Set());} }));
+    powerSource.pins.forEach(p=>{ const k=ufFind(pinKey(powerSource,p)); if(p.role==='line'&&p.phase) rootLine.get(k).add(p.phase); if(p.role==='neutral'||p.role==='earth') rootReturn.get(k).add(p.phase); });
+    for (const [k, line] of rootLine) {
+      const ret = rootReturn.get(k);
+      if (line.size>0 && ret.size>0) { globalShort = true; break; }
+    }
+  }
+  allForShort.forEach(comp => {
+    if (globalShort) return;
     comp.pins.forEach(pin => {
       const incomingPhases = new Set();
       wires.forEach(w => {
@@ -1732,9 +2623,11 @@ function triggerShortCircuitGeneral(phaseA, phaseB) {
   btn.innerHTML = '<i class="fa-solid fa-play"></i> '+t('startSim');
   btn.classList.remove('active-btn');
 
-  // Auto-trip all closed breakers
+  // Auto-trip all closed protective devices (断路器/空开——任何 category==='protect' 元件)
+  // 语义化判定：不再硬编码 type 字符串。新 breaker_qf_* 与老 breaker1p/3p 均走此分支；
+  // 熔断器 category='misc' 不受影响。
   components.forEach(c=>{
-    if ((c.type==='breaker1p'||c.type==='breaker3p') && c.state) {
+    if (compCategory(c)==='protect' && c.state) {
       c.state = false;
       saveUndo();
     }
@@ -1750,7 +2643,12 @@ function triggerShortCircuitGeneral(phaseA, phaseB) {
   haptic('error'); beep(150,.35,'sawtooth');
 
   wires.forEach(w=>{w.powered=false;w.activePhase=null;});
-  components.forEach(c=>{c.state=false;c.pins.forEach(p=>{p.voltage=0;p.phaseActive=null;});});
+  components.forEach(c=>{
+    c.state=false; c.pins.forEach(p=>{p.voltage=0;p.phaseActive=null;});
+    if (c.subtype==='relay_ka'||c.subtype==='relay_kt'||c.subtype==='thermal_aux'
+        ||c.subtype==='contactor_km'||c.subtype==='thermal_main'){c.driveState=false;c._energizedSince=0;}
+  });
+  if (powerSource) powerSource.pins.forEach(p=>{p.voltage=0; p.phaseActive=null;});
   render();
 }
 
@@ -1782,8 +2680,8 @@ const exercises = [
     desc:{zh:'连接单联开关与灯泡，实现基本照明控制',en:'Wire a 1-way switch to control a lamp',km:'ភ្ជាប់កុងតាក់ទៅអំពូល'},
     // Goal: switch closed => lamp ON, no short
     goal(comps,wires) {
-      const br = comps.find(c=>c.type==='breaker1p');
-      const sw = comps.find(c=>c.type==='switch1p');
+      const br = comps.find(c=>c.type==='breaker_qf_1p');
+      const sw = comps.find(c=>c.type==='switch_1g1w');
       const lp = comps.find(c=>c.type==='lamp');
       return br&&sw&&lp && br.state && sw.state && lp.state && !isSimulating; // isSimulating already false=safe
     }
@@ -1793,7 +2691,7 @@ const exercises = [
     level:'easy', mode:'home220v',
     desc:{zh:'L/N/PE 正确对应接线',en:'Wire L/N/PE correctly',km:'ភ្ជាប់ L/N/PE ឲ្យត្រូវ'},
     goal(comps,wires) {
-      const br = comps.find(c=>c.type==='breaker1p');
+      const br = comps.find(c=>c.type==='breaker_qf_1p');
       const sk = comps.find(c=>c.type==='socket');
       if (!br||!sk||!br.state) return false;
       // Check socket pins all energized with correct phases
@@ -1802,26 +2700,28 @@ const exercises = [
     }
   },
   {
-    id:'p3', title:{zh:'断路器保护电路',en:'Breaker + Contactor + Lamp',km:'ឧបករណ៍ + កុងតាក់ទ័រ + អំពូល'},
+    id:'p3', title:{zh:'断路器+接触器控制灯',en:'Breaker + Contactor + Lamp',km:'ឧបករណ៍ + កុងតាក់ទ័រ + អំពូល'},
     level:'medium', mode:'home220v',
-    desc:{zh:'断路器→接触器→负载的标准连接',en:'Standard breaker-contactor-load chain',km:'ខ្សែរស្តង់ដារ'},
+    desc:{zh:'断路器→接触器(线圈)→负载的标准连接',en:'Standard breaker-contactor(load) chain',km:'ខ្សែរស្តង់ដារ'},
     goal(comps,wires) {
-      const br = comps.find(c=>c.type==='breaker1p');
-      const ct = comps.find(c=>c.contactor);
+      const br = comps.find(c=>c.type==='breaker_qf_1p');
+      const ct = comps.find(c=>c.subtype==='contactor_km');
       const lp = comps.find(c=>c.type==='lamp');
-      return br&&ct&&lp && br.state && ct.state && lp.state;
+      // KM 由线圈驱动吸合 → 用 driveState 判定(而非手点 state)
+      return br&&ct&&lp && br.state && ct.driveState && lp.state;
     }
   },
   {
-    id:'p4', title:{zh:'三相电机正转控制',en:'3P Motor Forward',km:'ម៉ូទ័រទៅមុខ'},
+    id:'p4', title:{zh:'三相电机启停控制',en:'3P Motor Start/Stop',km:'ម៉ូទ័រ 3 ហ្វាស'},
     level:'hard', mode:'industrial380v',
-    desc:{zh:'断路器→接触器→热继电器→电机',en:'Breaker→Contactor→Thermal→Motor',km:'ឧបករណ៍→កុងតាក់ទ័រ→កម្តៅ→ម៉ូទ័រ'},
+    desc:{zh:'断路器→接触器→热继电器→电机，电机正常运转(未跳闸)',en:'Breaker→Contactor→Thermal→Motor, motor running (not tripped)',km:'ឧបករណ៍→កុងតាក់ទ័រ→កម្តៅ→ម៉ូទ័រ'},
     goal(comps,wires) {
-      const br = comps.find(c=>c.type==='breaker3p');
-      const ct = comps.find(c=>c.contactor);
-      const tr = comps.find(c=>c.type==='thermal_relay');
-      const mt = comps.find(c=>c.type==='motor3p');
-      return br&&ct&&tr&&mt && br.state && ct.state && tr.state && mt.state;
+      const br = comps.find(c=>c.type==='breaker_qf_3p');
+      const ct = comps.find(c=>c.subtype==='contactor_km');
+      const tr = comps.find(c=>c.type==='thermal_main');
+      const mt = comps.find(c=>c.type==='motor_3p');
+      // 目标判“正常运转”：断路器合 + KM 线圈吸合 + FR 未跳闸(state=false) + 电机运转
+      return br&&ct&&tr&&mt && br.state && ct.driveState && !tr.state && mt.state;
     }
   },
   {
@@ -1830,7 +2730,7 @@ const exercises = [
     desc:{zh:'多个指示灯并联接线',en:'Wire indicators in parallel',km:'ភ្ជាប់ភ្លើងសញ្ញាស្របគ្នា'},
     goal(comps,wires) {
       const indicators = comps.filter(c=>c.type==='indicator');
-      const br = comps.find(c=>c.type==='breaker1p');
+      const br = comps.find(c=>c.type==='breaker_qf_1p');
       if (!br||indicators.length<2||!br.state) return false;
       return indicators.every(i=>i.state);
     }
@@ -1877,6 +2777,7 @@ function initExercise(exId) {
   // Set mode
   currentMode = ex.mode||'home220v';
   updateSimModeLabel();
+  setupPowerSource(currentMode);   // 练习题依据模式重建固定电源
   renderComponentPanel();
   renderDrawerGrid();
 
@@ -1886,46 +2787,59 @@ function initExercise(exId) {
 
   switch(exId) {
     case 'p1': // Switch + Lamp with a breaker for power
-      spawnCompAt('breaker1p', startX, startY);
-      spawnCompAt('switch1p', startX, startY+180);
+      spawnCompAt('breaker_qf_1p', startX, startY);
+      spawnCompAt('switch_1g1w', startX, startY+180);
       spawnCompAt('lamp', startX+250, startY+100);
       // Breaker defaults to ON
-      const br1 = components.find(c=>c.type==='breaker1p');
+      const br1 = components.find(c=>c.type==='breaker_qf_1p');
       if (br1) br1.state = true;
       break;
 
     case 'p2': // Socket with breaker
-      spawnCompAt('breaker1p', startX, startY);
+      spawnCompAt('breaker_qf_1p', startX, startY);
       spawnCompAt('socket', startX+200, startY+60);
-      const br2 = components.find(c=>c.type==='breaker1p');
+      const br2 = components.find(c=>c.type==='breaker_qf_1p');
       if (br2) br2.state = true;
       break;
 
-    case 'p3': // Breaker + Contactor + Lamp
-      spawnCompAt('breaker1p', startX, startY);
-      spawnCompAt('contactor1p', startX+200, startY+50);
-      spawnCompAt('lamp', startX+400, startY+50);
-      const br3 = components.find(c=>c.type==='breaker1p');
-      if (br3) br3.state = true;
-      // Note: km contactor doesn't exist in home lib; spawn from industrial
-      // Workaround: spawn a special 1P contactor via directly adding
+    case 'p3': // Breaker + Contactor(KM 线圈) + Lamp —— 预置 KM 线圈回路，合 QF 即吸合
+      {
+        const br = spawnCompAt('breaker_qf_1p', startX, startY);
+        const ct = spawnCompAt('contactor_km', startX+200, startY+60);
+        const lp = spawnCompAt('lamp', startX+480, startY+60);
+        if (br.state!==undefined) br.state = true;       // QF 默认合闸
+        // 预置线圈回路：QF 出线(L_out) → KM·A1 ；KM·A2 → 电源 N。合 QF → KM 线圈得电 → 吸合。
+        // 主回路需用户自接：QF·L_out → KM·L1_in → KM·L1_out → 灯 → 电源 N。
+        if (ct && powerSource) {
+          preconnectWire(br, 'L_out',   ct, 'A1');
+          preconnectWire(ct,  'A2', powerSource, 'N');
+        }
+      }
       break;
 
-    case 'p4': // Industrial 380V chain
-      spawnCompAt('breaker3p', startX, startY);
-      spawnCompAt('contactor', startX+250, startY+50);
-      spawnCompAt('thermal_relay', startX+500, startY+50);
-      spawnCompAt('motor3p', startX+380, startY+250);
-      const br4 = components.find(c=>c.type==='breaker3p');
-      if (br4) br4.state = true;
+    case 'p4': // Industrial 380V chain —— QF3P → KM主3极 → FR主3极 → 电机，预置线圈回路
+      {
+        const br = spawnCompAt('breaker_qf_3p', startX, startY);
+        const ct = spawnCompAt('contactor_km', startX+280, startY+30);
+        const tr = spawnCompAt('thermal_main', startX+520, startY+30);
+        const mt = spawnCompAt('motor_3p', startX+430, startY+260);
+        if (br.state!==undefined) br.state = true;       // QF 默认合闸
+        // 预置 KM 线圈回路：QF·L1_out → KM·A1 ; KM·A2 → 电源 N。合 QF → KM 吸合。
+        if (ct && powerSource) {
+          preconnectWire(br, 'L1_out', ct, 'A1');
+          preconnectWire(ct, 'A2',    powerSource, 'N');
+        }
+        // 主回路由用户自接：QF·L1/L2/L3_out → KM·L1/L2/L3_in → KM·L*_out → FR·T*_in → FR·T*_out → 电机 U/V/W
+        void tr; void mt;
+      }
       break;
 
     case 'p5': // Multiple indicators parallel
-      spawnCompAt('breaker1p', startX, startY);
+      spawnCompAt('breaker_qf_1p', startX, startY);
       spawnCompAt('indicator', startX+180, startY+30);
       spawnCompAt('indicator', startX+350, startY+30);
       spawnCompAt('indicator', startX+180, startY+180);
-      const br5 = components.find(c=>c.type==='breaker1p');
+      const br5 = components.find(c=>c.type==='breaker_qf_1p');
       if (br5) br5.state = true;
       break;
   }
@@ -1933,27 +2847,25 @@ function initExercise(exId) {
   resizeCanvas(); render(); updateStatus();
 }
 
-function spawnCompAt(type, x, y) {
-  const tpl = findTemplate(type); if (!tpl) return;
-  const id = 'c'+Date.now()+'_'+Math.random().toString(36).substr(2,5);
-  const comp = {
-    id, type, name:tpl.name, icon:tpl.icon, pins:[], rotation:0,
-    x, y, w:(tpl.pins>=5?150:110), h:(tpl.pins>=4?100:90),
-    voltage:tpl.v||220, current:10, state:tpl.defaultState||false,
-    contactor:tpl.contactor||false
-  };
-  const phases = tpl.phases||[];
-  const pinCount = tpl.pins;
-  const rawPos = computePinPositions(pinCount);
-  for (let i=0; i<pinCount; i++) {
-    comp.pins.push({
-      id:comp.id+'_p'+i,
-      label: (phases[i])?(PHASE_LABEL[phases[i]]?PHASE_LABEL[phases[i]][lang]:phases[i]):('P'+(i+1)),
-      phase: phases[i]||null,
-      rx:rawPos[i].rx, ry:rawPos[i].ry, voltage:0, phaseActive:null
-    });
-  }
-  components.push(comp);
+// 练习题预置导线辅助：把 fromComp.fromPinId ↔ toComp.toPinId 连一条线并刷新端点坐标。
+// 容错：找不到对应 pin 则跳过。用于在 initExercise 里预置 KM 线圈回路等关键接线。
+function preconnectWire(fromComp, fromPinId, toComp, toPinId) {
+  if (!fromComp || !toComp) return;
+  const fp = fromComp.pins.find(p=>p.id===fromPinId || p.id===fromComp.id+'_'+fromPinId);
+  const tp = toComp.pins.find(p=>p.id===toPinId   || p.id===toComp.id  +'_'+toPinId);
+  if (!fp || !tp) return;
+  // 同一对重复连不建
+  const exists = wires.find(w=>
+    (w.fromC===fromComp.id&&w.fromP===fp.id&&w.toC===toComp.id&&w.toP===tp.id)||
+    (w.fromC===toComp.id&&w.fromP===tp.id&&w.toC===fromComp.id&&w.toP===fp.id));
+  if (exists) return;
+  wires.push({
+    id:'w'+Date.now()+'_'+Math.random().toString(36).substr(2,4),
+    fromC:fromComp.id, fromP:fp.id, toC:toComp.id, toP:tp.id,
+    x1: fromComp.x + fp.rx, y1: fromComp.y + fp.ry,
+    x2: toComp.x   + tp.rx, y2: toComp.y   + tp.ry,
+    powered:false, activePhase:null
+  });
 }
 
 // Exercise goal checker — runs post-simulation
@@ -1966,20 +2878,26 @@ function checkExerciseGoal(exId) {
 // ============================================================
 //  INITIALIZATION
 // ============================================================
-function init() {
+async function init() {
   applyI18N();
-  renderComponentPanel();
-  renderDrawerGrid();
   resizeCanvas();
-  render();
+  render();     // 先渲染框架（元件库显示"加载中"，画布占位）
   document.getElementById('undoBtn').disabled=true;
 
-  // Animation loop
+  // Animation loop（loadComponentLib 完成后，renderComponentPanel/renderDrawerGrid 由它触发）
+  // 仿真态下若存在延时(KT)/自复位(按钮)元件，每帧重算 analyzeCircuit 推进时间相关状态；
+  // 普通电路 _hasTimedComponents()=false 则零成本仅渲染。不引入额外 setInterval/RAF。
   function loop() {
-    if (currentView==='sim') render();
+    if (currentView==='sim') {
+      render();
+      if (isSimulating && _hasTimedComponents()) analyzeCircuit();
+    }
     requestAnimationFrame(loop);
   }
   loop();
+
+  // 真正加载元件库配置（异步 fetch），加载完会触发面板/画布刷新
+  await loadComponentLib();
 
   window.addEventListener('resize',()=>{ if (currentView==='sim') resizeCanvas(); });
 }
