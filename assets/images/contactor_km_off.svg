@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 200">
+  <defs>
+    <linearGradient id="case" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f1f5f9"/>
+      <stop offset="1" stop-color="#94a3b8"/>
+    </linearGradient>
+  </defs>
+  <!-- 外壳 -->
+  <rect x="6" y="6" width="168" height="188" rx="6" fill="url(#case)" stroke="#475569" stroke-width="2"/>
+  <rect x="10" y="10" width="160" height="180" rx="4" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+  <!-- 顶部线圈符号区 -->
+  <rect x="50" y="22" width="80" height="26" rx="2" fill="#fff" stroke="#1e40af" stroke-width="1.6"/>
+  <line x1="50" y1="48" x2="130" y2="22" stroke="#1e40af" stroke-width="1.4"/>
+  <text x="160" y="40" font-family="Arial" font-size="9" fill="#1e40af" font-weight="700">KM</text>
+  <!-- 线圈端子引线 A1(左,相红) A2(右,零蓝) -->
+  <line x1="30" y1="14" x2="30" y2="35" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <line x1="30" y1="35" x2="50" y2="35" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <line x1="150" y1="14" x2="150" y2="35" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+  <line x1="150" y1="35" x2="130" y2="35" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+  <!-- 主3极触点区(常态:断开-斜线) L1/L2/L3 -->
+  <!-- L1 极 -->
+  <line x1="20" y1="80" x2="20" y2="120" stroke="#dc2626" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="20" y1="120" x2="38" y2="140" stroke="#dc2626" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="20" y1="160" x2="20" y2="186" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="20" cy="120" r="2.2" fill="#dc2626"/>
+  <circle cx="20" cy="160" r="2.2" fill="#16a34a"/>
+  <!-- L2 极 -->
+  <line x1="90" y1="80" x2="90" y2="120" stroke="#dc2626" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="90" y1="120" x2="108" y2="140" stroke="#dc2626" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="90" y1="160" x2="90" y2="186" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="90" cy="120" r="2.2" fill="#dc2626"/>
+  <circle cx="90" cy="160" r="2.2" fill="#16a34a"/>
+  <!-- L3 极 -->
+  <line x1="160" y1="80" x2="160" y2="120" stroke="#dc2626" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="160" y1="120" x2="142" y2="140" stroke="#dc2626" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="160" y1="160" x2="160" y2="186" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="160" cy="120" r="2.2" fill="#dc2626"/>
+  <circle cx="160" cy="160" r="2.2" fill="#16a34a"/>
+  <!-- 辅助 NO 触点(右侧,常态断) -->
+  <line x1="110" y1="80" x2="110" y2="120" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <line x1="110" y1="120" x2="98" y2="136" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <line x1="110" y1="160" x2="110" y2="186" stroke="#16a34a" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="110" cy="120" r="2" fill="#dc2626"/>
+  <circle cx="110" cy="160" r="2" fill="#16a34a"/>
+  <!-- 文字标注 -->
+  <text x="30" y="11" text-anchor="middle" font-family="Arial" font-size="8" fill="#1e40af" font-weight="700">A1</text>
+  <text x="150" y="11" text-anchor="middle" font-family="Arial" font-size="8" fill="#1e40af" font-weight="700">A2</text>
+  <text x="20" y="74" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">1/L1</text>
+  <text x="90" y="74" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">3/L2</text>
+  <text x="160" y="74" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">5/L3</text>
+  <text x="110" y="74" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">13</text>
+  <text x="20" y="196" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">3/T1</text>
+  <text x="90" y="196" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">5/T2</text>
+  <text x="160" y="196" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">7/T3</text>
+  <text x="110" y="196" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">14</text>
+</svg>

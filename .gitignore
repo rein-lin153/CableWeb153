@@ -1,1 +1,27 @@
+# OS
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# Cloudflare Wrangler 本地构建缓存/状态(可由 wrangler dev/deploy 再生,勿提交)
+.wrangler/
+
+# Claude Code 本地工作区(临时浏览器/任务产物,与项目代码无关)
+.claude/tmp/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 日志 / 临时
+*.log
+*.tmp
+*.bak
+*.old
+*.orig
+
+# 一次性本地测试脚本(仅作临时校验,不进仓库)
+_test_*.js

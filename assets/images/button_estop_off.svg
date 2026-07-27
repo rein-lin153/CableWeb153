@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 120">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fde047"/>
+      <stop offset="1" stop-color="#ca8a04"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1f2937"/>
+      <stop offset="1" stop-color="#0f172a"/>
+    </linearGradient>
+  </defs>
+  <!-- 黄色外框(急停标识) -->
+  <rect x="3" y="3" width="74" height="114" rx="10" fill="url(#g1)" stroke="#854d0e" stroke-width="2"/>
+  <rect x="8" y="8" width="64" height="104" rx="8" fill="#0f172a" stroke="#000" stroke-width="1.5"/>
+  <!-- 急停 NC 常态闭合 -->
+  <line x1="12" y1="108" x2="12" y2="52" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="12" y1="52" x2="68" y2="52" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="68" y1="52" x2="68" y2="108" stroke="#fbbf24" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="12" cy="52" r="2.6" fill="#fbbf24"/>
+  <circle cx="68" cy="52" r="2.6" fill="#fbbf24"/>
+  <!-- 红蘑菇头(弹起态) -->
+  <circle cx="40" cy="40" r="20" fill="#dc2626" stroke="#7f1d1d" stroke-width="1.5"/>
+  <circle cx="40" cy="40" r="12" fill="#ef4444"/>
+  <text x="40" y="44" text-anchor="middle" font-family="Arial" font-size="9" font-weight="700" fill="#fff">STOP</text>
+  <text x="12" y="119" text-anchor="middle" font-family="Arial" font-size="9" font-weight="700" fill="#fde047">11</text>
+  <text x="68" y="119" text-anchor="middle" font-family="Arial" font-size="9" font-weight="700" fill="#fde047">12</text>
+</svg>

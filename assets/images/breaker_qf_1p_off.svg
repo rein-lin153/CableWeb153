@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 130">
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fafafa"/>
+      <stop offset="1" stop-color="#d1d5db"/>
+    </linearGradient>
+  </defs>
+  <!-- DIN 导轨底 -->
+  <rect x="6" y="116" width="68" height="8" rx="2" fill="#9ca3af" stroke="#6b7280" stroke-width="1"/>
+  <!-- 主体 -->
+  <rect x="10" y="8" width="60" height="108" rx="5" fill="url(#body)" stroke="#475569" stroke-width="1.8"/>
+  <rect x="14" y="12" width="52" height="100" rx="3" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+  <!-- 拨杆(OFF 向下,红) -->
+  <rect x="32" y="44" width="16" height="26" rx="3" fill="#ef4444" stroke="#991b1b" stroke-width="1.2"/>
+  <circle cx="40" cy="68" r="2.5" fill="#fee2e2"/>
+  <!-- 状态文字 -->
+  <text x="40" y="32" text-anchor="middle" font-family="Arial" font-size="9" fill="#dc2626" font-weight="700">OFF</text>
+  <text x="40" y="98" text-anchor="middle" font-family="Arial" font-size="8" fill="#475569" font-weight="700">1P</text>
+  <!-- 进出线 -->
+  <line x1="40" y1="14" x2="40" y2="40" stroke="#dc2626" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="40" cy="40" r="2.4" fill="#dc2626"/>
+  <line x1="40" y1="74" x2="40" y2="110" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="40" cy="110" r="2.4" fill="#16a34a"/>
+  <!-- 端子标 -->
+  <text x="40" y="11" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">L</text>
+  <text x="40" y="127" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">L</text>
+</svg>

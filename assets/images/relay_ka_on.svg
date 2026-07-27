@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140">
+  <defs>
+    <linearGradient id="case" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f1f5f9"/>
+      <stop offset="1" stop-color="#94a3b8"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="88" height="128" rx="6" fill="url(#case)" stroke="#475569" stroke-width="2"/>
+  <rect x="10" y="10" width="80" height="120" rx="4" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+  <!-- 线圈得电高亮 -->
+  <rect x="30" y="26" width="40" height="22" rx="2" fill="#fef08a" stroke="#ca8a04" stroke-width="1.8"/>
+  <line x1="30" y1="48" x2="70" y2="26" stroke="#ca8a04" stroke-width="1.4"/>
+  <text x="62" y="42" font-family="Arial" font-size="8" fill="#b45309" font-weight="700">KA</text>
+  <line x1="14" y1="12" x2="14" y2="37" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <line x1="14" y1="37" x2="30" y2="37" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <line x1="86" y1="12" x2="86" y2="37" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+  <line x1="86" y1="37" x2="70" y2="37" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
+  <!-- NO 吸合闭合 -->
+  <line x1="14" y1="128" x2="14" y2="73" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <line x1="14" y1="73" x2="38" y2="73" stroke="#16a34a" stroke-width="2" stroke-linecap="round"/>
+  <line x1="38" y1="73" x2="38" y2="128" stroke="#16a34a" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="14" cy="73" r="2" fill="#dc2626"/>
+  <circle cx="38" cy="73" r="2" fill="#16a34a"/>
+  <!-- NC 吸合断开(斜断) -->
+  <line x1="62" y1="128" x2="62" y2="80" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <line x1="62" y1="80" x2="78" y2="66" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <line x1="86" y1="128" x2="86" y2="66" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="62" cy="80" r="2" fill="#dc2626"/>
+  <circle cx="86" cy="66" r="2" fill="#dc2626"/>
+  <text x="14" y="20" text-anchor="middle" font-family="Arial" font-size="8" fill="#1e40af" font-weight="700">A1</text>
+  <text x="86" y="20" text-anchor="middle" font-family="Arial" font-size="8" fill="#1e40af" font-weight="700">A2</text>
+  <text x="14" y="137" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">13</text>
+  <text x="38" y="137" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">14</text>
+  <text x="62" y="137" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">11</text>
+  <text x="86" y="137" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">12</text>
+</svg>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 130">
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fafafa"/>
+      <stop offset="1" stop-color="#d1d5db"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="116" width="168" height="8" rx="2" fill="#9ca3af" stroke="#6b7280" stroke-width="1"/>
+  <rect x="10" y="8" width="160" height="108" rx="5" fill="url(#body)" stroke="#475569" stroke-width="1.8"/>
+  <rect x="14" y="12" width="152" height="100" rx="3" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+  <!-- 3 联拨杆(OFF 下,红) -->
+  <rect x="22" y="44" width="16" height="26" rx="3" fill="#ef4444" stroke="#991b1b" stroke-width="1.2"/>
+  <rect x="82" y="44" width="16" height="26" rx="3" fill="#ef4444" stroke="#991b1b" stroke-width="1.2"/>
+  <rect x="142" y="44" width="16" height="26" rx="3" fill="#ef4444" stroke="#991b1b" stroke-width="1.2"/>
+  <text x="90" y="32" text-anchor="middle" font-family="Arial" font-size="9" fill="#dc2626" font-weight="700">OFF</text>
+  <text x="90" y="98" text-anchor="middle" font-family="Arial" font-size="8" fill="#475569" font-weight="700">3P QF</text>
+  <!-- L1 极 -->
+  <line x1="30" y1="14" x2="30" y2="40" stroke="#eab308" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="30" cy="40" r="2.4" fill="#eab308"/>
+  <line x1="30" y1="74" x2="30" y2="110" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="30" cy="110" r="2.4" fill="#16a34a"/>
+  <!-- L2 极 -->
+  <line x1="90" y1="14" x2="90" y2="40" stroke="#22c55e" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="90" cy="40" r="2.4" fill="#22c55e"/>
+  <line x1="90" y1="74" x2="90" y2="110" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="90" cy="110" r="2.4" fill="#16a34a"/>
+  <!-- L3 极 -->
+  <line x1="150" y1="14" x2="150" y2="40" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="150" cy="40" r="2.4" fill="#ef4444"/>
+  <line x1="150" y1="74" x2="150" y2="110" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="150" cy="110" r="2.4" fill="#16a34a"/>
+  <!-- 端子标 -->
+  <text x="30" y="11" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">1/L1</text>
+  <text x="90" y="11" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">3/L2</text>
+  <text x="150" y="11" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">5/L3</text>
+  <text x="30" y="127" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">3/T1</text>
+  <text x="90" y="127" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">5/T2</text>
+  <text x="150" y="127" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">7/T3</text>
+</svg>

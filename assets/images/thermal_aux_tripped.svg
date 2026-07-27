@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 100">
+  <defs>
+    <linearGradient id="case" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fee2e2"/>
+      <stop offset="1" stop-color="#dc2626"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="68" height="88" rx="6" fill="url(#case)" stroke="#7f1d1d" stroke-width="2"/>
+  <rect x="10" y="10" width="60" height="80" rx="4" fill="none" stroke="#fecaca" stroke-width="1"/>
+  <!-- 已跳闸: 双金属片弯曲高亮红 -->
+  <rect x="20" y="24" width="40" height="18" rx="2" fill="#fee2e2" stroke="#dc2626" stroke-width="1.8"/>
+  <line x1="22" y1="40" x2="58" y2="30" stroke="#dc2626" stroke-width="1.4" stroke-dasharray="2 2"/>
+  <text x="40" y="36" text-anchor="middle" font-family="Arial" font-size="8" fill="#dc2626" font-weight="700">FR</text>
+  <!-- NC 辅助触点跳闸断开(斜断) -->
+  <line x1="12" y1="88" x2="12" y2="58" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <line x1="12" y1="58" x2="40" y2="44" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <line x1="68" y1="88" x2="68" y2="44" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="12" cy="58" r="2" fill="#dc2626"/>
+  <circle cx="68" cy="44" r="2" fill="#dc2626"/>
+  <rect x="52" y="48" width="6" height="8" fill="#dc2626" stroke="#7f1d1d" stroke-width="0.8"/>
+  <text x="40" y="14" text-anchor="middle" font-family="Arial" font-size="7" fill="#7f1d1d" font-weight="700">TRIPPED</text>
+  <text x="12" y="97" text-anchor="middle" font-family="Arial" font-size="7" fill="#dc2626" font-weight="700">95</text>
+  <text x="68" y="97" text-anchor="middle" font-family="Arial" font-size="7" fill="#dc2626" font-weight="700">96</text>
+</svg>

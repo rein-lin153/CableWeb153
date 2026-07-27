@@ -1228,10 +1228,13 @@ function render() {
 
   if (showGrid) drawGrid();
   if (powerSource) drawPowerSource();          // 固定电源（Canvas 手绘，唯一源头）
-  wires.forEach(w=>{ computeWireSegments(w); drawWire(w); });
+  wires.forEach(w=> computeWireSegments(w));   // 先全部路由
+  wires.forEach(w=> drawWire(w));               // 统一绘制
+  drawWireJunctionsAndJumps();         // 交汇跳线 + 同电位节点圆点(叠在导线之上)
   if (tempWire) drawTempWire();
   components.forEach(c=>drawComponent(c));
   if (hoveredPin&&wireStart) drawSnapIndicator(hoveredPin);
+  updateAndDrawSparks();                       // 短路爆火花粒子(世界坐标,叠加在最上层)
 
   ctx.restore();
 
@@ -1490,8 +1493,14 @@ function dedupeCollinear(pts) {
   return out;
 }
 
+// ============================================================
+//  平行避让偏移 (PARALLEL WIRE OFFSET) — 占位/未实装
+//  说明:平行避让若要保正交,需对内部段做 z-bend 插入(在段两端加 2 个拐点过渡)。
+//        简单整体平移内部点会令端点段变斜线、破坏引脚连接收缩,故不实装以免视觉劣化。
+//        风险评估后留此占位;若后续启用,实装入口在 render() 路由后 draw 前调用。
+// ============================================================
+
 function computeWireSegments(w) {
-  // Compute orthogonal Manhattan path from (x1,y1) to (x2,y2) with A* obstacle avoidance.
   const fromComp = findCompById(w.fromC);
   const toComp = findCompById(w.toC);
   if (!fromComp||!toComp) { w._g=[{x:w.x1,y:w.y1},{x:w.x2,y:w.y2}]; return; }
@@ -1586,16 +1595,37 @@ function outDirFor(comp, pin) {
   return outDir(pin.rx, pin.ry, comp.rotation);
 }
 
+// 导线三态分类（动态通电渲染）：非仿真态按端子设计相位色预览;
+// 仿真态分 live(相线带电高亮+光晕) / neutral(N连通亮蓝) / earth(PE连通亮黄绿) /
+// dead(不带电统一灰 #8E8E93 无光晕)。N/PE 因 BFS 永不置 powered，用 analyzeCircuit
+// 末尾标记的 w.neutralConnected / w.earthConnected 判通断。
+const WIRE_DEAD = '#8E8E93';            // 不带电/断路统一灰
+const WIRE_LIVE_BOOST = { 'L':'#FF3B30','L1':'#FACC15','L2':'#22C55E','L3':'#FF3B30' }; // 相线高亮色
+const WIRE_N_LIVE = '#007AFF';         // N 连通亮蓝
+const WIRE_PE_LIVE = '#84CC16';        // PE 连通亮黄绿
+
+function getWireState(w) {
+  // 非仿真态：维持"按端子设计相位色预览"（off态蓝/L态红/... 设计意图预览，合理不改）
+  if (!isSimulating) {
+    let ph = null;
+    const fc = findCompById(w.fromC);
+    if (fc) { const fp = fc.pins.find(p=>p.id===w.fromP); if (fp && fp.phase) ph = fp.phase; }
+    return { level:'preview', phase: ph, color: (ph && PHASE_COLOR[ph]) || '#1e69ff' };
+  }
+  // 仿真态三态
+  if (w.powered && w.activePhase) {
+    const ph = w.activePhase;
+    if (isLinePhase(ph)) return { level:'live', phase: ph, color: WIRE_LIVE_BOOST[ph] || PHASE_COLOR[ph] || '#FF3B30' };
+    // 理论上 activePhase 不会是 N/PE，兜底
+    return { level:'live', phase: ph, color: PHASE_COLOR[ph] || WIRE_DEAD };
+  }
+  if (w.neutralConnected) return { level:'neutral', phase:'N', color: WIRE_N_LIVE };
+  if (w.earthConnected)   return { level:'earth',   phase:'PE', color: WIRE_PE_LIVE };
+  return { level:'dead', phase:null, color: WIRE_DEAD };
+}
+
 function getWireColor(w) {
-  if (isSimulating && w.powered && w.activePhase) {
-    return PHASE_COLOR[w.activePhase]||'#22c55e';
-  }
-  const fromComp = findCompById(w.fromC);
-  if (fromComp) {
-    const fp = fromComp.pins.find(p=>p.id===w.fromP);
-    if (fp && fp.phase && PHASE_COLOR[fp.phase]) return PHASE_COLOR[fp.phase];
-  }
-  return '#1e69ff';
+  return getWireState(w).color;
 }
 
 function drawWire(w) {
@@ -1604,7 +1634,7 @@ function drawWire(w) {
 
   const pts = w._g || [{x:w.x1,y:w.y1},{x:w.x2,y:w.y2}];
 
-  // 样式（保留既有逻辑）
+  // 样式（保留既有逻辑 + 三态光晕分级）
   let sw, sc, shc, shb;
   if (isSel) {
     sw = isSimulating?7:5.5; sc='#eab308'; shc='#eab308'; shb=16;
@@ -1612,9 +1642,12 @@ function drawWire(w) {
     sw = isSimulating?6:4.5; sc='#f59e0b'; shc='#f59e0b'; shb=10;
   } else {
     sw = isSimulating?5:3.5;
-    sc = getWireColor(w);
-    if (isSimulating && w.powered) { shc = w.activePhase?PHASE_COLOR[w.activePhase]:'#22c55e'; shb=12; }
-    else { shc=null; shb=0; }
+    const st = getWireState(w);
+    sc = st.color;
+    // 光晕分级：live 相线强光晕(12)、neutral/earth 轻光晕(8)、dead 无光晕(0)
+    if (isSimulating && st.level==='live') { shc = st.color; shb = 12; }
+    else if (isSimulating && (st.level==='neutral'||st.level==='earth')) { shc = st.color; shb = 8; }
+    else { shc = null; shb = 0; }
   }
   ctx.lineWidth = sw; ctx.strokeStyle = sc;
   if (shc) { ctx.shadowColor=shc; ctx.shadowBlur=shb; } else ctx.shadowBlur=0;
@@ -1657,6 +1690,140 @@ function drawWire(w) {
 function drawTempWire() {
   ctx.beginPath(); ctx.moveTo(tempWire.x1,tempWire.y1); ctx.lineTo(tempWire.x2,tempWire.y2);
   ctx.strokeStyle='#eab308'; ctx.lineWidth=2; ctx.setLineDash([5,5]); ctx.stroke(); ctx.setLineDash([]);
+}
+
+// ============================================================
+//  交汇跳线 (JUMP CURVE) + 同电位分支节点圆点 (JUNCTION DOT)
+//
+//  电气原理图惯例：
+//   - 两线在某点相交但**不**相连 → 画一个"小拱"避让(jump curve),表示跨过不通。
+//   - 一线的端子落在另一线的线身中点上 → 画实心圆点(junction dot),表示在此分叉。
+//  采用纯几何判定(不依赖 unionFind,避免与 analyzeCircuit 时序耦合):
+//   - 跳线:两条不同导线、各自的"内部段"(非端点段)在某点严格相交 → 跨过。
+//   - 节点:某导线端点(x1,y1或x2,y2)落在另一导线的内部段(非该端点自己)上 → 该点为分叉。
+// ============================================================
+
+// 取导线 _g 路径的逐段列表 [{a:{x,y}, b:{x,y}, isHoriz}]
+function wireSegs(w) {
+  const pts = w._g || [{x:w.x1,y:w.y1},{x:w.x2,y:w.y2}];
+  const out = [];
+  for (let i=0;i<pts.length-1;i++) {
+    const a=pts[i], b=pts[i+1];
+    out.push({a,b, isHoriz:a.y===b.y, w});
+  }
+  return out;
+}
+
+// 两线段(水平与垂直,Manhattan 路径均为正交段)是否严格相交,且交点在两段内部
+// 返回交点 {x,y} 或 null。仅处理"水平段×垂直段"这类十字正交相交。
+function segCrossHV(hSeg, vSeg) {
+  // hSeg 水平: a.y===b.y; 求 y=hy, x 在 [min..max]
+  // vSeg 垂直: a.x===b.x; y 在 [min..max]
+  if (!hSeg.isHoriz || vSeg.isHoriz) {
+    // 调用方应保证一段水平一段垂直;若两端同向(共线),返回 null
+    return null;
+  }
+  const hy = hSeg.a.y;
+  const vx = vSeg.a.x;
+  const hx0 = Math.min(hSeg.a.x, hSeg.b.x), hx1 = Math.max(hSeg.a.x, hSeg.b.x);
+  const vy0 = Math.min(vSeg.a.y, vSeg.b.y), vy1 = Math.max(vSeg.a.y, vSeg.b.y);
+  if (vx > hx0 && vx < hx1 && hy > vy0 && hy < vy1) {
+    return {x:vx, y:hy};
+  }
+  return null;
+}
+
+// 点是否在水平段 or 垂直段的内部(含端点之外严格内部 + 端点附近)
+function pointOnSegInside(px, py, seg) {
+  if (seg.isHoriz) {
+    if (py !== seg.a.y) return false;
+    // 允许极小容差
+    return px > Math.min(seg.a.x,seg.b.x)+0.5 && px < Math.max(seg.a.x,seg.b.x)-0.5;
+  } else {
+    if (px !== seg.a.x) return false;
+    return py > Math.min(seg.a.y,seg.b.y)+0.5 && py < Math.max(seg.a.y,seg.b.y)-0.5;
+  }
+}
+
+// 跳线半径 —— 随 zoom 缩放后保持约 4px 屏幕高度
+const WIRE_JUMP_R = 6;
+
+// 在所有导线绘制完成后,叠加跳线 + 节点圆点
+function drawWireJunctionsAndJumps() {
+  if (!wires.length || wires.length<2) return;
+  const segsAll = wires.map(wireSegs);
+  const drawnJumps = new Set();   // 去重:同一交点只画一个拱
+  // --- 交汇跳线:两线段正交十字相交(且不是同一线的转折),且交点不是任一线的端点 ---
+  for (let i=0;i<segsAll.length;i++) {
+    for (let j=i+1;j<segsAll.length;j++) {
+      const A=segsAll[i], B=segsAll[j];
+      for (const sa of A) for (const sb of B) {
+        // 一段水平、一段垂直
+        const hSeg = sa.isHoriz?sa:sb, vSeg = sa.isHoriz?sb:sa;
+        if (!hSeg.isHoriz || vSeg.isHoriz) continue;
+        const pt = segCrossHV(hSeg, vSeg);
+        if (!pt) continue;
+        const key = pt.x.toFixed(1)+','+pt.y.toFixed(1);
+        if (drawnJumps.has(key)) continue;
+        drawnJumps.add(key);
+        drawJumpCurve(pt, hSeg, vSeg);
+      }
+    }
+  }
+  // --- 同电位分支节点圆点:某线端点落在另一线内部段上 ---
+  // 在仿真非必需场景也画(纯几何),让原理图美观;端点焊点本就有,这里额外强调分叉。
+  for (let i=0;i<wires.length;i++) {
+    const w = wires[i];
+    const endpoints = [{x:w.x1,y:w.y1},{x:w.x2,y:w.y2}];
+    for (let j=0;j<wires.length;j++) {
+      if (i===j) continue;
+      for (const seg of segsAll[j]) {
+        for (const ep of endpoints) {
+          if (pointOnSegInside(ep.x, ep.y, seg)) {
+            drawJunctionDot(ep, w);
+          }
+        }
+      }
+    }
+  }
+}
+
+// 在垂直主导线方向画一个"拱形跳线",跨过水平线。
+// 拱起方向:朝垂直段较长一端外侧(让拱避开较短的元件引线端)。
+function drawJumpCurve(pt, hSeg, vSeg) {
+  const w = vSeg.w;                       // 垂直段所属导线 —— 跨线画在其上
+  const st = getWireState(w);
+  const color = (isSimulating?st.color:'#1e69ff');
+  const sw = isSimulating?5:3.5;
+  const dTop = Math.abs(vSeg.a.y - pt.y), dBot = Math.abs(vSeg.b.y - pt.y);
+  const dir = dTop >= dBot ? -1 : 1;      // -1 向上拱, +1 向下拱
+  const R = WIRE_JUMP_R;
+  ctx.save();
+  ctx.lineWidth = sw; ctx.strokeStyle = color;
+  if (isSimulating && st.level==='live') { ctx.shadowColor=color; ctx.shadowBlur=12; }
+  ctx.beginPath();
+  const y0 = pt.y - dir*R;
+  const y1 = pt.y + dir*R;
+  ctx.moveTo(pt.x, y0);
+  ctx.quadraticCurveTo(pt.x + R*1.4, pt.y, pt.x, y1);
+  ctx.stroke();
+  ctx.shadowBlur=0;
+  ctx.restore();
+}
+
+// 同电位分支节点:实心圆点,颜色取所在导线相位色
+function drawJunctionDot(pt, w) {
+  const st = getWireState(w);
+  const color = (isSimulating?st.color:'#1e69ff');
+  const sw = isSimulating?5:3.5;
+  ctx.save();
+  ctx.fillStyle = color;
+  if (isSimulating && st.level==='live') { ctx.shadowColor=color; ctx.shadowBlur=10; }
+  ctx.beginPath();
+  ctx.arc(pt.x, pt.y, Math.max(3.5, sw*0.65), 0, Math.PI*2);
+  ctx.fill();
+  ctx.shadowBlur=0;
+  ctx.restore();
 }
 
 // ORTHOGONAL MANHATTAN WIRE ROUTING (continued)
@@ -2257,7 +2424,7 @@ function analyzeCircuit() {
   if (!isSimulating) return;
 
   // Reset all voltages and phases
-  wires.forEach(w=>{w.powered=false; w.activePhase=null;});
+  wires.forEach(w=>{w.powered=false; w.activePhase=null; w.neutralConnected=false; w.earthConnected=false;});
   components.forEach(c=>{
     if (isLoadComp(c)) c.state=false;     // 耗电器每帧重判；开关/断路器/接触器状态由点击维持
     c.pins.forEach(p=>{p.voltage=0; p.phaseActive=null;});
@@ -2346,6 +2513,34 @@ function analyzeCircuit() {
         // NO: pressed 通；NC(inverted): pressed 断（常态通）—— 与 inverted 复合
         const conducting = grp[0].inverted ? !pressed : pressed;
         if (conducting) out.push(grp);
+      }
+      return out;
+    }
+
+    // === 双控开关 switch_2way(单刀双掷)：COM 永远只通向其中一掷 ===
+    // 语义：off→拨杆悬空三端全断(off 态)；on→拨杆接 L1，故 COM+L1 成组、L2 独立悬空。
+    // 与 SVG 图形约定一致(on 图拨杆朝 L1)，L2 仅在另一掷需另设开关才得电，
+    // 模拟真实楼梯灯双控电路(两单刀双掷串接 COM 间)。
+    if (c.subtype === 'switch_2way') {
+      if (!c.state) return [];                       // off：拨杆悬空，三端全断
+      const com = c.pins.find(p => p.id === 'COM');
+      const l1  = c.pins.find(p => p.id === 'L1');
+      if (!com || !l1) return [];                     // 配置不完整则不导通
+      return [[com, l1]];                             // on：COM↔L1 通；L2 悬空
+    }
+
+    // === 接线端子排 terminal_block:4 独立极,每极顶↔底螺丝内部直通(跨极不短接) ===
+    // 按 contactGroup 分组(p1..p4),每对(顶+底)成组被动直通。无通断开关,永通。
+    if (c.subtype==='terminal_block') {
+      const byGroup = new Map();
+      c.pins.forEach(p => {
+        if (!p.contactGroup) return;
+        if (!byGroup.has(p.contactGroup)) byGroup.set(p.contactGroup, []);
+        byGroup.get(p.contactGroup).push(p);
+      });
+      const out = [];
+      for (const grp of byGroup.values()) {
+        if (grp.length >= 2) out.push(grp);   // 极的两端内部直通
       }
       return out;
     }
@@ -2560,6 +2755,8 @@ function analyzeCircuit() {
   //     与 N 都接到同一引脚），零/地端虽本身无电压不会在导线上留下 activePhase，
   //     但依连通图可识别为短路。覆盖用户接线中典型的"L/N 直连同点"漏检场景。
   let globalShort = false;
+  let globalShortPos = null;                  // 短路 pin 的世界坐标(用于爆火花)
+  const pinWorldPos = (comp,pin)=>({x:comp.x+pin.rx, y:comp.y+pin.ry});
   const allForShort = powerSource ? [powerSource, ...components] : components;
   // (2) 依并查集分组检查：相线相与 N/PE 同集合即短路
   if (powerSource) {
@@ -2587,6 +2784,7 @@ function analyzeCircuit() {
           for (let j=i+1;j<phasesArr.length;j++) {
             if (PHASE_INCOMPATIBLE[phasesArr[i]]?.includes(phasesArr[j])) {
               globalShort = true;
+              if (!globalShortPos) globalShortPos = pinWorldPos(comp, pin);
               break;
             }
           }
@@ -2597,7 +2795,7 @@ function analyzeCircuit() {
   });
 
   if (globalShort) {
-    triggerShortCircuitGeneral();
+    triggerShortCircuitGeneral('?', '?', globalShortPos);
     return;
   }
 
@@ -2608,16 +2806,88 @@ function analyzeCircuit() {
     }
   }
 
+  // ---------------- N/PE 通路标记 (动态导线渲染用) ----------------
+  // BFS 只传播相线相电势；N/PE 端子 voltage 恒 0，wire.powered 永远不会被置真。
+  // 因此 N/PE 线"通/断"必须用并查集连通性判：wire 任一端所在集合的 grpReturnPhases
+  // 含 'N' → 该线连通电源 N (亮蓝);含 'PE' → 连通 PE (亮黄绿);都无 → 断开(灰)。
+  // 仅在仿真中渲染时读取，非仿真态仍走 getWireState 的"设计相位色预览"分支。
+  wires.forEach(w => {
+    const fc = findCompById(w.fromC), tc = findCompById(w.toC);
+    if (!fc || !tc) return;
+    const fp = fc.pins.find(p=>p.id===w.fromP), tp = tc.pins.find(p=>p.id===w.toP);
+    if (!fp || !tp) return;
+    const rRet = grpReturnPhases.get(ufFind(pinKey(fc, fp))) || new Set();
+    const rRet2 = grpReturnPhases.get(ufFind(pinKey(tc, tp))) || new Set();
+    if (rRet.has('N') || rRet2.has('N')) w.neutralConnected = true;
+    if (rRet.has('PE') || rRet2.has('PE')) w.earthConnected = true;
+  });
+
   render();
 }
 
 function triggerShortCircuit(pinA, pinB) {
   const phaseA = pinA.phaseActive||pinA.phase||'?';
   const phaseB = pinB.phaseActive||pinB.phase||'?';
-  triggerShortCircuitGeneral(phaseA, phaseB);
+  // 爆火花位置:优先取两短路 pin 的中点(world 坐标)
+  let pos = null;
+  try {
+    const ca = components.find(c=>c.pins.includes(pinA)) || (powerSource&&powerSource.pins.includes(pinA)?powerSource:null);
+    const cb = components.find(c=>c.pins.includes(pinB)) || (powerSource&&powerSource.pins.includes(pinB)?powerSource:null);
+    if (ca && cb) {
+      const pa = ca.pins.find(p=>p===pinA), pb = cb.pins.find(p=>p===pinB);
+      pos = { x:(ca.x+pa.rx + cb.x+pb.rx)/2, y:(ca.y+pa.ry + cb.y+pb.ry)/2 };
+    } else if (ca) {
+      const pa = ca.pins.find(p=>p===pinA); pos={x:ca.x+pa.rx, y:ca.y+pa.ry};
+    }
+  } catch(e) {}
+  triggerShortCircuitGeneral(phaseA, phaseB, pos);
 }
 
-function triggerShortCircuitGeneral(phaseA, phaseB) {
+// 短路点爆火花粒子系统(Canvas 局部效果,叠加在全屏 flash 之上)
+let sparkParticles = [];
+let sparkActiveUntil = 0;
+function emitSparks(x, y, n=26) {
+  for (let i=0;i<n;i++) {
+    const a = Math.random()*Math.PI*2;
+    const sp = 1.5 + Math.random()*4;
+    sparkParticles.push({
+      x, y,
+      vx: Math.cos(a)*sp, vy: Math.sin(a)*sp - 0.6,
+      life: 0.5 + Math.random()*0.5,
+      age: 0,
+      r: 1 + Math.random()*2.2,
+      hue: 20 + Math.random()*25,   // 黄-橙-红
+    });
+  }
+  sparkActiveUntil = performance.now() + 900;
+}
+function updateAndDrawSparks() {
+  const now = performance.now();
+  if (!sparkParticles.length) return;
+  // dt 归一化(秒),用 RAF ~16ms
+  const dt = 0.016;
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';   // 叠加发光
+  for (let i=sparkParticles.length-1;i>=0;i--) {
+    const p = sparkParticles[i];
+    p.age += dt;
+    if (p.age >= p.life) { sparkParticles.splice(i,1); continue; }
+    p.vx *= 0.96; p.vy = p.vy*0.96 + 0.25;     // 阻尼 + 火花重力
+    p.x += p.vx; p.y += p.vy;
+    const t = 1 - p.age/p.life;
+    const alpha = t*t;
+    ctx.beginPath();
+    ctx.fillStyle = `hsla(${p.hue},100%,60%,${alpha})`;
+    ctx.shadowColor = `hsla(${p.hue},100%,55%,${alpha})`;
+    ctx.shadowBlur = 8;
+    ctx.arc(p.x, p.y, p.r*t + 0.4, 0, Math.PI*2);
+    ctx.fill();
+  }
+  ctx.shadowBlur=0;
+  ctx.restore();
+}
+
+function triggerShortCircuitGeneral(phaseA, phaseB, sparkPos) {
   isSimulating = false;
   const btn = document.getElementById('simToggleBtn');
   btn.innerHTML = '<i class="fa-solid fa-play"></i> '+t('startSim');
@@ -2640,9 +2910,12 @@ function triggerShortCircuitGeneral(phaseA, phaseB) {
   setTimeout(()=>flash.classList.add('active'), 900);
   setTimeout(()=>flash.classList.remove('active'), 1400);
 
+  // 短路点局部爆火花(若无定位则退回画布中心)
+  const sp = sparkPos || { x:(canvas.width/2 - panOffset.x)/zoomLevel, y:(canvas.height/2 - panOffset.y)/zoomLevel };
+  emitSparks(sp.x, sp.y, 30);
   haptic('error'); beep(150,.35,'sawtooth');
 
-  wires.forEach(w=>{w.powered=false;w.activePhase=null;});
+  wires.forEach(w=>{w.powered=false;w.activePhase=null;w.neutralConnected=false;w.earthConnected=false;});
   components.forEach(c=>{
     c.state=false; c.pins.forEach(p=>{p.voltage=0;p.phaseActive=null;});
     if (c.subtype==='relay_ka'||c.subtype==='relay_kt'||c.subtype==='thermal_aux'

@@ -452,6 +452,7 @@
         "km": "កុងតាក់ទោលរួម"
       },
       "category": "switch",
+      "subtype": "switch_2way",
       "modes": ["home220v", "industrial380v"],
       "width": 120,
       "height": 130,
@@ -509,6 +510,35 @@
       "terminals": [
         {"id": "L", "label": "L", "phase": "L", "x": 34, "y": 8},
         {"id": "N", "label": "N", "phase": "N", "x": 66, "y": 8}
+      ]
+    },
+    {
+      "id": "terminal_block",
+      "name": {
+        "zh": "接线端子排 XT",
+        "en": "Terminal Block",
+        "km": "បន្ទះស្ពីបភ្ជាប់"
+      },
+      "category": "misc",
+      "subtype": "terminal_block",
+      "modes": ["home220v", "industrial380v"],
+      "width": 84,
+      "height": 110,
+      "defaultState": "off",
+      "voltage": 220,
+      "images": {
+        "off": {"src": "assets/images/terminal_block.svg", "vw": 84, "vh": 110, "dx": 0, "dy": 0},
+        "on":  {"src": "assets/images/terminal_block.svg", "vw": 84, "vh": 110, "dx": 0, "dy": 0}
+      },
+      "terminals": [
+        {"id": "P1t", "label": "1", "phase": "L", "x": 12, "y": 4,  "contactGroup": "p1"},
+        {"id": "P1b", "label": "1", "phase": "L", "x": 12, "y": 108, "contactGroup": "p1"},
+        {"id": "P2t", "label": "2", "phase": "L", "x": 32, "y": 4,  "contactGroup": "p2"},
+        {"id": "P2b", "label": "2", "phase": "L", "x": 32, "y": 108, "contactGroup": "p2"},
+        {"id": "P3t", "label": "3", "phase": "L", "x": 52, "y": 4,  "contactGroup": "p3"},
+        {"id": "P3b", "label": "3", "phase": "L", "x": 52, "y": 108, "contactGroup": "p3"},
+        {"id": "P4t", "label": "4", "phase": "L", "x": 72, "y": 4,  "contactGroup": "p4"},
+        {"id": "P4b", "label": "4", "phase": "L", "x": 72, "y": 108, "contactGroup": "p4"}
       ]
     }
   ]

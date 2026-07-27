@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 180">
+  <defs>
+    <linearGradient id="case" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f1f5f9"/>
+      <stop offset="1" stop-color="#94a3b8"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="148" height="168" rx="6" fill="url(#case)" stroke="#475569" stroke-width="2"/>
+  <rect x="10" y="10" width="140" height="160" rx="4" fill="none" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="138" y="20" font-family="Arial" font-size="9" fill="#1e40af" font-weight="700">FR</text>
+  <!-- 主3极热元件(常态闭合-横桥) T1/T2/T3 -->
+  <line x1="25" y1="70" x2="25" y2="110" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="25" y1="110" x2="25" y2="160" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="25" cy="110" r="2.2" fill="#16a34a"/>
+  <line x1="70" y1="70" x2="70" y2="110" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="70" y1="110" x2="70" y2="160" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="70" cy="110" r="2.2" fill="#16a34a"/>
+  <line x1="115" y1="70" x2="115" y2="110" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="115" y1="110" x2="115" y2="160" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="115" cy="110" r="2.2" fill="#16a34a"/>
+  <!-- 双金属片符号示意(三道斜折) -->
+  <path d="M 18 50 L 32 56 L 18 62 L 32 68" fill="none" stroke="#b45309" stroke-width="1.6"/>
+  <path d="M 63 50 L 77 56 L 63 62 L 77 68" fill="none" stroke="#b45309" stroke-width="1.6"/>
+  <path d="M 108 50 L 122 56 L 108 62 L 122 68" fill="none" stroke="#b45309" stroke-width="1.6"/>
+  <!-- 复位按钮 -->
+  <rect x="135" y="46" width="14" height="20" rx="3" fill="#475569" stroke="#1e293b" stroke-width="1.2"/>
+  <text x="142" y="74" text-anchor="middle" font-family="Arial" font-size="6" fill="#475569" font-weight="700">RST</text>
+  <!-- NC 辅助 95/96(常态闭合-横桥) -->
+  <line x1="135" y1="86" x2="135" y2="110" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  <line x1="135" y1="110" x2="135" y2="160" stroke="#16a34a" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="135" cy="110" r="2" fill="#16a34a"/>
+  <!-- 端子标 -->
+  <text x="25" y="64" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">1/L1</text>
+  <text x="70" y="64" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">3/L2</text>
+  <text x="115" y="64" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">5/L3</text>
+  <text x="135" y="80" text-anchor="middle" font-family="Arial" font-size="6" fill="#475569" font-weight="700">95</text>
+  <text x="25" y="174" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">3/T1</text>
+  <text x="70" y="174" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">5/T2</text>
+  <text x="115" y="174" text-anchor="middle" font-family="Arial" font-size="7" fill="#475569" font-weight="700">7/T3</text>
+  <text x="135" y="174" text-anchor="middle" font-family="Arial" font-size="6" fill="#475569" font-weight="700">96</text>
+</svg>
