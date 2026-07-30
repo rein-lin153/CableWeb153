@@ -1,0 +1,42 @@
+[
+  {
+    "id": "household",
+    "title": "ខ្សែសាងសង់គ្រួសារ",
+    "label": "家装布电线",
+    "desc": "住宅明装/穿管布线、开关插座进线",
+    "color": "amber",
+    "icon": "fa-house-chimney",
+    "img": "assets/images/products/household-wiring.jpg",
+    "order": 1
+  },
+  {
+    "id": "power",
+    "title": "ខ្សែភ្លើងស្នូង",
+    "label": "电力主干电缆",
+    "desc": "工业/建筑电力主干、埋地配电网、大载流能力",
+    "color": "rose",
+    "icon": "fa-tower-broadcast",
+    "img": "assets/images/products/power-cable.jpg",
+    "order": 2
+  },
+  {
+    "id": "welding",
+    "title": "ខ្សែម៉ាស៊ីនប្រសិនស្នា",
+    "label": "电焊机专用电缆",
+    "desc": "高柔软、耐油耐磨、频繁拖拽不断芯",
+    "color": "slate",
+    "icon": "fa-fire-flame-curved",
+    "img": "assets/images/products/welding-cable.jpg",
+    "order": 3
+  },
+  {
+    "id": "flexible",
+    "title": "ខ្សែទន់ និងខ្សែឆ្កាង",
+    "label": "设备软线与花线",
+    "desc": "家电/灯具连接、临时照明、安防弱电，柔软手感",
+    "color": "emerald",
+    "icon": "fa-plug",
+    "img": "assets/images/products/flexible.jpg",
+    "order": 4
+  }
+]

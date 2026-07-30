@@ -117,18 +117,38 @@
         .filter-pill { transition: all 0.2s ease; }
         .filter-pill.active { background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; font-weight: 700; box-shadow: 0 4px 6px -1px rgba(245,158,11,0.3); }
 
+        /* 主页产品分类:无缝滚动 marquee 长条 */
+        .cat-marquee-track { display: flex; gap: 1rem; width: max-content; animation: catMarquee 38s linear infinite; }
+        .cat-marquee-wrap:hover .cat-marquee-track { animation-play-state: paused; }
+        @keyframes catMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        /* 尊重用户的动效减弱偏好 */
+        @media (prefers-reduced-motion: reduce) {
+            .cat-marquee-track { animation: none; }
+            .cat-marquee-wrap { overflow-x: auto; }
+        }
+        .cat-slide { width: 13rem; flex: 0 0 13rem; }
+
         /* Hero area */
         .hero-bg {
             background:
-                radial-gradient(at 20% 20%, rgba(255,255,255,0.12) 0px, transparent 50%),
-                radial-gradient(at 80% 60%, rgba(252,211,77,0.18) 0px, transparent 50%),
-                linear-gradient(135deg, #b45309 0%, #d97706 45%, #f59e0b 100%);
+                radial-gradient(at 20% 20%, rgba(255,255,255,0.06) 0px, transparent 50%),
+                linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #000000 100%);
         }
-        .hero-blob { animation: heroPulse 6s ease-in-out infinite; }
-        @keyframes heroPulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.08); opacity: 0.75; }
+        /* Hero 背景照片:绝对填满,缓慢推近 */
+        .hero-img {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            object-fit: cover; object-position: center 35%;
+            animation: heroZoom 18s ease-out forwards;
         }
+        @keyframes heroZoom { from { transform: scale(1.08); } to { transform: scale(1); } }
+        /* Hero 蒙版:黑色蒙版,顶部稍暗托白字,中下部透出金边夜色 */
+        .hero-mask {
+            position: absolute; inset: 0;
+            background:
+                linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.40) 45%, rgba(0,0,0,0.25) 75%, rgba(0,0,0,0.18) 100%),
+                radial-gradient(at 50% 0%, rgba(0,0,0,0.25) 0px, transparent 55%);
+        }
+        /* (hero-blob 光斑已随黑底化移除) */
         .fade-up { animation: fadeUp 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -183,8 +203,11 @@
                     <a href="calculator.html" class="px-3 py-2 rounded-lg text-slate-700 hover:bg-amber-50 hover:text-amber-600 transition-all flex items-center gap-1.5">
                         <i class="fa-solid fa-calculator text-amber-400"></i> គណនាករ <span class="text-xs text-slate-400">/ 工程计算器</span>
                     </a>
-                    <a href="tools.html" class="px-3 py-2 rounded-lg text-slate-700 hover:bg-amber-50 hover:text-amber-600 transition-all flex items-center gap-1.5">
+                    <a href="products.html" class="px-3 py-2 rounded-lg text-slate-700 hover:bg-amber-50 hover:text-amber-600 transition-all flex items-center gap-1.5">
                         <i class="fa-solid fa-diagram-project text-amber-400"></i> ត្រេះបន្ទាត់ <span class="text-xs text-slate-400">/ 接线仿真</span>
+                    </a>
+                    <a href="products.html" class="px-3 py-2 rounded-lg text-amber-600 bg-amber-50 transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-box-open text-amber-500"></i> ផលិតផល <span class="text-xs text-slate-400">/ 产品分类</span>
                     </a>
                     <a href="#articles" class="px-3 py-2 rounded-lg text-slate-700 hover:bg-amber-50 hover:text-amber-600 transition-all flex items-center gap-1.5">
                         <i class="fa-solid fa-newspaper text-amber-400"></i> អត្ថបទ <span class="text-xs text-slate-400">/ 文章</span>
@@ -203,7 +226,8 @@
             <!-- Mobile menu (collapsed) -->
             <div id="mobile-menu" class="hidden md:hidden pb-4 space-y-1 border-t border-slate-200 pt-3">
                 <a href="calculator.html" class="block px-3 py-2.5 rounded-lg text-slate-700 font-bold hover:bg-amber-50"><i class="fa-solid fa-calculator text-amber-400 w-5"></i> គណនាករ / 工程计算器</a>
-                <a href="tools.html" class="block px-3 py-2.5 rounded-lg text-slate-700 font-bold hover:bg-amber-50"><i class="fa-solid fa-diagram-project text-amber-400 w-5"></i> ត្រេះបន្ទាត់ / 接线仿真</a>
+                <a href="products.html" class="block px-3 py-2.5 rounded-lg text-slate-700 font-bold hover:bg-amber-50"><i class="fa-solid fa-diagram-project text-amber-400 w-5"></i> ត្រេះបន្ទាត់ / 接线仿真</a>
+                <a href="products.html" class="block px-3 py-2.5 rounded-lg text-amber-600 font-bold bg-amber-50"><i class="fa-solid fa-box-open text-amber-500 w-5"></i> ផលិតផល / 产品分类</a>
                 <a href="#articles" class="block px-3 py-2.5 rounded-lg text-slate-700 font-bold hover:bg-amber-50"><i class="fa-solid fa-newspaper text-amber-400 w-5"></i> អត្ថបទ / 文章资讯</a>
                 <a href="#contact" class="block px-3 py-2.5 rounded-lg bg-amber-400 text-slate-950 font-black text-center"><i class="fa-solid fa-phone w-5"></i> ទំនាក់ទំនង / 联系我们</a>
             </div>
@@ -219,8 +243,11 @@
 
     <!-- ==================== HERO ==================== -->
     <section class="relative overflow-hidden hero-bg text-white">
-        <div class="absolute -top-24 -right-24 w-72 h-72 bg-amber-300/30 rounded-full blur-3xl hero-blob"></div>
-        <div class="absolute -bottom-32 -left-16 w-80 h-80 bg-amber-500/20 rounded-full blur-3xl hero-blob" style="animation-delay:2s"></div>
+        <!-- 背景照片:金边夜景 (Vecteezy,见页脚署名) -->
+        <img src="assets/images/products/vecteezy_photo-of-city-during-evening_1816488.jpeg"
+             alt="金边夜景 / Phnom Penh evening skyline"
+             class="hero-img" loading="eager" decoding="async" />
+        <div class="hero-mask"></div>
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center fade-up">
             <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/15 backdrop-blur-sm border border-white/25 rounded-full text-xs font-bold mb-5">
                 <i class="fa-solid fa-industry"></i> ផលិតកម្មនៅភ្នំពេញ · 金边本地生产
@@ -228,151 +255,53 @@
             <h1 class="text-3xl sm:text-5xl font-black tracking-tight leading-tight drop-shadow-lg">
                 B·W CABLE
             </h1>
-            <p class="text-lg sm:text-2xl font-bold text-amber-50 mt-3">
+            <p class="text-lg sm:text-2xl font-bold text-white mt-3">
                 ខ្សែភ្លើង និងសម្ភារៈអគ្គិសនីពាណិជ្ជកម្ម
             </p>
-            <p class="text-sm sm:text-base text-amber-100/90 mt-2 font-medium">
+            <p class="text-sm sm:text-base text-slate-100 mt-2 font-medium">
                 电线电缆 · 工业与建筑电气耗材专业制造
             </p>
-            <p class="max-w-2xl mx-auto text-sm sm:text-base text-amber-50/80 mt-5 leading-relaxed">
+            <p class="max-w-2xl mx-auto text-sm sm:text-base text-slate-200 mt-5 leading-relaxed">
                 ផលិត នាំ និងចែក ខ្សែភ្លើងគុណភាពខ្ពស់សម្រាប់គម្រោងផ្ទះ ឡាន និងរោងចក្រ ក្នុងព្រះរាជាណាចក្រកម្ពុជា។<br>
                 为柬埔寨住宅、车辆及工业项目提供高品质电线电缆的制造、批发与配送。
             </p>
 
             <div class="flex flex-col sm:flex-row gap-3 justify-center items-center mt-8">
-                <a href="calculator.html" class="w-full sm:w-auto px-6 py-3.5 bg-white text-amber-600 font-black rounded-xl shadow-lg hover:shadow-xl border-2 border-white transition-all transform hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-2 btn-ripple">
+                <a href="calculator.html" class="w-full sm:w-auto px-6 py-3.5 bg-white text-slate-900 font-black rounded-xl shadow-lg hover:shadow-xl border-2 border-white transition-all transform hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-2 btn-ripple">
                     <i class="fa-solid fa-calculator"></i> ចូលគណនាករ / 进入工程计算器
                 </a>
-                <a href="tools.html" class="w-full sm:w-auto px-6 py-3.5 bg-transparent text-white font-bold rounded-xl border-2 border-white/70 hover:bg-white/10 backdrop-blur-sm transition-all transform hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-diagram-project"></i> ត្រេះបន្ទាត់ / 电路接线仿真
+                <a href="products.html" class="w-full sm:w-auto px-6 py-3.5 bg-transparent text-white font-bold rounded-xl border-2 border-white/70 hover:bg-white/10 backdrop-blur-sm transition-all transform hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-box-open"></i> ប្រភេទផលិតផល / 产品分类
                 </a>
             </div>
 
             <!-- Feature badges -->
-            <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 mt-10 text-sm font-semibold text-amber-50">
-                <span class="flex items-center gap-2"><i class="fa-solid fa-bolt text-amber-200"></i> គុណភាពខ្ពស់ · 质量可靠</span>
-                <span class="flex items-center gap-2"><i class="fa-solid fa-industry text-amber-200"></i> ផលិតក្នុងស្រុក · 本地制造</span>
-                <span class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-amber-200"></i> សុវត្ថិភាព · 安全合规</span>
+            <div class="flex flex-wrap justify-center gap-x-6 gap-y-3 mt-10 text-sm font-semibold text-slate-200">
+                <span class="flex items-center gap-2"><i class="fa-solid fa-bolt text-white"></i> គុណភាពខ្ពស់ · 质量可靠</span>
+                <span class="flex items-center gap-2"><i class="fa-solid fa-industry text-white"></i> ផលិតក្នុងស្រុក · 本地制造</span>
+                <span class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-white"></i> សុវត្ថិភាព · 安全合规</span>
             </div>
         </div>
     </section>
 
-    <!-- ==================== PRODUCT CATEGORIES ==================== -->
+    <!-- ==================== PRODUCT CATEGORIES (无缝滚动长条) ==================== -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
         <div class="flex items-center gap-3 mb-2">
             <div class="p-2 bg-amber-500/10 rounded-lg"><i class="fa-solid fa-box-open text-amber-400"></i></div>
             <h2 class="text-xl sm:text-2xl font-black text-slate-900">ប្រភេទផលិតផល</h2>
             <span class="text-xs text-slate-500 ml-1">产品分类 · Product Categories</span>
         </div>
-        <p class="text-sm text-slate-600 font-medium mb-6">ខ្សែភ្លើង និងសម្ភារៈអគ្គិសនី សម្រាប់គម្រោងគ្រប់ប្រភេទ — 家装布线 / 工程电力主干 / 电焊专用 / 设备软线与花线</p>
+        <p class="text-sm text-slate-600 font-medium mb-4">ខ្សែភ្លើង និងសម្ភារៈអគ្គិសនី — 家装布线 / 工程电力主干 / 电焊专用 / 设备软线与花线 · 鼠标悬停可暂停滚动,点击查看各分类详情</p>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <!-- ===== 大类一:家装布电线 ===== -->
-            <article class="card-hover bg-white border-2 border-slate-200 rounded-2xl shadow-md overflow-hidden flex flex-col">
-                <!-- 产品图占位(后期替换为 assets/images/products/household-wiring.jpg) -->
-                <div class="h-40 bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center relative">
-                    <img src="assets/images/products/household-wiring.jpg" class="h-40 w-full object-cover">
-                    <span class="absolute top-3 left-3 px-2.5 py-1 bg-white/85 backdrop-blur text-amber-700 text-xs font-black rounded-full border border-amber-300">01 · 家装布线</span>
-                </div>
-                <div class="p-5 flex-1 flex flex-col">
-                    <h3 class="font-black text-slate-900 text-base mb-0.5">ខ្សែសាងសង់គ្រួសារ</h3>
-                    <p class="text-xs text-slate-500 mb-3 font-semibold">家装布电线 · Household Wiring</p>
-                    <!-- 型号标签 -->
-                    <div class="flex flex-wrap gap-1.5 mb-3">
-                        <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-black rounded">BVR</span>
-                        <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-black rounded">BVVB</span>
-                        <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-black rounded">RVV</span>
-                        <span class="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-black rounded">RVS</span>
-                    </div>
-                    <ul class="text-xs text-slate-600 space-y-1 mb-3 leading-relaxed">
-                        <li><i class="fa-solid fa-circle-check text-amber-400 mr-1"></i><strong>用途:</strong>住宅明装/穿管布线、开关插座进线</li>
-                        <li><i class="fa-solid fa-circle-check text-amber-400 mr-1"></i><strong>电压:</strong>300/500V – 450/750V</li>
-                        <li><i class="fa-solid fa-circle-check text-amber-400 mr-1"></i><strong>导体:</strong>多股软铜 / 平型护套</li>
-                    </ul>
-                    <p class="text-sm text-slate-600 leading-relaxed flex-1">មានភាពទន់ងាយរុញ ឆ្លងកាត់បំពាក់ — PVC 阻燃绝缘,穿管省力,家庭用电安全首选。</p>
-                    <a href="#contact" class="text-sm text-amber-500 font-bold mt-3 flex items-center gap-2 hover:translate-x-1 transition-transform">询价 / Inquire <i class="fa-solid fa-arrow-right text-xs"></i></a>
-                </div>
-            </article>
+        <!-- 无缝滚动 marquee 长条 -->
+        <div class="cat-marquee-wrap relative overflow-hidden bg-white border-2 border-slate-200 rounded-2xl shadow-md py-4">
+            <!-- 左右渐隐遮罩,增强长条感 -->
+            <div class="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-white to-transparent z-10"></div>
+            <div class="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-white to-transparent z-10"></div>
 
-            <!-- ===== 大类二:工程电力主干 ===== -->
-            <article class="card-hover bg-white border-2 border-slate-200 rounded-2xl shadow-md overflow-hidden flex flex-col">
-                <div class="h-40 bg-gradient-to-br from-red-100 to-rose-200 flex items-center justify-center relative">
-                    <div class="text-center">
-                        <i class="fa-solid fa-tower-broadcast text-4xl text-rose-500/60"></i>
-                        <p class="text-[11px] text-rose-700/70 font-bold mt-1">ផលិតផល · 产品图占位</p>
-                    </div>
-                    <span class="absolute top-3 left-3 px-2.5 py-1 bg-white/85 backdrop-blur text-rose-700 text-xs font-black rounded-full border border-rose-300">02 · 工程电力主干</span>
-                </div>
-                <div class="p-5 flex-1 flex flex-col">
-                    <h3 class="font-black text-slate-900 text-base mb-0.5">ខ្សែភ្លើងស្នូង</h3>
-                    <p class="text-xs text-slate-500 mb-3 font-semibold">电力主干电缆 · Power Feeder Cable</p>
-                    <div class="flex flex-wrap gap-1.5 mb-3">
-                        <span class="px-2 py-0.5 bg-rose-100 text-rose-700 text-xs font-black rounded">YJV</span>
-                        <span class="px-2 py-0.5 bg-rose-100 text-rose-700 text-xs font-black rounded">YJLV</span>
-                        <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded">铜芯 / 铝芯可选</span>
-                    </div>
-                    <ul class="text-xs text-slate-600 space-y-1 mb-3 leading-relaxed">
-                        <li><i class="fa-solid fa-circle-check text-rose-400 mr-1"></i><strong>用途:</strong>工业/建筑电力主干、埋地配电网</li>
-                        <li><i class="fa-solid fa-circle-check text-rose-400 mr-1"></i><strong>电压:</strong>0.6/1kV 起(可至中压)</li>
-                        <li><i class="fa-solid fa-circle-check text-rose-400 mr-1"></i><strong>绝缘:</strong>交联聚乙烯 XLPE + PVC 护套,耐温 90℃</li>
-                    </ul>
-                    <p class="text-sm text-slate-600 leading-relaxed flex-1">ធំស្រួយផ្ទុក អាយុការនៅយូរ — 载流量大、寿命长;铜/铝双选型平衡性能与成本。</p>
-                    <a href="#contact" class="text-sm text-amber-500 font-bold mt-3 flex items-center gap-2 hover:translate-x-1 transition-transform">询价 / Inquire <i class="fa-solid fa-arrow-right text-xs"></i></a>
-                </div>
-            </article>
-
-            <!-- ===== 大类三:电焊机专用 ===== -->
-            <article class="card-hover bg-white border-2 border-slate-200 rounded-2xl shadow-md overflow-hidden flex flex-col">
-                <div class="h-40 bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center relative">
-                    <div class="text-center">
-                        <i class="fa-solid fa-fire-flame-curved text-4xl text-slate-500/60"></i>
-                        <p class="text-[11px] text-slate-600/70 font-bold mt-1">ផលិតផល · 产品图占位</p>
-                    </div>
-                    <span class="absolute top-3 left-3 px-2.5 py-1 bg-white/85 backdrop-blur text-slate-700 text-xs font-black rounded-full border border-slate-400">03 · 电焊机专用</span>
-                </div>
-                <div class="p-5 flex-1 flex flex-col">
-                    <h3 class="font-black text-slate-900 text-base mb-0.5">ខ្សែម៉ាស៊ីនប្រសិនស្នា</h3>
-                    <p class="text-xs text-slate-500 mb-3 font-semibold">电焊机电缆 · Welding Cable</p>
-                    <div class="flex flex-wrap gap-1.5 mb-3">
-                        <span class="px-2 py-0.5 bg-slate-700 text-white text-xs font-black rounded">YH</span>
-                        <span class="px-2 py-0.5 bg-slate-100 text-slate-600 text-[10px] font-bold rounded">橡皮绝缘 + 橡皮护套</span>
-                    </div>
-                    <ul class="text-xs text-slate-600 space-y-1 mb-3 leading-relaxed">
-                        <li><i class="fa-solid fa-circle-check text-slate-500 mr-1"></i><strong>用途:</strong>电焊机二次回路(焊把线/接地夹)</li>
-                        <li><i class="fa-solid fa-circle-check text-slate-500 mr-1"></i><strong>电压:</strong>200V 交流(焊机专用)</li>
-                        <li><i class="fa-solid fa-circle-check text-slate-500 mr-1"></i><strong>特性:</strong>高柔软、耐油耐磨、频繁拖拽不断芯</li>
-                    </ul>
-                    <p class="text-sm text-slate-600 leading-relaxed flex-1">ទន់ហួរទាញមិនដាច់ — 适配电焊作业长时间高负荷,工厂/工地维修首选。</p>
-                    <a href="#contact" class="text-sm text-amber-500 font-bold mt-3 flex items-center gap-2 hover:translate-x-1 transition-transform">询价 / Inquire <i class="fa-solid fa-arrow-right text-xs"></i></a>
-                </div>
-            </article>
-
-            <!-- ===== 大类四:设备软线与花线 ===== -->
-            <article class="card-hover bg-white border-2 border-slate-200 rounded-2xl shadow-md overflow-hidden flex flex-col">
-                <div class="h-40 bg-gradient-to-br from-emerald-100 to-teal-200 flex items-center justify-center relative">
-                    <div class="text-center">
-                        <i class="fa-solid fa-plug text-4xl text-emerald-500/60"></i>
-                        <p class="text-[11px] text-emerald-700/70 font-bold mt-1">ផលិតផល · 产品图占位</p>
-                    </div>
-                    <span class="absolute top-3 left-3 px-2.5 py-1 bg-white/85 backdrop-blur text-emerald-700 text-xs font-black rounded-full border border-emerald-300">04 · 设备软线与花线</span>
-                </div>
-                <div class="p-5 flex-1 flex flex-col">
-                    <h3 class="font-black text-slate-900 text-base mb-0.5">ខ្សែទន់ និងខ្សែឆ្កាង</h3>
-                    <p class="text-xs text-slate-500 mb-3 font-semibold">设备软线与花线 · Flexible & Cord</p>
-                    <div class="flex flex-wrap gap-1.5 mb-3">
-                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-black rounded">RVV</span>
-                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-black rounded">RVS</span>
-                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-black rounded">VAF <span class="text-[9px] opacity-70">企标</span></span>
-                    </div>
-                    <ul class="text-xs text-slate-600 space-y-1 mb-3 leading-relaxed">
-                        <li><i class="fa-solid fa-circle-check text-emerald-400 mr-1"></i><strong>用途:</strong>家电/灯具连接、临时照明、安防弱电</li>
-                        <li><i class="fa-solid fa-circle-check text-emerald-400 mr-1"></i><strong>电压:</strong>300/300V – 300/500V</li>
-                        <li><i class="fa-solid fa-circle-check text-emerald-400 mr-1"></i><strong>结构:</strong>双绞花线(RVS) / 护套软线(RVV/VAF)</li>
-                    </ul>
-                    <p class="text-sm text-slate-600 leading-relaxed flex-1">ទន់និងងាយបត់ — 多股细铜丝,极柔软手感。VAF 按厂标生产,规格以产品手册为准。</p>
-                    <a href="#contact" class="text-sm text-amber-500 font-bold mt-3 flex items-center gap-2 hover:translate-x-1 transition-transform">询价 / Inquire <i class="fa-solid fa-arrow-right text-xs"></i></a>
-                </div>
-            </article>
+            <div class="cat-marquee-track" id="cat-marquee-track">
+                <!-- JS 注入两轮卡片以实现无缝循环 -->
+            </div>
         </div>
 
         <!-- 配套图片说明 -->
@@ -415,6 +344,62 @@
                 </table>
             </div>
         </details>
+
+        <!-- 初始化 marquee 轮播卡片 -->
+        <script>
+        (function() {
+            // 内联精简分类数据 —— 仅作 fallback，避免首屏闪烁
+            const INLINE_CATEGORIES = [
+                {id: 'household', num: '01', kh: 'ខ្សែសាងសង់គ្រួសារ', zh: '家装布电线', en: 'Household Wiring', color: 'amber', icon: 'fa-house-chimney', img: 'assets/images/products/household-wiring.jpg', models: ['BVR','BVVB','RVV','RVS'], desc: '住宅明装/穿管布线', order: 1},
+                {id: 'power', num: '02', kh: 'ខ្សែភ្លើងស្នូង', zh: '电力主干电缆', en: 'Power Feeder Cable', color: 'rose', icon: 'fa-tower-broadcast', img: 'assets/images/products/power-cable.jpg', models: ['YJV','YJLV'], desc: '工业/建筑电力主干', order: 2},
+                {id: 'welding', num: '03', kh: 'ខ្សែម៉ាស៊ីនប្រសិនស្នា', zh: '电焊机电缆', en: 'Welding Cable', color: 'slate', icon: 'fa-fire-flame-curved', img: 'assets/images/products/welding-cable.jpg', models: ['YH'], desc: '电焊机二次回路', order: 3},
+                {id: 'flexible', num: '04', kh: 'ខ្សែទន់ និងខ្សែឆ្កាង', zh: '设备软线与花线', en: 'Flexible & Cord', color: 'emerald', icon: 'fa-plug', img: 'assets/images/products/flexible.jpg', models: ['RVV','RVS','VAF'], desc: '家电/灯具/弱电连接', order: 4}
+            ];
+
+            // 优先使用 localStorage 缓存（来自 admin 编辑后的 categories+products）
+            function tryParse(key) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : null; } catch (_) { return null; } }
+            function buildFromCache() {
+                const cats = tryParse('bw_cable_categories');
+                const prods = tryParse('bw_cable_products');
+                if (!cats || !cats.length) return null;
+                const sorted = cats.slice().sort((a,b) => (Number(a.order)||0) - (Number(b.order)||0));
+                return sorted.map((c, i) => {
+                    const models = (prods || []).filter(p => p.categoryId === c.id).map(p => p.name);
+                    return {
+                        id: c.id,
+                        num: String((i + 1)).padStart(2, '0'),
+                        kh: c.title || c.label || '',
+                        zh: c.label || c.title || '',
+                        en: c.label || '',
+                        color: c.color, icon: c.icon, img: c.img,
+                        models: models && models.length ? models.slice(0, 8) : [],
+                        desc: c.desc || '',
+                        order: c.order || (i + 1)
+                    };
+                });
+            }
+            let categories = buildFromCache() || INLINE_CATEGORIES;
+            const track = document.getElementById('cat-marquee-track');
+            if (!track) return;
+            const colorMap = {amber:{bg:'from-amber-100 to-amber-200',badge:'text-amber-700 border-amber-300',pill:'bg-amber-100 text-amber-700 border-amber-300',accent:'text-amber-700'},rose:{bg:'from-rose-100 to-rose-200',badge:'text-rose-700 border-rose-300',pill:'bg-rose-100 text-rose-700 border-rose-300',accent:'text-rose-700'},slate:{bg:'from-slate-200 to-slate-300',badge:'text-slate-700 border-slate-400',pill:'bg-slate-100 text-slate-700 border-slate-300',accent:'text-slate-700'},emerald:{bg:'from-emerald-100 to-teal-200',badge:'text-emerald-700 border-emerald-300',pill:'bg-emerald-100 text-emerald-700 border-emerald-300',accent:'text-emerald-700'}};
+            let html = '';
+            // 复制两轮实现无缝循环
+            for (let r = 0; r < 2; r++) {
+                categories.forEach(cat => {
+                    const c = colorMap[cat.color] || colorMap.slate;
+                    html += `<div class="cat-slide"><a href="products.html#${cat.id}" class="group block bg-white border-2 ${c.pill} rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 min-h-[140px] flex flex-col"><div class="h-24 bg-gradient-to-br ${c.bg} relative flex items-center justify-center"><img src="${cat.img}" alt="${cat.zh}" class="h-24 w-full object-cover opacity-90" loading="lazy" onerror="this.style.opacity='0.3'"><span class="absolute top-2 left-2 px-2 py-1 bg-white/85 backdrop-blur ${c.badge} text-xs font-black rounded-full border">${cat.num} · ${cat.zh}</span></div><div class="p-3 flex-1 flex flex-col"><h3 class="font-black text-slate-900 text-sm mb-1">${cat.kh}</h3><p class="text-[11px] text-slate-500 mb-2 font-semibold">${cat.zh} · ${cat.en}</p><div class="flex flex-wrap gap-1 mb-2">${cat.models.map(m => `<span class="px-1.5 py-0.5 ${c.pill} text-[10px] font-black rounded">${m}</span>`).join('')}</div><div class="text-[10px] text-slate-500 mb-2 line-clamp-1">${cat.desc}</div><span class="mt-auto inline-flex items-center gap-1.5 text-sm font-bold ${c.accent} hover:underline self-start">查看该分类 <i class="fa-solid fa-arrow-right text-xs"></i></span></div></a></div>`;
+                });
+            }
+            track.innerHTML = html;
+            // 尊重 prefers-reduced-motion: 允许横向滚动回退
+            const wrap = document.querySelector('.cat-marquee-wrap');
+            if (wrap && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                wrap.style.overflowX = 'auto';
+                wrap.style.scrollSnapType = 'x mandatory';
+                track.style.scrollSnapAlign = 'start';
+            }
+        })();
+        </script>
     </section>
 
     <!-- ==================== CONTACT ==================== -->
@@ -506,7 +491,11 @@
     </section>
 
     <footer class="mt-16 border-t border-slate-200 py-8 text-center text-xs text-slate-500">
-        © 2026 B·W CABLE Cambodia. 独立电线资讯平台.
+        <div>© 2026 B·W CABLE Cambodia. 独立电线资讯平台.</div>
+        <div class="mt-1.5 text-[11px] text-slate-400">
+            Hero 背景 / Hero background:
+            <a href="https://www.vecteezy.com/free-photos/phnom-penh" target="_blank" rel="noopener sponsored" class="text-amber-600 hover:underline">Vecteezy 提供的金边图片</a>
+        </div>
     </footer>
 
     <!-- ==================== ARTICLE READER MODAL ==================== -->

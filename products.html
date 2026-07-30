@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="km">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B·W CABLE — 产品分类 / Products</title>
+
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <link rel="apple-touch-icon" href="/logo.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Kantumruy Pro', sans-serif;
+    }
+
+    .filter-pill {
+      transition: all 0.2s ease;
+    }
+
+    .filter-pill.active {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #0f172a;
+      font-weight: 700;
+      box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.3);
+    }
+
+    .modal-backdrop {
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(8px);
+    }
+
+    .product-modal-content {
+      transform: scale(0.97);
+      opacity: 0;
+      transition: all 0.25s ease;
+    }
+
+    .product-modal.open .product-modal-content {
+      transform: scale(1);
+      opacity: 1;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-100 text-slate-900 min-h-screen antialiased">
+
+  <nav class="border-b-2 border-amber-400 bg-white/95 sticky top-0 z-40 backdrop-blur-md shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-3">
+        <div class="flex items-center space-x-3">
+          <a href="/" class="flex items-center gap-2.5 group">
+            <img src="/logo.png" alt="B·W CABLE Logo"
+              class="h-9 w-auto object-contain transition-transform group-hover:scale-105" />
+            <span class="font-extrabold text-xl tracking-tight text-slate-900">B·W <span
+                class="text-amber-500">CABLE</span></span>
+          </a>
+          <span
+            class="text-[10px] sm:text-xs bg-amber-400 text-slate-900 px-2 py-0.5 rounded-full font-black ml-2 border-2 border-amber-500">INDUSTRIAL</span>
+          <span
+            class="hidden lg:inline text-xs text-slate-500 font-semibold ml-2 border-l border-slate-300 pl-3">ភ្នំពេញ ·
+            Phnom Penh</span>
+        </div>
+        <div class="hidden md:flex items-center gap-1 text-sm font-bold">
+          <a href="calculator.html"
+            class="px-3 py-2 rounded-lg text-slate-700 hover:bg-amber-50 hover:text-amber-600 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-calculator text-amber-400"></i> គណនាករ <span class="text-xs text-slate-400">/
+              工程计算器</span>
+          </a>
+          <a href="products.html"
+            class="px-3 py-2 rounded-lg text-slate-700 hover:bg-amber-50 hover:text-amber-600 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-diagram-project text-amber-400"></i> ត្រេះបន្ទាត់ <span
+              class="text-xs text-slate-400">/ 接线仿真</span>
+          </a>
+          <a href="products.html"
+            class="px-3 py-2 rounded-lg text-amber-600 bg-amber-50 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-box-open text-amber-500"></i> ផលិតផល <span class="text-xs text-slate-400">/
+              产品分类</span>
+          </a>
+          <a href="#articles"
+            class="px-3 py-2 rounded-lg text-slate-700 hover:bg-amber-50 hover:text-amber-600 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-newspaper text-amber-400"></i> អត្ថបទ <span class="text-xs text-slate-400">/ 文章</span>
+          </a>
+          <a href="#contact"
+            class="ml-1 px-4 py-2 rounded-lg bg-amber-400 hover:bg-amber-500 text-slate-950 font-black shadow-md border-2 border-amber-500 transition-all transform hover:scale-[1.03] active:scale-95 flex items-center gap-1.5">
+            <i class="fa-solid fa-phone"></i> ទំនាក់ទំនង <span class="text-xs opacity-70">/ 联系</span>
+          </a>
+        </div>
+        <button id="mobile-menu-btn" aria-label="Menu"
+          class="md:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100">
+          <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+      </div>
+      <div id="mobile-menu" class="hidden md:hidden pb-4 space-y-1 border-t border-slate-200 pt-3">
+        <a href="calculator.html" class="block px-3 py-2.5 rounded-lg text-slate-700 font-bold hover:bg-amber-50"><i
+            class="fa-solid fa-calculator text-amber-400 w-5"></i> គណនាករ / 工程计算器</a>
+        <a href="products.html" class="block px-3 py-2.5 rounded-lg text-slate-700 font-bold hover:bg-amber-50"><i
+            class="fa-solid fa-diagram-project text-amber-400 w-5"></i> ត្រេះបន្ទាត់ / 接线仿真</a>
+        <a href="products.html" class="block px-3 py-2.5 rounded-lg text-amber-600 font-bold bg-amber-50"><i
+            class="fa-solid fa-box-open text-amber-500 w-5"></i> ផលិតផល / 产品分类</a>
+        <a href="#articles" class="block px-3 py-2.5 rounded-lg text-slate-700 font-bold hover:bg-amber-50"><i
+            class="fa-solid fa-newspaper text-amber-400 w-5"></i> អត្ថបទ / 文章资讯</a>
+        <a href="#contact" class="block px-3 py-2.5 rounded-lg bg-amber-400 text-slate-950 font-black text-center"><i
+            class="fa-solid fa-phone w-5"></i> ទំនាក់ទំនង / 联系我们</a>
+      </div>
+    </div>
+  </nav>
+
+  <script>
+    document.getElementById('mobile-menu-btn').addEventListener('click', function () {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+  </script>
+
+  <section class="relative overflow-hidden hero-bg text-white">
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 fade-up">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="p-2 bg-white/15 backdrop-blur-sm border border-white/25 rounded-full text-xs font-bold">
+          <i class="fa-solid fa-box-open"></i> PRODUCTS
+        </div>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-black tracking-tight drop-shadow-lg">ប្រភេទផលិតផល</h1>
+      <p class="text-sm sm:text-base text-slate-200 mt-2 font-medium">产品分类 / Product Categories</p>
+      <p class="text-xs text-slate-300 mt-1 font-medium">家装布线 / 工程电力主干 / 电焊专用 / 设备软线与花线</p>
+    </div>
+  </section>
+
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+    <div class="bg-white border-2 border-slate-200 rounded-2xl shadow-sm p-3 sm:p-4">
+      <div class="flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-1">
+          <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+          <input id="product-search" type="text" placeholder="搜索型号、规格或产品名称 / Search model..."
+            class="w-full bg-slate-50 border-2 border-slate-300 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-500 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none transition-all">
+        </div>
+        <div class="flex flex-wrap gap-2" id="category-filters">
+          <!-- filter pills injected by renderFilterPills() after data loaded -->
+        </div>
+      </div>
+      <div id="search-empty" class="hidden text-center py-10 text-slate-500 text-sm">未匹配到任何产品 / No matching products
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6" id="categories-grid"></div>
+  </section>
+
+  <footer class="mt-16 border-t border-slate-200 py-8 text-center text-xs text-slate-500">
+    <div>© 2026 B·W CABLE Cambodia. 独立电线资讯平台.</div>
+  </footer>
+
+  <div id="product-modal"
+    class="product-modal fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-4 transition-all duration-300">
+    <div
+      class="bg-white border-2 border-slate-300 rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden relative product-modal-content"
+      id="product-modal-box">
+      <button onclick="closeProductModal()"
+        class="absolute top-4 right-4 z-10 text-slate-600 hover:text-slate-900 p-2 rounded-lg bg-white/90 backdrop-blur-sm hover:bg-slate-200/80 transition border border-slate-200 min-w-[44px] min-h-[44px] flex items-center justify-center">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+      <div class="grid grid-cols-1 lg:grid-cols-2 overflow-y-auto">
+        <div class="bg-slate-100">
+          <img id="product-modal-img" src="" alt="" class="w-full h-64 sm:h-80 object-cover"
+            onerror="this.style.opacity='0.3'">
+          <div class="px-5 pb-5">
+            <span id="product-modal-badge"
+              class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/90 backdrop-blur border border-slate-200 text-[10px] font-black rounded-full mt-3"></span>
+          </div>
+        </div>
+        <div class="p-5 sm:p-6">
+          <div class="flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <span id="product-modal-category"
+                class="text-[11px] font-black text-slate-500 uppercase tracking-wide"></span>
+              <h2 id="product-modal-title" class="text-xl sm:text-2xl font-black text-slate-900 leading-snug mt-1"></h2>
+              <p id="product-modal-sub" class="text-xs text-slate-500 font-semibold mt-1"></p>
+            </div>
+            <span id="product-modal-tag"
+              class="shrink-0 px-2.5 py-1 bg-amber-50 border border-amber-200 text-amber-700 text-[11px] font-black rounded-lg">规格</span>
+          </div>
+          <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div class="text-[10px] font-black text-slate-400 uppercase">វ៉ុល / 电压</div>
+              <div id="product-modal-voltage" class="text-sm font-bold text-slate-900 mt-1"></div>
+            </div>
+            <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div class="text-[10px] font-black text-slate-400 uppercase">ខឹបរ / 导体</div>
+              <div id="product-modal-conductor" class="text-sm font-bold text-slate-900 mt-1"></div>
+            </div>
+            <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div class="text-[10px] font-black text-slate-400 uppercase">អ៊ីម៉ាញ៉េស / 绝缘</div>
+              <div id="product-modal-insulation" class="text-sm font-bold text-slate-900 mt-1"></div>
+            </div>
+            <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div class="text-[10px] font-black text-slate-400 uppercase">ស្គ្រី / 护套</div>
+              <div id="product-modal-sheath" class="text-sm font-bold text-slate-900 mt-1"></div>
+            </div>
+            <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div class="text-[10px] font-black text-slate-400 uppercase">长期工作温度 / Temp</div>
+              <div id="product-modal-temp" class="text-sm font-bold text-slate-900 mt-1"></div>
+            </div>
+            <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
+              <div class="text-[10px] font-black text-slate-400 uppercase">安装温度 / Install</div>
+              <div id="product-modal-install" class="text-sm font-bold text-slate-900 mt-1"></div>
+            </div>
+          </div>
+          <div class="mt-4 space-y-3 text-sm text-slate-700">
+            <div>
+              <div class="text-[10px] font-black text-slate-400 uppercase">យុទ្ធភាព / 用途</div>
+              <p id="product-modal-usage" class="text-sm mt-1 leading-relaxed"></p>
+            </div>
+            <div>
+              <div class="text-[10px] font-black text-slate-400 uppercase">លក្ខណៈសម្បត្តិ / 特性</div>
+              <p id="product-modal-features" class="text-sm mt-1 leading-relaxed whitespace-pre-line"></p>
+            </div>
+            <div>
+              <div class="text-[10px] font-black text-slate-400 uppercase">ស្តង់ដារ / 标准</div>
+              <p id="product-modal-standard" class="text-sm mt-1 whitespace-pre-line"></p>
+            </div>
+            <div>
+              <div class="text-[10px] font-black text-slate-400 uppercase">កូត / 包装</div>
+              <p id="product-modal-packaging" class="text-sm mt-1"></p>
+            </div>
+            <div>
+              <div class="text-[10px] font-black text-slate-400 uppercase">弯曲半径 / Bending Radius</div>
+              <p id="product-modal-radius" class="text-sm mt-1"></p>
+            </div>
+          </div>
+          <div id="product-modal-specs-wrap" class="mt-5 hidden">
+            <div class="flex items-center justify-between mb-2">
+              <div class="text-[10px] font-black text-slate-400 uppercase">规格截面表 / Spec Table</div>
+              <div class="text-[9px] text-slate-400 font-semibold">参考值 · 以随货规格书为准</div>
+            </div>
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+              <table class="w-full text-[11px]" id="product-modal-specs-table"></table>
+            </div>
+          </div>
+          <div id="product-modal-installation-wrap" class="mt-4 hidden">
+            <div class="text-[10px] font-black text-slate-400 uppercase mb-1">敷设与环境 / Installation</div>
+            <p id="product-modal-installation" class="text-sm text-slate-700 leading-relaxed whitespace-pre-line"></p>
+          </div>
+          <div id="product-modal-selection-wrap" class="mt-4 hidden">
+            <div class="text-[10px] font-black text-slate-400 uppercase mb-1">选型与施工要点 / Selection</div>
+            <p id="product-modal-selection" class="text-sm text-slate-700 leading-relaxed whitespace-pre-line"></p>
+          </div>
+          <div id="product-modal-variants-wrap" class="mt-4 hidden">
+            <div class="text-[10px] font-black text-slate-400 uppercase mb-1">派生型号 / Variants</div>
+            <div id="product-modal-variants" class="flex flex-wrap gap-1.5"></div>
+          </div>
+          <p id="product-modal-note" class="mt-3 text-[10px] text-slate-400 leading-relaxed"></p>
+          <div class="mt-5 flex flex-wrap gap-3">
+            <button onclick="copySpec()"
+              class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black transition-all text-sm border-2 border-slate-900">
+              <i class="fa-regular fa-copy"></i> 复制规格 / Copy
+            </button>
+            <a href="tel:+855979889321"
+              class="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-500 text-slate-950 font-black border-2 border-amber-500 transition-all text-sm">ទំនាក់ទំនង
+              / 询价</a>
+            <a href="https://wa.me/855979889321" target="_blank" rel="noopener"
+              class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-black transition-all text-sm border-2 border-emerald-600">WhatsApp
+              / 咨询</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // 数据源：localStorage → /api → data/*.json fallback
+    // CATEGORIES 为组装后的嵌套结构（分类 + 其下 products[]）
+    // ============================================================
+    var STORAGE_KEY_CATEGORIES = 'bw_cable_categories';
+    var STORAGE_KEY_PRODUCTS = 'bw_cable_products';
+
+    var CATEGORIES = [];        // 组装后：[{.., products:[..]}]
+    var CAT_SOURCE = [];         // 扁平分类
+    var PROD_SOURCE = [];        // 扁平产品
+    var DATA_READY = false;
+
+    function catById(id) {
+      for (var i = 0; i < CAT_SOURCE.length; i++) { if (CAT_SOURCE[i].id === id) return CAT_SOURCE[i]; }
+      return null;
+    }
+
+    function reorderSource(arr) {
+      return arr.slice().sort(function (a, b) {
+        var ao = Number(a.order), bo = Number(b.order);
+        if (isNaN(ao)) ao = 9999; if (isNaN(bo)) bo = 9999;
+        return ao - bo;
+      });
+    }
+
+    // 把扁平 categories + products 组装成嵌套 CATEGORIES
+    function assembleCategories(cats, prods) {
+      var sortedCats = reorderSource(cats);
+      var nested = [];
+      for (var i = 0; i < sortedCats.length; i++) {
+        var c = sortedCats[i];
+        var cProducts = prods
+          .filter(function (p) { return p.categoryId === c.id; })
+          .sort(function (a, b) { return (Number(a.order) || 0) - (Number(b.order) || 0); });
+        nested.push({
+          id: c.id, title: c.title, label: c.label, desc: c.desc,
+          color: c.color, icon: c.icon, img: c.img, order: c.order,
+          products: cProducts
+        });
+      }
+      return nested;
+    }
+
+    function tryParseStored(key) {
+      try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : null; } catch (_) { return null; }
+    }
+
+    function applyData(cats, prods) {
+      CAT_SOURCE = Array.isArray(cats) ? cats : [];
+      PROD_SOURCE = Array.isArray(prods) ? prods : [];
+      CATEGORIES = assembleCategories(CAT_SOURCE, PROD_SOURCE);
+      localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(CAT_SOURCE));
+      localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(PROD_SOURCE));
+    }
+
+    function onReady() {
+      DATA_READY = true;
+      renderFilterPills();
+      renderCategories();
+      initFromHash();
+      console.log('products ready, CATEGORIES count:', CATEGORIES.length, 'products:', PROD_SOURCE.length);
+    }
+
+    // 渲染顶部 filter pills（动态，基于 CATEGORIES）
+    function renderFilterPills() {
+      var box = document.getElementById('category-filters');
+      if (!box) return;
+      var html = '<button class="filter-pill active px-4 py-2 rounded-xl text-sm font-semibold bg-amber-500 text-slate-950 shadow-lg" data-cat="all">全部 All</button>';
+      for (var i = 0; i < CATEGORIES.length; i++) {
+        var c = CATEGORIES[i];
+        html += '<button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-200 text-slate-700 font-bold hover:bg-slate-300" data-cat="' + esc(c.id) + '">' + esc(c.label) + '</button>';
+      }
+      box.innerHTML = html;
+    }
+
+    // 初始化加载：三级 fallback（DOMContentLoaded 后执行，确保 esc/renderCategories 等已定义）
+    document.addEventListener('DOMContentLoaded', function loadData() {
+      var localCats = tryParseStored(STORAGE_KEY_CATEGORIES);
+      var localProds = tryParseStored(STORAGE_KEY_PRODUCTS);
+
+      // 1) localStorage 快速渲染
+      if (localCats && localCats.length) {
+        applyData(localCats, localProds || []);
+        onReady();
+      }
+
+      // 2) /api 远程（权威源）
+      Promise.all([
+        fetch('/api/categories').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }),
+        fetch('/api/products').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })
+      ]).then(function (res) {
+        var rc = res[0], rp = res[1];
+        if (Array.isArray(rc) && rc.length) {
+          applyData(rc, Array.isArray(rp) ? rp : []);
+          onReady();
+          return;
+        }
+        // 3) 静态 json fallback（KV 不可用且无本地缓存时）
+        if (!DATA_READY) {
+          Promise.all([
+            fetch('data/categories.json').then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; }),
+            fetch('data/products.json').then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; })
+          ]).then(function (s) {
+            applyData(s[0] || [], s[1] || []);
+            onReady();
+          });
+        }
+      });
+    });
+
+
+    var FALLBACK_IMG = 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?q=80&w=800&auto=format&fit=crop';
+
+    function esc(s) {
+      if (s == null) return '';
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+    function nl(s) { return s ? esc(s).replace(/\n/g, '<br>') : ''; }
+
+    function colorClasses(name) {
+      var map = {
+        amber: { pill: 'bg-amber-100 text-amber-700', outline: 'border-amber-300', hover: 'hover:border-amber-500', accent: 'text-amber-700', bg: 'from-amber-100 to-amber-200' },
+        rose: { pill: 'bg-rose-100 text-rose-700', outline: 'border-rose-300', hover: 'hover:border-rose-500', accent: 'text-rose-700', bg: 'from-rose-100 to-rose-200' },
+        slate: { pill: 'bg-slate-100 text-slate-700', outline: 'border-slate-400', hover: 'hover:border-slate-500', accent: 'text-slate-700', bg: 'from-slate-200 to-slate-300' },
+        emerald: { pill: 'bg-emerald-100 text-emerald-700', outline: 'border-emerald-300', hover: 'hover:border-emerald-500', accent: 'text-emerald-700', bg: 'from-emerald-100 to-teal-200' }
+      };
+      return map[name] || map.slate;
+    }
+
+    function matchesQuery(text, q) { return text.toLowerCase().indexOf(q.toLowerCase()) > -1; }
+
+    function renderCategories() {
+      var grid = document.getElementById('categories-grid');
+      var q = document.getElementById('product-search').value.trim();
+      var activePill = document.querySelector('#category-filters .filter-pill.active');
+      var activeCat = activePill ? activePill.dataset.cat : 'all';
+      var anyVisible = false;
+      var html = '';
+      for (var ci = 0; ci < CATEGORIES.length; ci++) {
+        var cat = CATEGORIES[ci];
+        var c = colorClasses(cat.color);
+        var out = [];
+        for (var pi = 0; pi < cat.products.length; pi++) {
+          var p = cat.products[pi];
+          var text = p.name + ' ' + p.label + ' ' + cat.label + ' ' + cat.desc;
+          var qOk = !q || matchesQuery(text, q);
+          var catOk = activeCat === 'all' || cat.id === activeCat;
+          if (qOk && catOk) out.push(p);
+        }
+        if (out.length === 0) continue;
+        anyVisible = true;
+        var buttons = '';
+        for (var bi = 0; bi < out.length; bi++) {
+          var p = out[bi];
+          buttons += '<button data-cat="' + cat.id + '" data-pid="' + p.id + '" type="button" class="w-full text-left border-2 ' + c.outline + ' rounded-xl p-3 flex gap-3 items-center bg-white hover:bg-slate-50 transition group"><div class="h-20 w-24 rounded-lg bg-slate-200 overflow-hidden shrink-0 border border-slate-200 pointer-events-none"><img src="' + p.img + '" alt="" class="w-full h-full object-cover" loading="lazy" draggable="false"></div><div class="min-w-0"><div class="text-xs font-black ' + c.accent + ' truncate group-hover:underline">' + esc(p.name) + ' <span class="font-semibold text-slate-600">/ ' + esc(p.label) + '</span></div><div class="text-[11px] text-slate-600 mt-1 line-clamp-2">' + nl(p.usage) + '</div><span class="inline-block mt-2 text-[10px] font-black text-slate-900 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded">ព័ត៌មានលំអិត / 查看详情</span></div></button>';
+        }
+        html += '<article class="card-hover bg-white border-2 ' + c.outline + ' rounded-2xl shadow-md overflow-hidden flex flex-col ' + c.hover + '"><div class="h-36 bg-gradient-to-br ' + c.bg + ' relative"><div class="absolute inset-0 flex items-center justify-center"><i class="fa-solid ' + cat.icon + ' text-5xl opacity-60"></i></div><span class="absolute top-3 left-3 px-2.5 py-1 bg-white/85 backdrop-blur text-slate-900 text-xs font-black rounded-full border ' + c.outline + '">' + esc(cat.label) + '</span><span class="absolute top-3 right-3 px-2 py-1 bg-slate-900/70 backdrop-blur text-white text-[10px] font-black rounded-full">' + out.length + ' 规格</span></div><div class="p-5 flex-1 flex flex-col"><h3 class="font-black text-slate-900 text-base mb-0.5">' + esc(cat.title) + '</h3><p class="text-xs text-slate-500 mb-3 font-semibold">' + esc(cat.label) + '</p><p class="text-sm text-slate-600 leading-relaxed mb-4">' + esc(cat.desc) + '</p><div class="mt-auto grid grid-cols-1 gap-3">' + buttons + '</div></div></article>';
+      }
+      grid.innerHTML = html;
+      document.getElementById('search-empty').classList.toggle('hidden', anyVisible);
+    }
+
+    function findProduct(catId, prodId) {
+      for (var i = 0; i < CATEGORIES.length; i++) {
+        if (CATEGORIES[i].id !== catId) continue;
+        for (var j = 0; j < CATEGORIES[i].products.length; j++) {
+          if (CATEGORIES[i].products[j].id === prodId) return [CATEGORIES[i], CATEGORIES[i].products[j]];
+        }
+      }
+      return [null, null];
+    }
+
+    var modal = document.getElementById('product-modal');
+    var currentProduct = null;
+
+    // 1. 修改卡片点击事件代理（添加 e.preventDefault() 和 e.stopPropagation()）
+    document.getElementById('categories-grid').addEventListener('click', function (e) {
+      var btn = e.target.closest('button[data-cat][data-pid]');
+      if (btn) {
+        e.preventDefault(); // 阻止默认行为，防止浏览器误将图片打开
+        e.stopPropagation(); // 阻止冒泡
+        openProduct(btn.dataset.cat, btn.dataset.pid);
+      }
+    });
+    // 图片加载失败时隐藏碎裂图标（error 事件不冒泡，需用捕获阶段）
+    document.getElementById('categories-grid').addEventListener('error', function (e) {
+      var t = e.target;
+      if (t && t.tagName === 'IMG') { t.style.visibility = 'hidden'; }
+    }, true);
+    window.openProduct = function (catId, prodId) {
+      try {
+        var pair = findProduct(catId, prodId);
+        var cat = pair[0]; var p = pair[1];
+        console.log('openProduct', catId, prodId, 'found?', !!(p && p.name), p && p.name);
+        if (!p || !p.name) { console.warn('openProduct missing', catId, prodId); return; }
+        currentProduct = p;
+        var vel = document.getElementById('product-modal-voltage');
+        var ids = ['product-modal-img', 'product-modal-badge', 'product-modal-category', 'product-modal-title', 'product-modal-sub', 'product-modal-tag', 'product-modal-voltage', 'product-modal-conductor', 'product-modal-insulation', 'product-modal-sheath', 'product-modal-temp', 'product-modal-install', 'product-modal-usage', 'product-modal-features', 'product-modal-standard', 'product-modal-packaging', 'product-modal-radius'];
+        var missing = ids.filter(function (id) { return !document.getElementById(id); });
+        if (missing.length) { console.error('missing modal fields', missing); }
+        document.getElementById('product-modal-img').src = p.img;
+        document.getElementById('product-modal-img').onerror = function () { this.style.opacity = '0.3'; };
+        document.getElementById('product-modal-badge').textContent = p.name + ' · ' + (cat ? cat.label : '');
+        document.getElementById('product-modal-category').textContent = cat ? cat.title : '';
+        document.getElementById('product-modal-title').textContent = p.name;
+        document.getElementById('product-modal-sub').textContent = p.label;
+        document.getElementById('product-modal-tag').textContent = cat && cat.icon ? cat.icon + ' ' + cat.label : '';
+        vel.textContent = nl(p.voltage);
+        document.getElementById('product-modal-conductor').textContent = nl(p.conductor);
+        document.getElementById('product-modal-insulation').textContent = nl(p.insulation);
+        document.getElementById('product-modal-sheath').textContent = nl(p.sheath);
+        document.getElementById('product-modal-temp').textContent = nl(p.temp);
+        document.getElementById('product-modal-install').textContent = nl(p.install);
+        document.getElementById('product-modal-usage').textContent = nl(p.usage);
+        document.getElementById('product-modal-features').textContent = nl(p.features);
+        document.getElementById('product-modal-standard').textContent = nl(p.standard);
+        document.getElementById('product-modal-packaging').textContent = nl(p.packaging);
+        document.getElementById('product-modal-radius').textContent = nl(p.radius);
+        // 新增区块：规格截面表 / 敷设 / 选型 / 派生型号 / 数据说明
+        var tbl = document.getElementById('product-modal-specs-table');
+        tbl.innerHTML = '';
+        if (p.specs && p.specs.length) {
+          document.getElementById('product-modal-specs-wrap').classList.remove('hidden');
+          // 动态表头：默认 5 列；若某行有 6 列则用电力类表头
+          var ncols = p.specs[0].length;
+          var headers = p.specHeaders || (ncols >= 6
+            ? ['规格', '导体结构', '外径 mm', '参考重量', '载流量 空气30℃', '载流量 埋地25℃']
+            : ['规格', '导体结构', '外径 mm', '参考重量', '参考载流量']);
+          var thead = document.createElement('thead');
+          thead.className = 'bg-slate-100 text-slate-600';
+          var htr = document.createElement('tr');
+          for (var hi = 0; hi < headers.length; hi++) {
+            var th = document.createElement('th');
+            th.className = 'px-2.5 py-2 text-left font-black whitespace-nowrap';
+            th.textContent = headers[hi];
+            htr.appendChild(th);
+          }
+          thead.appendChild(htr); tbl.appendChild(thead);
+          var tbody = document.createElement('tbody');
+          tbody.className = 'divide-y divide-slate-100';
+          for (var si = 0; si < p.specs.length; si++) {
+            var row = p.specs[si];
+            var tr = document.createElement('tr');
+            tr.className = si % 2 ? 'bg-slate-50/60' : '';
+            for (var ci = 0; ci < row.length; ci++) {
+              var td = document.createElement('td');
+              td.className = 'px-2.5 py-1.5 whitespace-nowrap';
+              if (ci === 0) { td.className += ' font-black text-slate-900'; td.textContent = row[ci]; }
+              else if (ci === row.length - 1) { td.className += ' text-amber-700 font-bold'; td.textContent = row[ci]; }
+              else { td.className += ' text-slate-600'; td.textContent = row[ci]; }
+              tr.appendChild(td);
+            }
+            tbody.appendChild(tr);
+          }
+          tbl.appendChild(tbody);
+        } else { document.getElementById('product-modal-specs-wrap').classList.add('hidden'); }
+
+        function toggleTextBlock(wrapId, textId, val) {
+          var w = document.getElementById(wrapId), el = document.getElementById(textId);
+          if (val) { w.classList.remove('hidden'); el.innerHTML = nl(val); } else { w.classList.add('hidden'); }
+        }
+        toggleTextBlock('product-modal-installation-wrap', 'product-modal-installation', p.installation);
+        toggleTextBlock('product-modal-selection-wrap', 'product-modal-selection', p.selection);
+
+        var vWrap = document.getElementById('product-modal-variants-wrap');
+        var vBox = document.getElementById('product-modal-variants');
+        vBox.innerHTML = '';
+        if (p.variants && p.variants.length) {
+          vWrap.classList.remove('hidden');
+          for (var vi = 0; vi < p.variants.length; vi++) {
+            var chip = document.createElement('span');
+            chip.className = 'px-2 py-1 bg-slate-100 border border-slate-200 text-slate-700 text-[10px] font-bold rounded-md';
+            chip.textContent = p.variants[vi];
+            vBox.appendChild(chip);
+          }
+        } else { vWrap.classList.add('hidden'); }
+
+        document.getElementById('product-modal-note').textContent = p.note || '';
+        modal.classList.remove('hidden'); modal.classList.add('flex');
+        requestAnimationFrame(function () { modal.classList.add('open'); });
+        document.body.style.overflow = 'hidden';
+      } catch (err) { console.error('openProduct error', err); }
+    };
+
+    window.closeProductModal = function () {
+      modal.classList.remove('open');
+      setTimeout(function () { modal.classList.add('hidden'); modal.classList.remove('flex'); document.body.style.overflow = ''; }, 250);
+    };
+
+    window.copySpec = function () {
+      if (!currentProduct) return;
+      var p = currentProduct;
+      var lines = [p.name + ' | ' + p.label, '电压: ' + p.voltage, '导体: ' + p.conductor, '绝缘: ' + p.insulation, '护套: ' + p.sheath, '温度: ' + p.temp, '安装: ' + p.install, '弯曲半径: ' + p.radius, '用途: ' + p.usage, '特性: ' + p.features, '标准: ' + p.standard, '包装: ' + p.packaging];
+      if (p.specs && p.specs.length) {
+        lines.push('');
+        lines.push('规格截面表（参考值）:');
+        lines.push('规格 | 导体结构 | 外径mm | 参考重量 | 参考载流量');
+        for (var i = 0; i < p.specs.length; i++) { lines.push(p.specs[i].join(' | ')); }
+      }
+      if (p.installation) lines.push('', '敷设与环境: ' + p.installation);
+      if (p.selection) lines.push('', '选型与施工: ' + p.selection);
+      if (p.variants && p.variants.length) lines.push('', '派生型号: ' + p.variants.join('、'));
+      if (p.note) lines.push('', p.note);
+      var text = lines.join('\\n');
+      if (navigator.clipboard) { navigator.clipboard.writeText(text).then(function () { alert('已复制规格 / Copied'); }); }
+    };
+
+    modal.addEventListener('click', function (e) { if (e.target === modal) closeProductModal(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeProductModal(); });
+
+    document.getElementById('product-search').addEventListener('input', renderCategories);
+    document.getElementById('category-filters').addEventListener('click', function (e) {
+      var pill = e.target.closest('.filter-pill');
+      if (!pill) return;
+      var pills = document.querySelectorAll('#category-filters .filter-pill');
+      for (var i = 0; i < pills.length; i++) { pills[i].classList.remove('active', 'bg-amber-500', 'text-slate-950', 'shadow-lg'); pills[i].classList.add('bg-slate-200', 'text-slate-700', 'font-bold', 'hover:bg-slate-300'); }
+      pill.classList.add('active', 'bg-amber-500', 'text-slate-950', 'shadow-lg');
+      pill.classList.remove('bg-slate-200', 'text-slate-700', 'font-bold', 'hover:bg-slate-300');
+      renderCategories();
+    });
+
+    // 处理 URL hash (来自首页点击) —— 激活对应分类并滚动到网格（由 onReady 在数据就绪后调用）
+    function initFromHash() {
+        var hash = window.location.hash.replace('#', '');
+        var validIds = CATEGORIES.map(function (c) { return c.id; });
+        if (hash && validIds.indexOf(hash) > -1) {
+            var targetPill = document.querySelector('#category-filters .filter-pill[data-cat="' + hash + '"]');
+            if (targetPill) {
+                var pills = document.querySelectorAll('#category-filters .filter-pill');
+                for (var i = 0; i < pills.length; i++) {
+                    pills[i].classList.remove('active', 'bg-amber-500', 'text-slate-950', 'shadow-lg');
+                    pills[i].classList.add('bg-slate-200', 'text-slate-700', 'font-bold', 'hover:bg-slate-300');
+                }
+                targetPill.classList.add('active', 'bg-amber-500', 'text-slate-950', 'shadow-lg');
+                targetPill.classList.remove('bg-slate-200', 'text-slate-700', 'font-bold', 'hover:bg-slate-300');
+            }
+            var grid = document.getElementById('categories-grid');
+            if (grid) {
+                setTimeout(function() { grid.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
+            }
+        }
+    }
+  </script>
+
+</body>
+
+</html>
