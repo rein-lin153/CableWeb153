@@ -17,8 +17,13 @@ export async function onRequestPost(context) {
       });
     }
 
-    // Read admin password from env var or use default
-    const adminPassword = env.ADMIN_PASSWORD || 'BwCable2026!';
+    // Read admin password from env var or use default.
+    // trim() 防御性处理:避免在 Cloudflare 控制台粘贴 Secret 时
+    // 误带入前后空白/换行导致密码比对失败。
+    const rawEnvPw = env.ADMIN_PASSWORD;
+    const adminPassword = (typeof rawEnvPw === 'string' && rawEnvPw.length)
+      ? rawEnvPw.trim()
+      : 'BwCable2026!';
 
     if (password !== adminPassword) {
       return new Response(JSON.stringify({ success: false, message: '密码错误，请重试 (Invalid password)' }), {
