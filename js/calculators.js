@@ -1,13 +1,13 @@
 /**
- * B·W CABLE — 工程计算器逻辑 (calculator.html)
+ * B·W CABLE — 工程计算器逻辑 (内嵌主页 #calculators)
  * 13 个计算器：电力、土木、装饰三大类。
- * 主色：电气蓝 #1e69ff / #0052d9，副色 emerald。
+ * 主色：琥珀 amber (#f59e0b / #d97706)，副色 emerald。
  * 计算 结果写入对应 `#xxx-result` 区。
  *
  * 设计原则：
  *  - 每个计算器独立 IIFE / 函数，互不污染全局。
  *  - 输入校验：缺失或非法 → 在结果区给出提示，不抛错。
- *  - 结果文案：中文为主，关键数值高亮（blue-700 加粗）。
+ *  - 结果文案：中文为主，关键数值高亮（amber-700 加粗，与主页琥珀主色统一）。
  */
 (function () {
     'use strict';
@@ -42,7 +42,7 @@
 
     /** 高亮数值 */
     function hl(v, unit) {
-        return `<strong class="text-blue-700">${v}${unit || ''}</strong>`;
+        return `<strong class="text-amber-700">${v}${unit || ''}</strong>`;
     }
 
     /** 空值提示 */
@@ -155,9 +155,9 @@
         row.className = 'flex flex-wrap gap-2 items-center bg-slate-50 p-3 rounded-xl border border-slate-200';
         row.innerHTML = `
             <span class="text-xs font-bold text-slate-500 w-6">#${id}</span>
-            <input type="text" class="device-name flex-1 min-w-[120px] bg-white border-2 border-slate-300 rounded-lg px-3 py-2 text-sm font-bold placeholder-slate-400 focus:border-blue-500 outline-none" placeholder="设备名称">
-            <input type="number" class="device-kw w-24 bg-white border-2 border-slate-300 rounded-lg px-3 py-2 text-sm font-bold placeholder-slate-400 focus:border-blue-500 outline-none" placeholder="kW" step="0.1">
-            <input type="number" class="device-kf w-20 bg-white border-2 border-slate-300 rounded-lg px-3 py-2 text-sm font-bold placeholder-slate-400 focus:border-blue-500 outline-none" placeholder="kf" value="0.8" step="0.05" min="0" max="1">
+            <input type="text" class="device-name flex-1 min-w-[120px] bg-white border-2 border-slate-300 rounded-lg px-3 py-2 text-sm font-bold placeholder-slate-400 focus:border-amber-500 outline-none" placeholder="设备名称">
+            <input type="number" class="device-kw w-24 bg-white border-2 border-slate-300 rounded-lg px-3 py-2 text-sm font-bold placeholder-slate-400 focus:border-amber-500 outline-none" placeholder="kW" step="0.1">
+            <input type="number" class="device-kf w-20 bg-white border-2 border-slate-300 rounded-lg px-3 py-2 text-sm font-bold placeholder-slate-400 focus:border-amber-500 outline-none" placeholder="kf" value="0.8" step="0.05" min="0" max="1">
             <button type="button" class="device-del px-3 py-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg text-sm font-bold transition"><i class="fa-solid fa-trash"></i></button>
         `;
         row.querySelector('.device-del').addEventListener('click', () => row.remove());
@@ -502,17 +502,17 @@
         document.querySelectorAll('.tile-size-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.tile-size-btn').forEach(b => {
-                    b.classList.remove('border-blue-600', 'bg-blue-50', 'text-blue-700');
+                    b.classList.remove('border-amber-600', 'bg-amber-50', 'text-amber-700');
                     b.classList.add('border-transparent');
                 });
-                btn.classList.add('border-blue-600', 'bg-blue-50', 'text-blue-700');
+                btn.classList.add('border-amber-600', 'bg-amber-50', 'text-amber-700');
                 btn.classList.remove('border-transparent');
                 $('tile-size').value = btn.dataset.tile;
             });
         });
         // 默认选中 60
         const def = document.querySelector('.tile-size-btn[data-tile="60"]');
-        if (def) { def.classList.add('border-blue-600', 'bg-blue-50', 'text-blue-700'); def.classList.remove('border-transparent'); }
+        if (def) { def.classList.add('border-amber-600', 'bg-amber-50', 'text-amber-700'); def.classList.remove('border-transparent'); }
 
         // 配电列表初始一行
         renderDeviceList();

@@ -1,0 +1,246 @@
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        <div class="bg-white border-2 border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xl">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="p-2 bg-blue-600/10 rounded-lg"><i class="fa-solid fa-toolbox text-blue-600 text-lg"></i></div>
+                <h2 class="text-xl sm:text-2xl font-black text-slate-900">គណនាករ 13 合 1</h2>
+            </div>
+
+            <!-- Category Tab Navigation -->
+            <div id="calc-tabs" class="flex flex-wrap gap-3 mb-8 border-b-2 border-slate-200 pb-4">
+                <button class="calc-category-tab active-tab px-5 py-3 bg-blue-600 text-white font-black rounded-xl text-sm transition-all duration-300 whitespace-nowrap btn-ripple shadow-md border-2 border-blue-700" data-category="cat-electric">
+                    ⚡ 电力 <span class="text-xs opacity-70 ml-1">(9)</span>
+                </button>
+                <button class="calc-category-tab px-3 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-sm transition-all duration-300 whitespace-nowrap btn-ripple" data-category="cat-civil">
+                    🧱 土木工程
+                </button>
+                <button class="calc-category-tab px-3 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-sm transition-all duration-300 whitespace-nowrap btn-ripple" data-category="cat-decor">
+                    🎨 装饰
+                </button>
+                <button class="calc-category-tab px-3 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-sm transition-all duration-300 whitespace-nowrap btn-ripple" data-category="cat-cost">
+                    🏠 价格范围
+                </button>
+            </div>
+
+            <!-- Sub-Pill Navigation -->
+            <div id="electric-sub-pills" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none snap-x my-4 md:flex-wrap"></div>
+            <div id="civil-sub-pills" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none snap-x my-4 md:flex-wrap hidden"></div>
+            <div id="decor-sub-pills" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none snap-x my-4 md:flex-wrap hidden"></div>
+            <div id="cost-sub-pills" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none snap-x my-4 md:flex-wrap hidden"></div>
+
+            <!-- ===== Electric Category ===== -->
+            <div id="cat-electric" class="calc-category-panel">
+                <div id="electric-cards-container" class="min-h-[400px]">
+                    <!-- 1. Cable Size & Voltage Drop -->
+                    <div class="calc-card calc-card-active bg-white border-2 border-slate-200 shadow-md rounded-xl p-6 space-y-5 calc-card-1">
+                        <h3 class="text-blue-600 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-plug"></i> 缆线载流量与电压降计算</h3>
+                        <div class="mb-5 p-4 rounded-xl bg-blue-50 border-2 border-blue-300">
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-blue-800 mb-1">傻瓜指南</h4><p class="text-slate-700">电线就像水管！如果线径太小，电流过大就会发热甚至起火。距离越远，电压降越大（Voltage Drop）。这个工具帮你选择最安全的线径。</p></div></div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">系统 (Phase)</label>
+                                <select id="cable-phase" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all">
+                                    <option value="single">单相 Single</option><option value="three">三相 Three</option></select></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">材质 (Material)</label>
+                                <select id="cable-material" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all">
+                                    <option value="copper">铜 Copper</option><option value="aluminum">铝 Aluminum</option></select></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">功率 (kW)</label>
+                                <input type="number" id="cable-power" placeholder="例 15" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">距离 (m)</label>
+                                <input type="number" id="cable-length" placeholder="例 80" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                        </div>
+                        <button id="btn-cable-size" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple shadow-md border-2 border-blue-700"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
+                        <div id="cable-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
+                    </div>
+                    <!-- 2. Copper Weight & Cost -->
+                    <div class="calc-card hidden bg-white border-2 border-slate-200 shadow-md rounded-xl p-6 space-y-5 calc-card-2">
+                        <h3 class="text-blue-600 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-coins"></i> 铜重估价计算</h3>
+                        <div class="mb-5 p-4 rounded-xl bg-blue-50 border-2 border-blue-300">
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-blue-800 mb-1">傻瓜指南</h4><p class="text-slate-700">想知道把旧电缆拿去卖能值多少钱？或者买电缆不被坑？这个工具计算电缆中纯铜的重量和大约市场价格。</p></div></div></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">截面积 mm²</label><input type="number" id="cu-area" placeholder="例 25" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">芯数 (1-4)</label><select id="cu-cores" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">总长度 (m)</label><input type="number" id="cu-length" placeholder="例 100" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                        </div>
+                        <button id="btn-copper-weight" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
+                        <div id="copper-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
+                    </div>
+                    <!-- 3. Distribution System Design -->
+                    <div class="calc-card hidden bg-white border-2 border-slate-200 shadow-md rounded-xl p-6 space-y-5 calc-card-3">
+                        <h3 class="text-blue-600 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-server"></i> 配电设计负荷计算</h3>
+                        <div class="mb-5 p-4 rounded-xl bg-blue-50 border-2 border-blue-300">
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-blue-800 mb-1">傻瓜指南</h4><p class="text-slate-700">不要把电器全插在一个插座上！这个工具帮你计算家庭或工厂的总功率负荷，选择合适的断路器（Breaker），避免频繁跳闸。</p></div></div></div>
+                        <div id="device-list" class="space-y-3"></div>
+                        <div class="flex flex-wrap gap-3">
+                            <button id="btn-add-device" class="px-5 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple border-2 border-slate-300"><i class="fa-solid fa-plus mr-2"></i>添加设备 (Add)</button>
+                            <button id="btn-distribution" class="px-5 py-3 bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-400 hover:to-blue-600 text-white font-bold rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算总负荷</button>
+                        </div>
+                        <div id="distribution-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
+                    </div>
+                    <!-- 4. P/I/V/PF Converter -->
+                    <div class="calc-card hidden bg-white border-2 border-slate-200 shadow-md rounded-xl p-6 space-y-5 calc-card-4">
+                        <h3 class="text-blue-600 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-right-left"></i> P/I/V/PF 转换器</h3>
+                        <div class="mb-5 p-4 rounded-xl bg-blue-50 border-2 border-blue-300">
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-blue-800 mb-1">傻瓜指南</h4><p class="text-slate-700">不理解瓦特(Watt)、安培(Ampere)和伏特(Volt)之间的关系？只需输入已知数值，工具自动计算其余参数。</p></div></div></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">系统</label><select id="pc-phase" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"><option value="single">单相</option><option value="three">三相</option></select></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">求未知量 (Unknown)</label><select id="pc-unknown" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"><option value="p">功率 P</option><option value="i">电流 I</option><option value="v">电压 V</option><option value="pf">功率因数 PF</option></select></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">P (kW)</label><input type="number" id="pc-p" placeholder="功率 kW" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">V (V)</label><input type="number" id="pc-v" placeholder="电压" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">I (A)</label><input type="number" id="pc-i" placeholder="电流" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">PF</label><input type="number" id="pc-pf" step="0.01" placeholder="0.85" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                        </div>
+                        <button id="btn-power-conv" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
+                        <div id="power-conv-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
+                    </div>
+                    <!-- 5. Transformer Current -->
+                    <div class="calc-card hidden bg-white border-2 border-slate-200 shadow-md rounded-xl p-6 space-y-5 calc-card-5">
+                        <h3 class="text-blue-600 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-bolt"></i> 变压器电流感应</h3>
+                        <div class="mb-5 p-4 rounded-xl bg-blue-50 border-2 border-blue-300">
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-blue-800 mb-1">傻瓜指南</h4><p class="text-slate-700">国家电网进入工厂是高压(22kV)。变压器将其降压到(400V)供使用。这个工具帮助计算变压器一次侧和二次侧的总电流。</p></div></div></div>
+                        <div><label class="text-xs text-slate-600 mb-1.5 block">容量 kVA (例 250 / 630 / 1000)</label><input type="number" id="xfmr-kva" placeholder="例 250" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                        <button id="btn-transformer" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple shadow-md border-2 border-blue-700"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
+                        <div id="transformer-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
+                    </div>
+                    <!-- 6. AC vs DC -->
+                    <div class="calc-card hidden bg-white border-2 border-slate-200 shadow-md rounded-xl p-6 space-y-5 calc-card-6">
+                        <h3 class="text-blue-600 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-arrows-left-right"></i> AC vs DC 对比</h3>
+                        <div class="mb-5 p-4 rounded-xl bg-blue-50 border-2 border-blue-300">
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-blue-800 mb-1">傻瓜指南</h4><p class="text-slate-700">家庭用电(AC)和电池/太阳能用电(DC)特性不同。这个工具帮助比较两种电流的电流大小和能量损耗。</p></div></div></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">功率 kW</label><input type="number" id="acdc-power" placeholder="例 50" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">电压 V</label><input type="number" id="acdc-voltage" placeholder="例 380" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">PF</label><input type="number" id="acdc-pf" step="0.01" value="0.85" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                        </div>
+                        <button id="btn-acdc" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算对比</button>
+                        <div id="acdc-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
+                    </div>
+                    <!-- 7. EDC Electricity Bill -->
+                    <div class="calc-card hidden bg-white border-2 border-slate-200 shadow-md rounded-xl p-6 space-y-5 calc-card-7">
+                        <h3 class="text-blue-600 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-file-invoice-dollar"></i> EDC 电费估算</h3>
+                        <div class="mb-5 p-4 rounded-xl bg-blue-50 border-2 border-blue-300">
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-blue-800 mb-1">傻瓜指南</h4><p class="text-slate-700">想知道这个月大概要交多少电费？输入月用电量(kWh)，工具根据EDC阶梯电价计算约瑞尔和美元费用。</p></div></div></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">类型</label><select id="edc-type" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"><option value="residential">住宅 Residential</option><option value="commercial">商业 Commercial</option></select></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">月用电量 kWh</label><input type="number" id="edc-kwh" placeholder="例 500" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                        </div>
+                        <button id="btn-edc" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple shadow-md border-2 border-blue-700"><i class="fa-solid fa-calculator mr-2"></i>计算电费</button>
+                        <div id="edc-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
+                    </div>
+                    <!-- 8. Lighting Lux -->
+                    <div class="calc-card hidden bg-white border-2 border-slate-200 shadow-md rounded-xl p-6 space-y-5 calc-card-8">
+                        <h3 class="text-blue-600 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-lightbulb"></i> 照度 Lux 与灯具数量计算</h3>
+                        <div class="mb-5 p-4 rounded-xl bg-blue-50 border-2 border-blue-300">
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-blue-800 mb-1">傻瓜指南</h4><p class="text-slate-700">房间太暗伤眼睛！只需输入房间尺寸(长x宽x高)，工具会告诉你需要安装多少LED灯才够亮。</p></div></div></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">长度 (m)</label><input type="number" id="light-room-l" placeholder="10" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">宽度 (m)</label><input type="number" id="light-room-w" placeholder="8" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">高度 (m)</label><input type="number" id="light-room-h" placeholder="3.5" step="0.1" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">用途 / Lux</label><select id="light-lux" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"><option value="100">住宅 Living 100</option><option value="150">仓库 Warehouse 150</option><option value="300" selected>办公室 Office 300</option><option value="500">车间 Workshop 500</option><option value="750">精密作业 Precision 750</option></select></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">LED功率 W</label><input type="number" id="light-led-w" value="40" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                        </div>
+                        <button id="btn-lighting" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算灯具数</button>
+                        <div id="lighting-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
+                    </div>
+                    <!-- 9. Conduit & Bending Radius -->
+                    <div class="calc-card hidden bg-white border-2 border-slate-200 shadow-md rounded-xl p-6 space-y-5 calc-card-9">
+                        <h3 class="text-blue-600 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-ring"></i> 电缆弯曲半径与穿线管</h3>
+                        <div class="mb-5 p-4 rounded-xl bg-blue-50 border-2 border-blue-300">
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-blue-800 mb-1">傻瓜指南</h4><p class="text-slate-700">穿线管内塞太多线会发热起火！这个工具帮助计算合适的PVC/GI穿线管尺寸，以及电缆弯曲的最小半径。</p></div></div></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">外径 mm</label><input type="number" id="conduit-d" step="0.1" placeholder="例 10" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">电缆数量</label><input type="number" id="conduit-count" value="1" min="1" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">电缆类型</label><select id="conduit-type" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"><option value="general">普通 General (4×)</option><option value="armored">铠装 Armored (6×)</option></select></div>
+                            <div class="flex items-end"><div class="text-xs text-slate-500">弯曲半径标准见右侧说明</div></div>
+                        </div>
+                        <button id="btn-conduit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple shadow-md border-2 border-blue-700"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
+                        <div id="conduit-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
+                    </div>
+                </div><!-- /electric-cards-container -->
+            </div><!-- /cat-electric -->
+
+            <!-- ===== Civil Category ===== -->
+            <div id="cat-civil" class="calc-category-panel hidden">
+                <div id="civil-cards-container" class="min-h-[400px]">
+                    <div class="calc-card calc-card-active bg-white border-2 border-slate-200 shadow-md rounded-xl p-6 space-y-5 calc-card-1">
+                        <h3 class="text-blue-600 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-trowel-bricks"></i> 🧱 砖块与水泥砂浆计算器</h3>
+                        <div class="mb-5 p-4 rounded-xl bg-blue-50 border-2 border-blue-300">
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-blue-800 mb-1">傻瓜指南</h4><p class="text-slate-700">想建墙，多少米？输入墙体长度和高度，工具立即算出需要多少红砖、多少袋水泥和多少立方米沙子。使用柬埔寨标准红砖 4x8x18cm。</p></div></div></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">墙体长度 (m)</label><input type="number" id="brick-length" placeholder="例 10" step="0.1" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">墙体高度 (m)</label><input type="number" id="brick-height" placeholder="例 3" step="0.1" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                        </div>
+                        <button id="btn-brick" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple shadow-md border-2 border-blue-700"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
+                        <div id="brick-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
+                    </div>
+                    <div class="calc-card hidden bg-white border-2 border-slate-200 shadow-md rounded-xl p-6 space-y-5 calc-card-2">
+                        <h3 class="text-blue-600 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-bars-staggered"></i> 🏗️ 钢筋重量计算器</h3>
+                        <div class="mb-5 p-4 rounded-xl bg-blue-50 border-2 border-blue-300">
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-blue-800 mb-1">傻瓜指南</h4><p class="text-slate-700">根据直径和长度计算钢筋重量。帮助你估算建筑或房地产项目的钢筋成本。</p></div></div></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">钢筋直径 mm</label><select id="rebar-d" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"><option value="6">6 mm</option><option value="8">8 mm</option><option value="10" selected>10 mm</option><option value="12">12 mm</option><option value="16">16 mm</option><option value="20">20 mm</option><option value="25">25 mm</option></select></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">总长度 (m)</label><input type="number" id="rebar-length" placeholder="例 100" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                        </div>
+                        <button id="btn-rebar" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple shadow-md border-2 border-blue-700"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
+                        <div id="rebar-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
+                    </div>
+                </div><!-- /civil-cards-container -->
+            </div><!-- /cat-civil -->
+
+            <!-- ===== Decoration Category ===== -->
+            <div id="cat-decor" class="calc-category-panel hidden">
+                <div id="decor-cards-container" class="min-h-[400px]">
+                    <div class="calc-card calc-card-active bg-white border-2 border-slate-200 shadow-md rounded-xl p-6 space-y-5 calc-card-1">
+                        <h3 class="text-emerald-500 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-border-all"></i> 📦 瓷砖与胶泥箱数计算器</h3>
+                        <div class="mb-5 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-sm">
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-emerald-500 mb-1">傻瓜指南</h4><p class="text-slate-700">想铺客厅或房间的瓷砖？输入房间长和宽，选择瓷砖尺寸，工具会算出需要多少箱瓷砖（含5%损耗）以及多少袋瓷砖胶泥。</p></div></div></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">房间长度 (m)</label><input type="number" id="tile-length" placeholder="例 5" step="0.1" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-200 outline-none input-glow transition-all"></div>
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">房间宽度 (m)</label><input type="number" id="tile-width" placeholder="例 4" step="0.1" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-200 outline-none input-glow transition-all"></div>
+                        </div>
+                        <div><label class="text-xs text-slate-600 mb-2 block">瓷砖尺寸 (Tile Size)</label>
+                            <div class="flex flex-wrap gap-3">
+                                <button type="button" class="tile-size-btn px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-sm font-bold transition-all duration-300 border-2 border-transparent" data-tile="60" data-desc="60×60cm">📐 60×60 cm</button>
+                                <button type="button" class="tile-size-btn px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-sm font-bold transition-all duration-300 border-2 border-transparent" data-tile="30" data-desc="30×30cm">📐 30×30 cm</button>
+                            </div><input type="hidden" id="tile-size" value="60"></div>
+                        <button id="btn-tile" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
+                        <div id="tile-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
+                    </div>
+                    <div class="calc-card hidden bg-white border-2 border-slate-200 shadow-md rounded-xl p-6 space-y-5 calc-card-2">
+                        <h3 class="text-blue-600 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-paint-roller"></i> 🪣 墙面油漆大桶数计算器</h3>
+                        <div class="mb-5 p-4 rounded-xl bg-blue-50 border-2 border-blue-300">
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 class="font-bold text-blue-800 mb-1">傻瓜指南</h4><p class="text-slate-700">想刷漆多少平方米？只需输入总刷漆面积，工具会算出需要多少桶大桶油漆(18L)和底漆。</p></div></div></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div><label class="text-xs text-slate-600 mb-1.5 block">墙面总面积 (m²)</label><input type="number" id="paint-area" placeholder="例 60" step="0.1" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-200 outline-none input-glow transition-all"></div>
+                        </div>
+                        <button id="btn-paint" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple shadow-md border-2 border-blue-700"><i class="fa-solid fa-calculator mr-2"></i>计算</button>
+                        <div id="paint-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
+                    </div>
+                </div><!-- /decor-cards-container -->
+            </div><!-- /cat-decor -->
+
+            <!-- ===== Cost Estimation Category ===== -->
+            <div id="cat-cost" class="calc-category-panel hidden">
+                <div class="bg-white border-2 border-slate-200 rounded-xl p-10 text-center space-y-4">
+                    <div class="p-5 bg-blue-500/10 rounded-full w-fit mx-auto"><i class="fa-solid fa-house-chimney text-4xl text-blue-600"></i></div>
+                    <h3 class="text-blue-600 font-bold text-lg">🏠 造价估算</h3>
+                    <p class="text-slate-400 text-sm max-w-md mx-auto leading-relaxed">排屋/别墅造价估算与工钱计算器即将上线。<br><span class="text-slate-500">Coming soon — 敬请期待！</span></p>
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-slate-200 border border-slate-300 rounded-full text-xs text-slate-600 font-semibold"><i class="fa-solid fa-clock fa-spin"></i> 开发中 (Developing)</div>
+                </div>
+            </div>
+        </div>
+    </section>

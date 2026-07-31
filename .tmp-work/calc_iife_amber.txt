@@ -1,0 +1,78 @@
+    <script>
+    (function() {
+        const SUB_PILLS = {
+            'cat-electric': [
+                { id: 'elec-1', label: '① 缆线载流量' }, { id: 'elec-2', label: '② 铜重估价' },
+                { id: 'elec-3', label: '③ 配电设计' }, { id: 'elec-4', label: '④ P/I/V/PF转换' },
+                { id: 'elec-5', label: '⑤ 变压器电流感应' }, { id: 'elec-6', label: '⑥ AC vs DC' },
+                { id: 'elec-7', label: '⑦ EDC电费估算' }, { id: 'elec-8', label: '⑧ 照度计算' },
+                { id: 'elec-9', label: '⑨ 弯曲半径与穿线管' },
+            ],
+            'cat-civil': [{ id: 'civil-1', label: '① 砖块与水泥' }, { id: 'civil-2', label: '② 钢筋重量' }],
+            'cat-decor': [{ id: 'decor-1', label: '① 瓷砖与胶泥' }, { id: 'decor-2', label: '② 油漆计算' }],
+            'cat-cost': [],
+        };
+
+        function renderSubPills(containerId, pills) {
+            const c = document.getElementById(containerId); if (!c) return;
+            c.innerHTML = pills.map((p, i) =>
+                `<button type="button" class="sub-pill px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all duration-200 ${i === 0 ? 'bg-amber-500 text-white font-black shadow-md border-2 border-amber-600' : 'bg-slate-200 text-slate-700 hover:bg-slate-300'}" data-index="${i}">${p.label}</button>`
+            ).join('');
+        }
+
+        function switchCard(panelId, idx) {
+            const panel = document.getElementById(panelId); if (!panel) return;
+            const cards = panel.querySelectorAll('.calc-card');
+            if (cards[idx]) {
+                cards.forEach(c => c.classList.add('hidden'));
+                cards[idx].classList.remove('hidden');
+                cards[idx].classList.add('calc-card-enter');
+                setTimeout(() => cards[idx].classList.remove('calc-card-enter'), 300);
+            }
+        }
+
+        function attachSubPills(containerId, panelId) {
+            const c = document.getElementById(containerId); if (!c) return;
+            c.addEventListener('click', (e) => {
+                const btn = e.target.closest('.sub-pill'); if (!btn) return;
+                const idx = parseInt(btn.dataset.index, 10);
+                c.querySelectorAll('.sub-pill').forEach((b, i) => {
+                    if (i === idx) { b.classList.remove('bg-slate-200','text-slate-700','hover:bg-slate-300','font-bold','border-transparent'); b.classList.add('bg-amber-500','text-white','font-black','shadow-md','border-2','border-amber-600'); }
+                    else { b.classList.remove('bg-amber-500','text-white','font-black','shadow-md','border-2','border-amber-600'); b.classList.add('bg-slate-200','text-slate-700','hover:bg-slate-300','font-bold','border-2','border-transparent'); }
+                });
+                switchCard(panelId, idx);
+            });
+        }
+
+        function initSubPills() {
+            renderSubPills('electric-sub-pills', SUB_PILLS['cat-electric']);
+            renderSubPills('civil-sub-pills', SUB_PILLS['cat-civil']);
+            renderSubPills('decor-sub-pills', SUB_PILLS['cat-decor']);
+            renderSubPills('cost-sub-pills', SUB_PILLS['cat-cost']);
+            attachSubPills('electric-sub-pills', 'cat-electric');
+            attachSubPills('civil-sub-pills', 'cat-civil');
+            attachSubPills('decor-sub-pills', 'cat-decor');
+            attachSubPills('cost-sub-pills', 'cat-cost');
+        }
+
+        // Category tabs
+        document.querySelectorAll('.calc-category-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.calc-category-tab').forEach(t => {
+                    t.classList.remove('active-tab','bg-amber-500','text-white','font-black','shadow-md','border-2','border-amber-600');
+                    t.classList.add('bg-slate-200','text-slate-700','font-bold','hover:bg-slate-300','border-2','border-transparent');
+                });
+                tab.classList.add('active-tab','bg-amber-500','text-white','font-black','shadow-md','border-2','border-amber-600');
+                tab.classList.remove('bg-slate-200','text-slate-700','font-bold','hover:bg-slate-300','border-transparent');
+                const cat = tab.dataset.category;
+                document.querySelectorAll('.calc-category-panel').forEach(p => p.classList.add('hidden'));
+                document.getElementById(cat)?.classList.remove('hidden');
+                const map = {'cat-electric':'electric-sub-pills','cat-civil':'civil-sub-pills','cat-decor':'decor-sub-pills','cat-cost':'cost-sub-pills'};
+                Object.values(map).forEach(id => document.getElementById(id)?.classList.add('hidden'));
+                document.getElementById(map[cat])?.classList.remove('hidden');
+            });
+        });
+
+        initSubPills();
+    })();
+    </script>
