@@ -1,0 +1,10 @@
+# B·W CABLE — https://bw-cable.com
+User-agent: *
+Allow: /
+
+# 不索引后台与 API
+Disallow: /admin.html
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://bw-cable.com/sitemap.xml
