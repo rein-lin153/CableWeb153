@@ -1,0 +1,352 @@
+{
+  "calc.result.need_all": {
+    "zh": "请填写：",
+    "km": "សូមបំពេញ：",
+    "en": "Please fill in: "
+  },
+  "calc.result.system": {
+    "zh": "系统：",
+    "km": "ប្រព័ន្ធ：",
+    "en": "System: "
+  },
+  "calc.result.material": {
+    "zh": "材质：",
+    "km": "លក្ខណៈសម្បត្តិ：",
+    "en": "Material: "
+  },
+  "calc.result.calc_current": {
+    "zh": "计算电流：",
+    "km": "ចរន្តគណនា：",
+    "en": "Calculated current: "
+  },
+  "calc.result.recommend_wire": {
+    "zh": "推荐线径：",
+    "km": "ទំហំស再来ៈល្អ：",
+    "en": "Recommended wire size: "
+  },
+  "calc.result.ampacity": {
+    "zh": "该规格载流量",
+    "km": "សមត្ថភាពផ្ទុកចរន្ត",
+    "en": "Ampacity"
+  },
+  "calc.result.voltage_drop": {
+    "zh": "电压降：",
+    "km": "ការធ្លាក់ចុះតង់ស្សុង：",
+    "en": "Voltage drop: "
+  },
+  "calc.result.pass": {
+    "zh": "合格（电压降 ≤ 5%）",
+    "km": "ល្អ（តង់ស្សុងធ្លាក់ចុះ ≤ ៥%）",
+    "en": "Pass (voltage drop ≤ 5%)"
+  },
+  "calc.result.fail": {
+    "zh": "不合格，电压降 > 5%，建议增大线径或缩短距离",
+    "km": "មិនល្អ，តង់ស្សុងធ្លាក់ចុះ > ៥%，សូមបង្កើនទំហំខ្សែឬបន្ថយចម្ងាយ",
+    "en": "Fail, voltage drop > 5%, increase wire size or reduce distance"
+  },
+  "calc.result.spec": {
+    "zh": "规格：",
+    "km": "លក្ខណៈ：",
+    "en": "Spec: "
+  },
+  "calc.result.copper_weight": {
+    "zh": "纯铜重量：",
+    "km": "ទម្ងន់សពៃ：",
+    "en": "Pure copper weight: "
+  },
+  "calc.result.est_value": {
+    "zh": "估算市值（按 $",
+    "km": "តម្លៃប៉ាន់ស្មាន（តាម $",
+    "en": "Estimated value (at $"
+  },
+  "calc.result.copper_note": {
+    "zh": "铜价随市场波动，以上为近似参考",
+    "km": "តម្លៃសពៃប្រែប្រួលតាមទីផ្សារ ខាងលើគឺឯកតាជំហាន",
+    "en": "Copper prices fluctuate with the market, above is approximate reference"
+  },
+  "calc.result.valid_load": {
+    "zh": "有效总负荷：",
+    "km": "ផ្ទុកសរុបពិតប្រាកដ：",
+    "en": "Effective total load: "
+  },
+  "calc.result.total_current": {
+    "zh": "总电流（三相400V，pf=0.85）：",
+    "km": "ចរន្តសរុប（ត្រីភាគ៤០០V, pf=០.៨៥）：",
+    "en": "Total current (3-phase 400V, pf=0.85): "
+  },
+  "calc.result.recommend_breaker": {
+    "zh": "推荐主断路器：",
+    "km": "ស្វិចឆ្នាំងសំខាន់ល្អ：",
+    "en": "Recommended main breaker: "
+  },
+  "calc.result.recommend_cable": {
+    "zh": "推荐主电缆：铜",
+    "km": "ខ្សែសំខាន់ល្អ：សពៃ",
+    "en": "Recommended main cable: Copper"
+  },
+  "calc.result.kf_note": {
+    "zh": "kf 为利用系数/需用系数，家用 0.6~0.8、商用 0.7~0.9",
+    "km": "kf គឺជាមេគុណប្រើប្រាស់/មេគុណត្រូវការ ផ្ទះ ០.៦~០.៨ ការពាណិជ្ជកម្ម ០.៧~០.៩",
+    "en": "kf is utilization/demand factor, home 0.6~0.8, commercial 0.7~0.9"
+  },
+  "calc.result.power_p": {
+    "zh": "功率 P = ",
+    "km": "ថាមពល P = ",
+    "en": "Power P = "
+  },
+  "calc.result.current_i": {
+    "zh": "电流 I = P×1000 / (",
+    "km": "ចរន្ត I = P×១០០០ / (",
+    "en": "Current I = P×1000 / ("
+  },
+  "calc.result.voltage_v": {
+    "zh": "电压 V = P×1000 / (",
+    "km": "តង់ស្សុង V = P×១០០០ / (",
+    "en": "Voltage V = P×1000 / ("
+  },
+  "calc.result.pf": {
+    "zh": "功率因数 PF = P×1000 / (",
+    "km": "មេគុណថាមពល PF = P×១០០០ / (",
+    "en": "Power factor PF = P×1000 / ("
+  },
+  "calc.result.pf_need_le1": {
+    "zh": " (需 ≤ 1)",
+    "km": " (ត្រូវ ≤ ១)",
+    "en": " (must be ≤ 1)"
+  },
+  "calc.result.pf_warning": {
+    "zh": "⚠ 计算结果 > 1，输入数据可能不一致",
+    "km": "⚠ លទ្ធផលគណនា > ១ ទិន្នន័យបញ្ចូលអាចមិនត្រឹមត្រូវ",
+    "en": "⚠ Result > 1, input data may be inconsistent"
+  },
+  "calc.result.calc_error": {
+    "zh": "计算错误",
+    "km": "កំហុសគណនា",
+    "en": "Calculation error"
+  },
+  "calc.result.phase_single": {
+    "zh": "单相",
+    "km": "មូលភាគ",
+    "en": "Single phase"
+  },
+  "calc.result.phase_three": {
+    "zh": "三相",
+    "km": "ត្រីភាគ",
+    "en": "Three phase"
+  },
+  "calc.result.pf_default": {
+    "zh": "（PF 默认 0.85）",
+    "km": "（PF លំនំដើម ០.៨៥）",
+    "en": "(PF default 0.85)"
+  },
+  "calc.result.capacity": {
+    "zh": "容量：",
+    "km": "សមត្ថភាព：",
+    "en": "Capacity: "
+  },
+  "calc.result.primary_side": {
+    "zh": "一次侧（22kV）：",
+    "km": "ភាគីបឋម（២២kV）：",
+    "en": "Primary side (22kV): "
+  },
+  "calc.result.secondary_side": {
+    "zh": "二次侧（0.4kV）：",
+    "km": "ភាគីទី២（០.៤kV）：",
+    "en": "Secondary side (0.4kV): "
+  },
+  "calc.result.transformer_note": {
+    "zh": "I = S / (√3 · V)；按柬埔寨电网 22kV/0.4kV 标称",
+    "km": "I = S / (√៣ · V) តាមបណ្តាញអគ្គិសនីកម្ពុជា ២២kV/០.៤kV",
+    "en": "I = S / (√3 · V); per Cambodia grid 22kV/0.4kV standard"
+  },
+  "calc.result.ac_current": {
+    "zh": "AC 三相电流：I = P / (√3·V·PF) = ",
+    "km": "ចរន្ត AC ត្រីភាគ：I = P / (√៣·V·PF) = ",
+    "en": "AC 3-phase current: I = P / (√3·V·PF) = "
+  },
+  "calc.result.dc_current": {
+    "zh": "DC 直流电流：I = P / V = ",
+    "km": "ចរន្ត DC ផ្ទាល់：I = P / V = ",
+    "en": "DC current: I = P / V = "
+  },
+  "calc.result.current_ratio": {
+    "zh": "电流比 DC/AC = ",
+    "km": "សមាមាត្រចរន្ត DC/AC = ",
+    "en": "Current ratio DC/AC = "
+  },
+  "calc.result.acdc_note": {
+    "zh": "DC 无功率因数与无功损耗，电流通常更大；AC 适合远距离、DC 适合储能/光伏",
+    "km": "DC គ្មានមេគុណថាមពល ចរន្តប្រហាក់ប្រហែលធំជាង AC សាកសមចម្ងាយ AC សាកសមស្តុក/សូលារ",
+    "en": "DC has no power factor/reactive loss, current usually larger; AC for long distance, DC for storage/solar"
+  },
+  "calc.result.full_rate": {
+    "zh": "全量",
+    "km": "តម្លៃពេញ",
+    "en": "Flat rate "
+  },
+  "calc.result.type": {
+    "zh": "类型：",
+    "km": "ប្រភេទ：",
+    "en": "Type: "
+  },
+  "calc.result.usage": {
+    "zh": "用量：",
+    "km": "បរិមាណ：",
+    "en": "Usage: "
+  },
+  "calc.result.electricity_fee": {
+    "zh": "电费：",
+    "km": "ថ្លៃអគ្គិសនី：",
+    "en": "Electricity fee: "
+  },
+  "calc.result.edc_note": {
+    "zh": "阶梯电价近似值，实际以 EDC 账单为准（1 USD ≈ 4100 ៛）",
+    "km": "តម្លៃអគ្គិសនីជណ្តើរប្រហាក់ប្រហែល តាមវិក្កយបត្រ EDC ជាគោល（១ USD ≈ ៤១០០ ៛）",
+    "en": "Tiered rate is approximate, actual EDC bill prevails (1 USD ≈ 4100 ៛)"
+  },
+  "calc.result.room_area": {
+    "zh": "房间面积：",
+    "km": "ផ្ទៃតំបន់បន្ទប់：",
+    "en": "Room area: "
+  },
+  "calc.result.target_lux": {
+    "zh": "目标照度：",
+    "km": "កម្រិតពន្លឺគោលដៅ：",
+    "en": "Target illuminance: "
+  },
+  "calc.result.lumens_per_lamp": {
+    "zh": "单灯流明：",
+    "km": "លុយមិនក្នុងមួយអំពូល：",
+    "en": "Lumens per lamp: "
+  },
+  "calc.result.cu_mf": {
+    "zh": "利用系数 CU=0.7 维护系数 MF=0.8",
+    "km": "មេគុណប្រើប្រាស់ CU=០.៧ មេគុណថែរក្សា MF=០.៨",
+    "en": "Utilization factor CU=0.7 Maintenance factor MF=0.8"
+  },
+  "calc.result.need_fixtures": {
+    "zh": "需要灯具数：",
+    "km": "ចំនួនអំពូលត្រូវការ：",
+    "en": "Required fixtures: "
+  },
+  "calc.result.total_power": {
+    "zh": "总功率：",
+    "km": "ថាមពលសរុប：",
+    "en": "Total power: "
+  },
+  "calc.result.cable_info": {
+    "zh": "电缆：外径",
+    "km": "ខ្សែ：អង្កត់ផ្ចាល",
+    "en": "Cable: outer dia"
+  },
+  "calc.result.roots": {
+    "zh": "根",
+    "km": "សន្លឹក",
+    "en": "cores"
+  },
+  "calc.result.fill_rate": {
+    "zh": "填充率标准：",
+    "km": "តម្រង់_indicatorីភាគបំពេញ：",
+    "en": "Fill ratio standard: "
+  },
+  "calc.result.need_inner_dia": {
+    "zh": "需管内径 ≥",
+    "km": "អង្កត់ផ្ចាលក្នុងត្រូវការ ≥",
+    "en": "Required inner dia ≥"
+  },
+  "calc.result.recommend_pipe": {
+    "zh": "推荐",
+    "km": "ណែនាំ",
+    "en": "Recommended"
+  },
+  "calc.result.min_bend_radius": {
+    "zh": "最小弯曲半径：",
+    "km": "កាំកោងអប្បបរមា：",
+    "en": "Minimum bend radius: "
+  },
+  "calc.result.conduit_note": {
+    "zh": "普通电缆填充 ≤ 40%，铠装 ≤ 60%；弯曲半径普通 ≥ 6D，铠装 ≥ 10D",
+    "km": "ខ្សែធម្មតាបំពេញ ≤ ៤០% ស្រទាប់គ្មាន ≤ ៦០% កាំកោងធម្មតា ≥ ៦D ស្រទាប់គ្មាន ≥ ១០D",
+    "en": "Normal cable fill ≤ 40%, armored ≤ 60%; bend radius normal ≥ 6D, armored ≥ 10D"
+  },
+  "calc.result.wall_area": {
+    "zh": "墙面积：",
+    "km": "ផ្ទៃជញ្ជាំង：",
+    "en": "Wall area: "
+  },
+  "calc.result.brick_count": {
+    "zh": "红砖数量：",
+    "km": "ចំនួនឥដ្ឋក្រហម：",
+    "en": "Red brick count: "
+  },
+  "calc.result.mortar": {
+    "zh": "砌筑砂浆：",
+    "km": "លាយសIMENT：",
+    "en": "Masonry mortar: "
+  },
+  "calc.result.cement": {
+    "zh": "水泥：",
+    "km": "សIMENT：",
+    "en": "Cement: "
+  },
+  "calc.result.sand": {
+    "zh": "砂子：",
+    "km": "ខ្សាច់：",
+    "en": "Sand: "
+  },
+  "calc.result.brick_note": {
+    "zh": "未含抹灰面积；双面抹灰需另计砂浆与水泥",
+    "km": "មិនរាប់បញ្ចូលផ្ទៃបាន បើបានទាំងសងខាងត្រូវគណនាលាយនិងសIMENTបន្ថែម",
+    "en": "Excludes plastering area; double-side plastering needs extra mortar and cement"
+  },
+  "calc.result.rebar_weight": {
+    "zh": "钢筋重量：",
+    "km": "ទម្ងន់ដែកប្រេង：",
+    "en": "Rebar weight: "
+  },
+  "calc.result.tile_area": {
+    "zh": "瓷砖规格：",
+    "km": "លក្ខណៈក្បឿង：",
+    "en": "Tile spec: "
+  },
+  "calc.result.need_tiles": {
+    "zh": "需瓷砖：",
+    "km": "ក្បឿងត្រូវការ：",
+    "en": "Tiles needed: "
+  },
+  "calc.result.tile_glue": {
+    "zh": "瓷砖胶泥：",
+    "km": "ក colleuelaក្បឿង：",
+    "en": "Tile adhesive: "
+  },
+  "calc.result.paint_area": {
+    "zh": "刷漆面积：",
+    "km": "ផ្ទៃលាបពណ៌：",
+    "en": "Paint area: "
+  },
+  "calc.result.paint_topcoat": {
+    "zh": "面漆用量：",
+    "km": "បរិមាណពណ៌លាបលើ：",
+    "en": "Topcoat usage: "
+  },
+  "calc.result.paint_primer": {
+    "zh": "底漆建议：",
+    "km": "ណែនាំពណ៌លាបបាត：",
+    "en": "Primer recommendation: "
+  },
+  "calc.result.device_name_placeholder": {
+    "zh": "设备名称",
+    "km": "ឈ្មោះឧបករណ៍",
+    "en": "Device name"
+  },
+  "calc.result.device_default": {
+    "zh": "设备",
+    "km": "ឧបករណ៍",
+    "en": "Device"
+  },
+  "calc.result.at_least_one_device": {
+    "zh": "至少一行有效设备 (kW + kf)",
+    "km": "ត្រូវការឧបករណ៍តែមួយហ្មង (kW + kf)",
+    "en": "At least one valid device (kW + kf)"
+  }
+}

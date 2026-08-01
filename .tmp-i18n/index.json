@@ -1,0 +1,1052 @@
+{
+  "title.index": {
+    "zh": "B·W CABLE — 柬埔寨专业电工与建筑计算门户",
+    "km": "B·W CABLE — គណនាករអគ្គិសនីនិងសំណង់ឯកទេសនៅកម្ពុជា",
+    "en": "B·W CABLE — Cambodian Electrical & Construction Calculators Portal"
+  },
+  "hero.badge": {
+    "zh": "金边本地生产",
+    "km": "ផលិតកម្មនៅភ្នំពេញ",
+    "en": "Manufactured in Phnom Penh"
+  },
+  "hero.brand": {
+    "zh": "B·W CABLE",
+    "km": "B·W CABLE",
+    "en": "B·W CABLE"
+  },
+  "hero.title": {
+    "zh": "电线电缆与商业电气耗材",
+    "km": "ខ្សែភ្លើង និងសម្ភារៈអគ្គិសនីពាណិជ្ជកម្ម",
+    "en": "Wires, Cables & Commercial Electrical Materials"
+  },
+  "hero.subtitle": {
+    "zh": "电线电缆 · 工业与建筑电气耗材专业制造",
+    "km": "ខ្សែភ្លើង និងសម្ភារៈអគ្គិសនីផ្ទាល់ដៃសម្រាប់ឧស្សាហកម្ម និងសំណង់",
+    "en": "Electrical Wires & Cables · Professional Manufacturing for Industrial & Construction"
+  },
+  "hero.description": {
+    "zh": "为柬埔寨住宅、车辆及工业项目提供高品质电线电缆的制造、批发与配送。",
+    "km": "ផលិត នាំ និងចែក ខ្សែភ្លើងគុណភាពខ្ពស់សម្រាប់គម្រោងផ្ទះ ឡាន និងរោងចក្រ ក្នុងព្រះរាជាណាចក្រកម្ពុជា។",
+    "en": "Manufacturing, wholesale and distribution of high-quality wires and cables for residential, vehicle and industrial projects in the Kingdom of Cambodia."
+  },
+  "hero.btn_calc": {
+    "zh": "进入工程计算器",
+    "km": "ចូលគណនាករ",
+    "en": "Enter Calculators"
+  },
+  "hero.badge.quality": {
+    "zh": "质量可靠",
+    "km": "គុណភាពខ្ពស់",
+    "en": "High Quality"
+  },
+  "hero.badge.local": {
+    "zh": "本地制造",
+    "km": "ផលិតក្នុងស្រុក",
+    "en": "Locally Made"
+  },
+  "hero.badge.safety": {
+    "zh": "安全合规",
+    "km": "សុវត្ថិភាព",
+    "en": "Safety Certified"
+  },
+  "hero.credit.link": {
+    "zh": "Vecteezy 提供的金边图片",
+    "km": "រូបភាពភ្នំពេញដោយ Vecteezy",
+    "en": "Phnom Penh photos provided by Vecteezy"
+  },
+  "marquee.subheading": {
+    "zh": "产品分类 · Product Categories",
+    "km": "ប្រភេទផលិតផល · ប្រភេទផលិតផល",
+    "en": "Product Categories"
+  },
+  "marquee.intro": {
+    "zh": "家装布线 / 工程电力主干 / 电焊专用 / 设备软线与花线",
+    "km": "ខ្សែភ្លើង និងសម្ភារៈអគ្គិសនី — ខ្សែបរិវត្តន៍គ្រួសារ / ខ្សែភ្លើងស្នូង / ខ្សែម៉ាស៊ីនប្រសិនស្នា / ខ្សែទន់ឧបករណ៍",
+    "en": "Household Wiring / Power Distribution / Welding Cables / Equipment Flexible Cords"
+  },
+  "marquee.view_category": {
+    "zh": "查看该分类",
+    "km": "មើលប្រភេទផលិតផលនេះ",
+    "en": "View this category"
+  },
+  "marquee.quick_reference": {
+    "zh": "型号速查表",
+    "km": "តារាងយោងលឿនតាមម៉ូដែល",
+    "en": "Model Quick Reference"
+  },
+  "marquee.table.model": {
+    "zh": "型号",
+    "km": "ម៉ូដែល",
+    "en": "Model"
+  },
+  "marquee.table.fullname": {
+    "zh": "全称",
+    "km": "ឈ្មោះពេញ",
+    "en": "Full Name"
+  },
+  "marquee.table.usage": {
+    "zh": "用途",
+    "km": "ការប្រើប្រាស់",
+    "en": "Application"
+  },
+  "marquee.table.voltage": {
+    "zh": "电压",
+    "km": "វ៉ុល",
+    "en": "Voltage"
+  },
+  "marquee.table.conductor": {
+    "zh": "导体",
+    "km": "ខឹបរ",
+    "en": "Conductor"
+  },
+  "marquee.model.BVR": {
+    "zh": "铜芯 PVC 绝缘软布电线",
+    "km": "ខ្សែភ្លើងឆាប់ ធូងលីង PVC ស្ពាន់",
+    "en": "Copper PVC insulated flexible wire"
+  },
+  "marquee.model.BVR.usage": {
+    "zh": "家用穿管布线、配电箱接线",
+    "km": "ខ្សែចូលផ្ទះ និងប្រអប់ភ្លើង",
+    "en": "Household conduit wiring, distribution box"
+  },
+  "marquee.model.BVVB": {
+    "zh": "铜芯 PVC 绝缘护套平型电缆",
+    "km": "ខ្សែភ្លើងក្រអាប់ PVC រាបស្មើ",
+    "en": "Copper PVC insulated flat sheathed cable"
+  },
+  "marquee.model.BVVB.usage": {
+    "zh": "明装布线、开关插座进线",
+    "km": "ខ្សែផ្ទាល់ និងសោចាប់ស្វិច",
+    "en": "Surface wiring, switches & sockets"
+  },
+  "marquee.model.YJV": {
+    "zh": "铜芯交联聚乙烯绝缘护套电力电缆",
+    "km": "ខ្សែភ្លើង XLPE ស្ពាយជ័រគ្រឹះស្ពាន់",
+    "en": "Copper XLPE insulated power cable"
+  },
+  "marquee.model.YJV.usage": {
+    "zh": "电力主干、埋地配电网",
+    "km": "ខ្សែស្នូងភ្លើង និងបណ្តាញផ្គតផ្គង់",
+    "en": "Power feeder, underground distribution"
+  },
+  "marquee.model.YJLV": {
+    "zh": "铝芯交联聚乙烯绝缘护套电力电缆",
+    "km": "ខ្សែភ្លើង XLPE អាលុមីញ៉ូម",
+    "en": "Aluminum XLPE insulated power cable"
+  },
+  "marquee.model.YJLV.usage": {
+    "zh": "长距离大截面、市政农网",
+    "km": "ចម្ងាយឆ្ងាយ និងបណ្តាញក្រុងជនបទ",
+    "en": "Long-distance large cross-section, municipal grids"
+  },
+  "marquee.model.YH": {
+    "zh": "橡皮绝缘橡皮护套电焊机电缆",
+    "km": "ខ្សែម៉ាស៊ីនប្រសិនស្នា កាវជ័រ",
+    "en": "Rubber insulated welding cable"
+  },
+  "marquee.model.YH.usage": {
+    "zh": "电焊机二次回路(焊把线)",
+    "km": "ខ្សែម៉ាស៊ីនប្រសិនស្នារង្វង់ទី២",
+    "en": "Welding machine secondary circuit"
+  },
+  "marquee.model.RVV": {
+    "zh": "铜芯 PVC 绝缘护套软电缆",
+    "km": "ខ្សែទន់ PVC ឆាប់",
+    "en": "Copper PVC insulated flexible cable"
+  },
+  "marquee.model.RVV.usage": {
+    "zh": "家电连接、移动设备",
+    "km": "ឧបករណ៍គ្រួសារ និងឧបករណ៍ចល័ត",
+    "en": "Appliances, mobile devices"
+  },
+  "marquee.model.RVS": {
+    "zh": "铜芯 PVC 绝缘双绞软线(花线)",
+    "km": "ខ្សែទន់ PVC",
+    "en": "Copper PVC insulated twisted flexible cord"
+  },
+  "marquee.model.RVS.usage": {
+    "zh": "灯具引线、临时照明",
+    "km": "ខ្សែបន្ទះ និងភ្លើងបណ្តោះអាសន្ន",
+    "en": "Lighting leads, temporary lighting"
+  },
+  "marquee.model.VAF": {
+    "zh": "PVC 绝缘护套软线(按厂标)",
+    "km": "ខ្សែទន់ PVC (តាមស្តង់ដាររោងចក្រ)",
+    "en": "PVC insulated flexible cord (factory standard)"
+  },
+  "marquee.model.VAF.usage": {
+    "zh": "设备连接 / 临时供电",
+    "km": "ភ្ជាប់ឧបករណ៍ / អគ្គិសនីបណ្តោះអាសន្ន",
+    "en": "Equipment connection / Temporary power"
+  },
+  "marquee.model.VAF.tag": {
+    "zh": "企标",
+    "km": "ស្តង់ដាររោងចក្រ",
+    "en": "Factory Std"
+  },
+  "marquee.voltage.vaf": {
+    "zh": "300/500V(企标)",
+    "km": "300/500V (ស្តង់ដាររោងចក្រ)",
+    "en": "300/500V (Factory Std)"
+  },
+  "marquee.conductor.vaf": {
+    "zh": "待企标确认",
+    "km": "រង់ចាំស្តង់ដារ",
+    "en": "Pending factory standard"
+  },
+  "marquee.conductor.fine_strand": {
+    "zh": "多股细铜",
+    "km": "ស្ពាន់សរសៃល្អិត",
+    "en": "Fine multi-strand copper"
+  },
+  "marquee.conductor.flex_strand": {
+    "zh": "多股软铜",
+    "km": "ស្ពាន់ទន់សរសៃ",
+    "en": "Flexible multi-strand copper"
+  },
+  "marquee.conductor.ultra_fine": {
+    "zh": "极细多股铜",
+    "km": "ស្ពាន់សរសៃល្អិតបំផុត",
+    "en": "Ultra-fine multi-strand copper"
+  },
+  "marquee.conductor.flex_single": {
+    "zh": "软铜/单芯",
+    "km": "ស្ពាន់ទន់/សរសៃតែមួយ",
+    "en": "Flexible copper / single core"
+  },
+  "calc.section.title": {
+    "zh": "电气与工程计算器",
+    "km": "គណនាករអគ្គិសនីនិងសំណង់",
+    "en": "Electrical & Engineering Calculators"
+  },
+  "calc.section.subtitle": {
+    "zh": "电力 · 土木 · 装饰 · 价格范围",
+    "km": "អគ្គិសនី · សំណង់ · តុបតែង · តម្លៃ",
+    "en": "Electrical · Civil · Decoration · Cost Estimation"
+  },
+  "calc.tab.electrical": {
+    "zh": "⚡ 电力",
+    "km": "⚡ អគ្គិសនី",
+    "en": "⚡ Electrical"
+  },
+  "calc.tab.civil": {
+    "zh": "🧱 土木工程",
+    "km": "🧱 សំណង់",
+    "en": "🧱 Civil Engineering"
+  },
+  "calc.tab.decoration": {
+    "zh": "🎨 装饰",
+    "km": "🎨 តុបតែង",
+    "en": "🎨 Decoration"
+  },
+  "calc.tab.cost": {
+    "zh": "🏠 价格范围",
+    "km": "🏠 ជួរតម្លៃ",
+    "en": "🏠 Cost Range"
+  },
+  "calc.subpill.elec1": {
+    "zh": "① 缆线载流量",
+    "km": "① ទំហំខ្សែ",
+    "en": "① Cable Ampacity"
+  },
+  "calc.subpill.elec2": {
+    "zh": "② 铜重估价",
+    "km": "② ទម្ងន់ស្ពាន់",
+    "en": "② Copper Weight"
+  },
+  "calc.subpill.elec3": {
+    "zh": "③ 配电设计",
+    "km": "③ ផ្គតផ្គង់អគ្គិសនី",
+    "en": "③ Distribution"
+  },
+  "calc.subpill.elec4": {
+    "zh": "④ P/I/V/PF转换",
+    "km": "④ P/I/V/PF",
+    "en": "④ P/I/V/PF"
+  },
+  "calc.subpill.elec5": {
+    "zh": "⑤ 变压器电流感应",
+    "km": "⑤ ចរន្ក Transformer",
+    "en": "⑤ Transformer Current"
+  },
+  "calc.subpill.elec6": {
+    "zh": "⑥ AC vs DC",
+    "km": "⑥ AC vs DC",
+    "en": "⑥ AC vs DC"
+  },
+  "calc.subpill.elec7": {
+    "zh": "⑦ EDC电费估算",
+    "km": "⑦ EDC ថ្លៃអគ្គិសនី",
+    "en": "⑦ EDC Bill"
+  },
+  "calc.subpill.elec8": {
+    "zh": "⑧ 照度计算",
+    "km": "⑧ ពន្លឺ Lux",
+    "en": "⑧ Illumination"
+  },
+  "calc.subpill.elec9": {
+    "zh": "⑨ 弯曲半径与穿线管",
+    "km": "⑨ កាំរំភាយ និងបំពង់",
+    "en": "⑨ Conduit & Radius"
+  },
+  "calc.subpill.civil1": {
+    "zh": "① 砖块与水泥",
+    "km": "① ឥដ្ឋ និងស៊ីម៉ងត៍",
+    "en": "① Bricks & Cement"
+  },
+  "calc.subpill.civil2": {
+    "zh": "② 钢筋重量",
+    "km": "② ទម្ងន់ដែក",
+    "en": "② Rebar Weight"
+  },
+  "calc.subpill.decor1": {
+    "zh": "① 瓷砖与胶泥",
+    "km": "① ក្បឿង និងក្រួរស្អិយ",
+    "en": "① Tile & Adhesive"
+  },
+  "calc.subpill.decor2": {
+    "zh": "② 油漆计算",
+    "km": "② ពណ៌គំនរ",
+    "en": "② Paint"
+  },
+  "calc.intro.label": {
+    "zh": "使用说明",
+    "km": "ការណែនាំប្រើប្រាស់",
+    "en": "Instructions"
+  },
+  "calc.card1.title": {
+    "zh": "缆线载流量与电压降计算",
+    "km": "ការគណនាទំហំខ្សែ និងធ្លាក់វ៉ុល",
+    "en": "Cable Ampacity & Voltage Drop Calculator"
+  },
+  "calc.card1.intro": {
+    "zh": "电线就像水管！如果线径太小，电流过大就会发热甚至起火。距离越远，电压降越大（Voltage Drop）。这个工具帮你选择最安全的线径。",
+    "km": "ខ្សែភ្លើងដូចនឹងបំពង់ទឹក! ប្រសិនបើទំហំខ្សែតូចពេក ចរន្កធំពេកនឹងក្តៅរហូតដល់ឆេះ។ ជាងនេះទៅ វ៉ុលធ្លាក់កាន់តែធំ (Voltage Drop)។ ឧបករណ៍នេះជួយអ្នកជ្រើសរើសទំហំខ្សែសុវត្ថិភាពបំផុត។",
+    "en": "Electric wires are like water pipes! If the wire is too thin, large current will overheat and catch fire. The further the distance, the larger the voltage drop. This tool helps you pick the safest wire size."
+  },
+  "calc.card1.label.phase": {
+    "zh": "系统 (Phase)",
+    "km": "ប្រព័ន្ធ (Phase)",
+    "en": "Phase"
+  },
+  "calc.card1.label.material": {
+    "zh": "材质 (Material)",
+    "km": "សម្ភារៈ (Material)",
+    "en": "Material"
+  },
+  "calc.card1.label.power": {
+    "zh": "功率 (kW)",
+    "km": "ថាមពល (kW)",
+    "en": "Power (kW)"
+  },
+  "calc.card1.label.distance": {
+    "zh": "距离 (m)",
+    "km": "ចម្ងាយ (m)",
+    "en": "Distance (m)"
+  },
+  "calc.card1.btn": {
+    "zh": "计算",
+    "km": "គណនា",
+    "en": "Calculate"
+  },
+  "calc.card1.option.single": {
+    "zh": "单相 Single",
+    "km": "តែមួយ Single",
+    "en": "Single"
+  },
+  "calc.card1.option.three": {
+    "zh": "三相 Three",
+    "km": "បី Three",
+    "en": "Three"
+  },
+  "calc.card1.option.copper": {
+    "zh": "铜 Copper",
+    "km": "ស្ពាន់ Copper",
+    "en": "Copper"
+  },
+  "calc.card1.option.aluminum": {
+    "zh": "铝 Aluminum",
+    "km": "អាលុមីញ៉ូម Aluminum",
+    "en": "Aluminum"
+  },
+  "calc.card1.placeholder.power": {
+    "zh": "例 15",
+    "km": "ឧ. 15",
+    "en": "e.g. 15"
+  },
+  "calc.card1.placeholder.distance": {
+    "zh": "例 80",
+    "km": "ឧ. 80",
+    "en": "e.g. 80"
+  },
+  "calc.card2.title": {
+    "zh": "铜重估价计算",
+    "km": "ការគណនាទម្ងន់ស្ពាន់",
+    "en": "Copper Weight & Cost Calculator"
+  },
+  "calc.card2.intro": {
+    "zh": "想知道把旧电缆拿去卖能值多少钱？或者买电缆不被坑？这个工具计算电缆中纯铜的重量和大约市场价格。",
+    "km": "ចង់ដឹងថាខ្សែចាស់លក់បានប៉ុន្មាន? ឬទិញខ្សែមិនឱ្យឃើញទីផ្សារ? ឧបករណ៍នេះគណនាទម្ងន់ស្ពាន់សុទ្ធ និងតម្លៃទីផ្សារប្រហាក់ប្រហែល។",
+    "en": "Want to know how much scrap cable is worth, or avoid getting ripped off buying cable? This tool calculates the weight of pure copper in the cable and approximate market value."
+  },
+  "calc.card2.label.area": {
+    "zh": "截面积 mm²",
+    "km": "ផ្ទៃកាត់ mm²",
+    "en": "Cross-section mm²"
+  },
+  "calc.card2.label.cores": {
+    "zh": "芯数 (1-4)",
+    "km": "ចំនួនសរសៃ (1-4)",
+    "en": "Cores (1-4)"
+  },
+  "calc.card2.label.length": {
+    "zh": "总长度 (m)",
+    "km": "ប្រវែងសរុប (m)",
+    "en": "Total Length (m)"
+  },
+  "calc.card2.btn": {
+    "zh": "计算",
+    "km": "គណនា",
+    "en": "Calculate"
+  },
+  "calc.card2.placeholder.area": {
+    "zh": "例 25",
+    "km": "ឧ. 25",
+    "en": "e.g. 25"
+  },
+  "calc.card2.placeholder.length": {
+    "zh": "例 100",
+    "km": "ឧ. 100",
+    "en": "e.g. 100"
+  },
+  "calc.card3.title": {
+    "zh": "配电设计负荷计算",
+    "km": "ការគណនាផ្ទុកផ្គតផ្គង់អគ្គិសនី",
+    "en": "Distribution Load Calculator"
+  },
+  "calc.card3.intro": {
+    "zh": "不要把电器全插在一个插座上！这个工具帮你计算家庭或工厂的总功率负荷，选择合适的断路器（Breaker），避免频繁跳闸。",
+    "km": "កុំដោតកាប់ភ្លើងទាំងអស់នៅក្នុងព្រីមួយ! ឧបករណ៍នេះជួយគណនាផ្ទុកថាមពលសរុបនៅផ្ទះ ឬរោងចក្រ និងជ្រើសរើសស្វ៊ីឆដោតត្រឹមត្រូវ ដើម្បីចៀសវាងការដកចេញញឹកញាប់។",
+    "en": "Don't plug everything into one outlet! This tool calculates the total power load of a home or factory and selects the right breaker to avoid frequent trips."
+  },
+  "calc.card3.btn_add": {
+    "zh": "添加设备 (Add)",
+    "km": "បន្ថែមឧបករណ៍ (Add)",
+    "en": "Add Device"
+  },
+  "calc.card3.btn_calc": {
+    "zh": "计算总负荷",
+    "km": "គណនាផ្ទុកសរុប",
+    "en": "Calculate Total Load"
+  },
+  "calc.option.add": {
+    "zh": "添加设备 (Add)",
+    "km": "បន្ថែមឧបករណ៍ (Add)",
+    "en": "Add Device"
+  },
+  "calc.option.calc_total_load": {
+    "zh": "计算总负荷",
+    "km": "គណនាផ្ទុកសរុប",
+    "en": "Calculate Total Load"
+  },
+  "calc.card4.title": {
+    "zh": "P/I/V/PF 转换器",
+    "km": "ការបំលែង P/I/V/PF",
+    "en": "P/I/V/PF Converter"
+  },
+  "calc.card4.intro": {
+    "zh": "不理解瓦特(Watt)、安培(Ampere)和伏特(Volt)之间的关系？只需输入已知数值，工具自动计算其余参数。",
+    "km": "មិនយល់ពីទំនាក់ទំនងរវាង Watt, Ampere និង Volt? គ្រាន់តែបញ្ចូលតម្លៃដែលអ្នកស្គាល់ ឧបករណ៍នឹងគណនាតម្លៃផ្សេងទៀតដោយស្វ័យប្រវត្តិ។",
+    "en": "Confused about the relationship between Watt, Ampere, and Volt? Just enter known values and the tool auto-calculates the rest."
+  },
+  "calc.card4.label.system": {
+    "zh": "系统",
+    "km": "ប្រព័ន្ធ",
+    "en": "System"
+  },
+  "calc.card4.label.unknown": {
+    "zh": "求未知量 (Unknown)",
+    "km": "ស្វែងរកអញ្ញី (Unknown)",
+    "en": "Find Unknown"
+  },
+  "calc.card4.label.P": {
+    "zh": "P (kW)",
+    "km": "P (kW)",
+    "en": "P (kW)"
+  },
+  "calc.card4.label.V": {
+    "zh": "V (V)",
+    "km": "V (V)",
+    "en": "V (V)"
+  },
+  "calc.card4.label.I": {
+    "zh": "I (A)",
+    "km": "I (A)",
+    "en": "I (A)"
+  },
+  "calc.card4.label.PF": {
+    "zh": "PF",
+    "km": "PF",
+    "en": "PF"
+  },
+  "calc.card4.btn": {
+    "zh": "计算",
+    "km": "គណនា",
+    "en": "Calculate"
+  },
+  "calc.card4.option.single": {
+    "zh": "单相",
+    "km": "តែមួយ",
+    "en": "Single"
+  },
+  "calc.card4.option.three": {
+    "zh": "三相",
+    "km": "បី",
+    "en": "Three"
+  },
+  "calc.card4.option.unknown_p": {
+    "zh": "功率 P",
+    "km": "ថាមពល P",
+    "en": "Power P"
+  },
+  "calc.card4.option.unknown_i": {
+    "zh": "电流 I",
+    "km": "ចរន្ក I",
+    "en": "Current I"
+  },
+  "calc.card4.option.unknown_v": {
+    "zh": "电压 V",
+    "km": "វ៉ុល V",
+    "en": "Voltage V"
+  },
+  "calc.card4.option.unknown_pf": {
+    "zh": "功率因数 PF",
+    "km": "កត្តាថាមពល PF",
+    "en": "Power Factor PF"
+  },
+  "calc.card4.placeholder.P": {
+    "zh": "功率 kW",
+    "km": "ថាមពល kW",
+    "en": "Power kW"
+  },
+  "calc.card4.placeholder.V": {
+    "zh": "电压",
+    "km": "វ៉ុល",
+    "en": "Voltage"
+  },
+  "calc.card4.placeholder.I": {
+    "zh": "电流",
+    "km": "ចរន្ក",
+    "en": "Current"
+  },
+  "calc.card4.placeholder.PF": {
+    "zh": "0.85",
+    "km": "0.85",
+    "en": "0.85"
+  },
+  "calc.card5.title": {
+    "zh": "变压器电流感应",
+    "km": "ការគណនាចរន្ក Transformer",
+    "en": "Transformer Current Calculation"
+  },
+  "calc.card5.intro": {
+    "zh": "国家电网进入工厂是高压(22kV)。变压器将其降压到(400V)供使用。这个工具帮助计算变压器一次侧和二次侧的总电流。",
+    "km": "បណ្តាញអគ្គិសនីជាតិចូលរោងចក្រដោយវ៉ុលខ្ពស់ (22kV)។ Transformer បន្ថយវ៉ុលដល់ (400V) សម្រាប់ប្រើប្រាស់។ ឧបករណ៍នេះជួយគណនាចរន្កសរុបនៅផ្នែក primary និង secondary របស់ Transformer។",
+    "en": "The national grid enters factories at high voltage (22kV). Transformers step it down to (400V) for use. This tool calculates total current on the primary and secondary side of the transformer."
+  },
+  "calc.card5.label.kva": {
+    "zh": "容量 kVA (例 250 / 630 / 1000)",
+    "km": "សមត្ថភាព kVA (ឧ. 250 / 630 / 1000)",
+    "en": "Capacity kVA (e.g. 250 / 630 / 1000)"
+  },
+  "calc.card5.btn": {
+    "zh": "计算",
+    "km": "គណនា",
+    "en": "Calculate"
+  },
+  "calc.card5.placeholder.kva": {
+    "zh": "例 250",
+    "km": "ឧ. 250",
+    "en": "e.g. 250"
+  },
+  "calc.card6.title": {
+    "zh": "AC vs DC 对比",
+    "km": "ប្រៀបធៀប AC vs DC",
+    "en": "AC vs DC Comparison"
+  },
+  "calc.card6.intro": {
+    "zh": "家庭用电(AC)和电池/太阳能用电(DC)特性不同。这个工具帮助比较两种电流的电流大小和能量损耗。",
+    "km": "អគ្គិសនីគ្រួសារ (AC) និងថាមពលថ្ម/សូឡារ (DC) មានលក្ខណៈខុសគ្នា។ ឧបករណ៍នេះជួយប្រៀបធៀបទំហំចរន្ក និងការបាត់បង់ថាមពលរវាង AC និង DC។",
+    "en": "Household AC and battery/solar DC have different characteristics. This tool compares their current magnitudes and energy losses."
+  },
+  "calc.card6.label.power": {
+    "zh": "功率 kW",
+    "km": "ថាមពល kW",
+    "en": "Power kW"
+  },
+  "calc.card6.label.voltage": {
+    "zh": "电压 V",
+    "km": "វ៉ុល V",
+    "en": "Voltage V"
+  },
+  "calc.card6.label.PF": {
+    "zh": "PF",
+    "km": "PF",
+    "en": "PF"
+  },
+  "calc.card6.btn": {
+    "zh": "计算对比",
+    "km": "គណនាប្រៀបធៀប",
+    "en": "Compare"
+  },
+  "calc.card6.placeholder.power": {
+    "zh": "例 50",
+    "km": "ឧ. 50",
+    "en": "e.g. 50"
+  },
+  "calc.card6.placeholder.voltage": {
+    "zh": "例 380",
+    "km": "ឧ. 380",
+    "en": "e.g. 380"
+  },
+  "calc.card7.title": {
+    "zh": "EDC 电费估算",
+    "km": "ការគណនាថ្លៃអគ្គិសនី EDC",
+    "en": "EDC Electricity Bill Estimator"
+  },
+  "calc.card7.intro": {
+    "zh": "想知道这个月大概要交多少电费？输入月用电量(kWh)，工具根据EDC阶梯电价计算约瑞尔和美元费用。",
+    "km": "ចង់ដឹងថាថ្លៃអគ្គិសនីក្នុងខែនេះប្រហែលប៉ុន្មាន? បញ្ចូលបរិមាណថាមពលប្រចាំខែ (kWh) ឧបករណ៍នឹងគណនាថ្លៃជារ៉ីល និងដុល្លារ ដោយផ្អែកលើតម្លៃតាមជណ្តើររបស់ EDC។",
+    "en": "Want to know your monthly electricity bill? Enter monthly usage (kWh)—the tool computes costs in Riel and USD based on EDC tiered pricing."
+  },
+  "calc.card7.label.type": {
+    "zh": "类型",
+    "km": "ប្រភេទ",
+    "en": "Type"
+  },
+  "calc.card7.label.kwh": {
+    "zh": "月用电量 kWh",
+    "km": "ការប្រើប្រាស់រ៉ិច kWh",
+    "en": "Monthly usage kWh"
+  },
+  "calc.card7.option.residential": {
+    "zh": "住宅 Residential",
+    "km": "លំនៅដ្ឋាន Residential",
+    "en": "Residential"
+  },
+  "calc.card7.option.commercial": {
+    "zh": "商业 Commercial",
+    "km": "ពាណិជ្ជកម្ម Commercial",
+    "en": "Commercial"
+  },
+  "calc.card7.btn": {
+    "zh": "计算电费",
+    "km": "គណនាថ្លៃអគ្គិសនី",
+    "en": "Calculate Bill"
+  },
+  "calc.card7.placeholder.kwh": {
+    "zh": "例 500",
+    "km": "ឧ. 500",
+    "en": "e.g. 500"
+  },
+  "calc.option.residential": {
+    "zh": "住宅",
+    "km": "លំនៅដ្ឋាន",
+    "en": "Residential"
+  },
+  "calc.option.commercial": {
+    "zh": "商业",
+    "km": "ពាណិជ្ជកម្ម",
+    "en": "Commercial"
+  },
+  "calc.card8.title": {
+    "zh": "照度 Lux 与灯具数量计算",
+    "km": "ការគណនាពន្លឺ Lux និងចំនួនបើកភ្លើង",
+    "en": "Illumination Lux & Fixture Count Calculator"
+  },
+  "calc.card8.intro": {
+    "zh": "房间太暗伤眼睛！只需输入房间尺寸(长x宽x高)，工具会告诉你需要安装多少LED灯才够亮。",
+    "km": "បន្ទប់ងងឹតពេកអាចធ្វើឱ្យឈឺភ្នែក! គ្រាន់តែបញ្ចូលទំហំបន្ទប់ (បណ្តោយ×ទទឹង×កម្ពស់) ឧបករណ៍នឹងប្រាប់អ្នកថាត្រូវដាក់ភ្លើង LED ប៉ុន្មានទើបគ្រប់គ្រាន់។",
+    "en": "A dim room hurts your eyes! Just enter room dimensions (L×W×H) and the tool tells you how many LED fixtures are needed."
+  },
+  "calc.card8.label.length": {
+    "zh": "长度 (m)",
+    "km": "ប្រវែង (m)",
+    "en": "Length (m)"
+  },
+  "calc.card8.label.width": {
+    "zh": "宽度 (m)",
+    "km": "ទទឹង (m)",
+    "en": "Width (m)"
+  },
+  "calc.card8.label.height": {
+    "zh": "高度 (m)",
+    "km": "កម្ពស់ (m)",
+    "en": "Height (m)"
+  },
+  "calc.card8.label.usage": {
+    "zh": "用途 / Lux",
+    "km": "ការប្រើប្រាស់ / Lux",
+    "en": "Application / Lux"
+  },
+  "calc.card8.label.led_w": {
+    "zh": "LED功率 W",
+    "km": "ថាមពល LED W",
+    "en": "LED Power W"
+  },
+  "calc.card8.btn": {
+    "zh": "计算灯具数",
+    "km": "គណនាចំនួនភ្លើង",
+    "en": "Calculate Fixtures"
+  },
+  "calc.card8.option.living": {
+    "zh": "住宅 Living 100",
+    "km": "លំនៅ Living 100",
+    "en": "Living 100"
+  },
+  "calc.card8.option.warehouse": {
+    "zh": "仓库 Warehouse 150",
+    "km": "ឃ្លាំង Warehouse 150",
+    "en": "Warehouse 150"
+  },
+  "calc.card8.option.office": {
+    "zh": "办公室 Office 300",
+    "km": "ការិយាល័យ Office 300",
+    "en": "Office 300"
+  },
+  "calc.card8.option.workshop": {
+    "zh": "车间 Workshop 500",
+    "km": "សហក្រម Workshop 500",
+    "en": "Workshop 500"
+  },
+  "calc.card8.option.precision": {
+    "zh": "精密作业 Precision 750",
+    "km": "ការងារត្រឹមត្រូវ Precision 750",
+    "en": "Precision 750"
+  },
+  "calc.card9.title": {
+    "zh": "电缆弯曲半径与穿线管",
+    "km": "កាំរំភាយខ្សែ និងបំពង់ឆាប់",
+    "en": "Cable Bending Radius & Conduit"
+  },
+  "calc.card9.intro": {
+    "zh": "穿线管内塞太多线会发热起火！这个工具帮助计算合适的PVC/GI穿线管尺寸，以及电缆弯曲的最小半径。",
+    "km": "គ្រប់ភ្ជាប់ខ្សែក្នុងបំពង់ច្រើនពេកនឹងក្តៅរហូតឆេះ! ឧបករណ៍នេះជួយគណនាទំហំបំពង់ឆាប់ PVC/GI និងកាំរំភាយអប្បបរមារបស់ខ្សែ។",
+    "en": "Packing too many wires into a conduit overheats and catches fire! This tool computes the appropriate PVC/GI conduit size and minimum cable bending radius."
+  },
+  "calc.card9.label.diameter": {
+    "zh": "外径 mm",
+    "km": "អង្កត់ក្រៅ mm",
+    "en": "Outer Diameter mm"
+  },
+  "calc.card9.label.count": {
+    "zh": "电缆数量",
+    "km": "ចំនួនខ្សែ",
+    "en": "Cable Count"
+  },
+  "calc.card9.label.type": {
+    "zh": "电缆类型",
+    "km": "ប្រភេទខ្សែ",
+    "en": "Cable Type"
+  },
+  "calc.card9.note": {
+    "zh": "弯曲半径标准见右侧说明",
+    "km": "ស្តង់ដារកាំរំភាយមើលនៅខាងស្តាំ",
+    "en": "Bending radius standard: see notes on the right"
+  },
+  "calc.card9.btn": {
+    "zh": "计算",
+    "km": "គណនា",
+    "en": "Calculate"
+  },
+  "calc.card9.option.general": {
+    "zh": "普通 General (4×)",
+    "km": "ធម្មតា General (4×)",
+    "en": "General (4×)"
+  },
+  "calc.card9.option.armored": {
+    "zh": "铠装 Armored (6×)",
+    "km": "ខ្សែការពារ Armored (6×)",
+    "en": "Armored (6×)"
+  },
+  "calc.card9.placeholder.diameter": {
+    "zh": "例 10",
+    "km": "ឧ. 10",
+    "en": "e.g. 10"
+  },
+  "calc.card10.title": {
+    "zh": "🧱 砖块与水泥砂浆计算器",
+    "km": "🧱 ការគណនាឥដ្ឋ និងស៊ីម៉ងត៍",
+    "en": "🧱 Brick & Cement Mortar Calculator"
+  },
+  "calc.card10.intro": {
+    "zh": "想建墙，多少米？输入墙体长度和高度，工具立即算出需要多少红砖、多少袋水泥和多少立方米沙子。使用柬埔寨标准红砖 4x8x18cm。",
+    "km": "ចង់សង់ជញ្ជាំងប្រវែងប៉ុន្មាន? បញ្ចូលប្រវែង និងកម្ពស់ជញ្ជាំង ឧបករណ៍នឹងគណនាបន្ទាន់ថាត្រូវការឥដ្ឋក្រហមប៉ុន្មាន ស៊ីម៉ងត៍ប៉ុន្មានក្នុង និងខ្សាច់ប៉ុន្មានម៉ែត្រគូប។ ប្រើឥដ្ឋក្រហមស្តង់ដារកម្ពុជា 4×8×18cm។",
+    "en": "Planning a wall, how many meters? Enter wall length and height—the tool instantly computes the number of red bricks, cement bags, and sand (m³). Uses Cambodian standard red brick 4×8×18cm."
+  },
+  "calc.card10.label.length": {
+    "zh": "墙体长度 (m)",
+    "km": "ប្រវែងជញ្ជាំង (m)",
+    "en": "Wall Length (m)"
+  },
+  "calc.card10.label.height": {
+    "zh": "墙体高度 (m)",
+    "km": "កម្ពស់ជញ្ជាំង (m)",
+    "en": "Wall Height (m)"
+  },
+  "calc.card10.btn": {
+    "zh": "计算",
+    "km": "គណនា",
+    "en": "Calculate"
+  },
+  "calc.card10.placeholder.length": {
+    "zh": "例 10",
+    "km": "ឧ. 10",
+    "en": "e.g. 10"
+  },
+  "calc.card10.placeholder.height": {
+    "zh": "例 3",
+    "km": "ឧ. 3",
+    "en": "e.g. 3"
+  },
+  "calc.card11.title": {
+    "zh": "🏗️ 钢筋重量计算器",
+    "km": "🏗️ ការគណនាទម្ងន់ដែកប្រេង",
+    "en": "🏗️ Rebar Weight Calculator"
+  },
+  "calc.card11.intro": {
+    "zh": "根据直径和长度计算钢筋重量。帮助你估算建筑或房地产项目的钢筋成本。",
+    "km": "គណនាទម្ងន់ដែកដោយផ្អែកលើអង្កត់ និងប្រវែង។ ជួយឱ្យអ្នកប៉ាន់ស្មានតម្លៃដែកនៅគម្រោងសំណង់ ឬអចលនទ្រព្យ។",
+    "en": "Calculate rebar weight by diameter and length. Helps estimate rebar costs for construction or real estate projects."
+  },
+  "calc.card11.label.diameter": {
+    "zh": "钢筋直径 mm",
+    "km": "អង្កត់ដែក mm",
+    "en": "Rebar Diameter mm"
+  },
+  "calc.card11.label.length": {
+    "zh": "总长度 (m)",
+    "km": "ប្រវែងសរុប (m)",
+    "en": "Total Length (m)"
+  },
+  "calc.card11.btn": {
+    "zh": "计算",
+    "km": "គណនា",
+    "en": "Calculate"
+  },
+  "calc.card11.placeholder.length": {
+    "zh": "例 100",
+    "km": "ឧ. 100",
+    "en": "e.g. 100"
+  },
+  "calc.card12.title": {
+    "zh": "📦 瓷砖与胶泥箱数计算器",
+    "km": "📦 ការគណនាក្បឿង និងក្រួរស្អិយ",
+    "en": "📦 Tile & Adhesive Box Calculator"
+  },
+  "calc.card12.intro": {
+    "zh": "想铺客厅或房间的瓷砖？输入房间长和宽，选择瓷砖尺寸，工具会算出需要多少箱瓷砖（含5%损耗）以及多少袋瓷砖胶泥。",
+    "km": "ចង់ក្រាលក្បឿងសាល ឬបន្ទប់? បញ្ចូលប្រវែង និងទទឹងបន្ទប់ ជ្រើសទំហំក្បឿង ឧបករណ៍នឹងគណនាប្រអប់ក្បឿង (រួម5%ខាត) និងកាប់ស៊ីម៉ងត៍ស្អិយ។",
+    "en": "Want to tile a living room or bedroom? Enter room length and width and pick a tile size—the tool computes the number of tile boxes (incl. 5% waste) and bags of adhesive."
+  },
+  "calc.card12.label.length": {
+    "zh": "房间长度 (m)",
+    "km": "ប្រវែងបន្ទប់ (m)",
+    "en": "Room Length (m)"
+  },
+  "calc.card12.label.width": {
+    "zh": "房间宽度 (m)",
+    "km": "ទទឹងបន្ទប់ (m)",
+    "en": "Room Width (m)"
+  },
+  "calc.card12.label.tile_size": {
+    "zh": "瓷砖尺寸 (Tile Size)",
+    "km": "ទំហំក្បឿង (Tile Size)",
+    "en": "Tile Size"
+  },
+  "calc.card12.btn": {
+    "zh": "计算",
+    "km": "គណនា",
+    "en": "Calculate"
+  },
+  "calc.card12.placeholder.length": {
+    "zh": "例 5",
+    "km": "ឧ. 5",
+    "en": "e.g. 5"
+  },
+  "calc.card12.placeholder.width": {
+    "zh": "例 4",
+    "km": "ឧ. 4",
+    "en": "e.g. 4"
+  },
+  "calc.card13.title": {
+    "zh": "🪣 墙面油漆大桶数计算器",
+    "km": "🪣 ការគណនារូបធាតុពណ៌គំនរ",
+    "en": "🪣 Wall Paint Big Bucket Calculator"
+  },
+  "calc.card13.intro": {
+    "zh": "想刷漆多少平方米？只需输入总刷漆面积，工具会算出需要多少桶大桶油漆(18L)和底漆。",
+    "km": "ចង់លាបពណ៌ប៉ុន្មានម៉ែត្រការ៉េ? គ្រាន់តែបញ្ចូលផ្ទៃសរុប ឧបករណ៍នឹងគណនារូបធាតុដែលត្រូវប្រើ និងពណ៌មូលដ្ឋាន (18L)។",
+    "en": "Painting how many square meters? Just enter the total paint area—the tool calculates how many big buckets (18L) and primer you need."
+  },
+  "calc.card13.label.area": {
+    "zh": "墙面总面积 (m²)",
+    "km": "ផ្ទៃជញ្ជាំងសរុប (m²)",
+    "en": "Total Wall Area (m²)"
+  },
+  "calc.card13.btn": {
+    "zh": "计算",
+    "km": "គណនា",
+    "en": "Calculate"
+  },
+  "calc.card13.placeholder.area": {
+    "zh": "例 60",
+    "km": "ឧ. 60",
+    "en": "e.g. 60"
+  },
+  "calc.cost.title": {
+    "zh": "🏠 造价估算",
+    "km": "🏠 ការគណនាតម្លៃ",
+    "en": "🏠 Cost Estimation"
+  },
+  "calc.cost.intro": {
+    "zh": "排屋/别墅造价估算与工钱计算器即将上线。",
+    "km": "ការគណនាតម្លៃរោងសំណង់ និងតម្លៃការងារសម្រាប់ផ្ទះតួ/វិល្លានឹងមកដល់ឆាប់ៗ។",
+    "en": "Cost estimation and labor fee calculator for row houses/villas coming soon."
+  },
+  "calc.cost.coming_soon": {
+    "zh": "Coming soon — 敬请期待！",
+    "km": "Coming soon — សូមរង់ចាំ!",
+    "en": "Coming soon — stay tuned!"
+  },
+  "calc.cost.developing": {
+    "zh": "开发中 (Developing)",
+    "km": "កំពុងអភិវន្ត (Developing)",
+    "en": "Developing"
+  },
+  "contact.subtitle": {
+    "zh": "联系我们 · Contact",
+    "km": "ទំនាក់ទំនង · Contact",
+    "en": "Contact"
+  },
+  "contact.map_title": {
+    "zh": "仓库位置图",
+    "km": "ផែនទីឃ្លាំងស្តុក",
+    "en": "Warehouse Location Map"
+  },
+  "contact.map_caption": {
+    "zh": "金边仓库",
+    "km": "ឃ្លាំងស្តុកភ្នំពេញ",
+    "en": "Phnom Penh Warehouse"
+  },
+  "contact.btn.gmaps": {
+    "zh": "在 Google 地图打开",
+    "km": "មើលក្នុង Google Maps",
+    "en": "View on Google Maps"
+  },
+  "contact.btn.gmaps.hint": {
+    "zh": "点击新窗口打开 Google 地图",
+    "km": "មួយចុចនឹងនាំទៅ Google Maps",
+    "en": "One click opens Google Maps in a new window"
+  },
+  "contact.val.map_link": {
+    "zh": "查看 Google 地图位置 →",
+    "km": "មើលទីតាំងនៅលើផែនទី Google →",
+    "en": "View on Google Maps →"
+  },
+  "contact.hours_km": {
+    "zh": "周一至周六 08:00 – 17:30",
+    "km": "ចន្លោះ ០៨៖០០−១៧៖៣០ (ច័ន្ទ-សៅរ៍)",
+    "en": "Mon–Sat 08:00 – 17:30"
+  },
+  "contact.hours_zh": {
+    "zh": "周一至周六 07:00 – 18:00",
+    "km": "ច័ន្ទ-សៅរ៍ ០៧៖០០ – ១៨៖០០",
+    "en": "Mon–Sat 07:00 – 18:00"
+  },
+  "articles.section.filter_all_index": {
+    "zh": "全部 (All)",
+    "km": "ទាំងអស់ (All)",
+    "en": "All (All)"
+  },
+  "articles.section.filter_elec": {
+    "zh": "⚡ 电力",
+    "km": "⚡ អគ្គិសនី",
+    "en": "⚡ Electrical"
+  },
+  "articles.section.filter_civil": {
+    "zh": "🧱 土木工程",
+    "km": "🧱 សំណង់",
+    "en": "🧱 Civil Engineering"
+  },
+  "articles.section.filter_decor": {
+    "zh": "🎨 装饰",
+    "km": "🎨 តុបតែង",
+    "en": "🎨 Decoration"
+  },
+  "articles.section.filter_cost": {
+    "zh": "🏠 造价",
+    "km": "🏠 តម្លៃ",
+    "en": "🏠 Cost"
+  },
+  "articles.section.filter_safety": {
+    "zh": "⚠️ 安全",
+    "km": "⚠️ សុវត្ថិភាព",
+    "en": "⚠️ Safety"
+  },
+  "articles.section.heading_index": {
+    "zh": "文章资讯",
+    "km": "អត្ថបទ",
+    "en": "Articles & News"
+  },
+  "articles.section.tag_index": {
+    "zh": "Articles & Knowledge Base",
+    "km": "អត្ថបទ និងមជ្ឈមណ្ឌលចំណេះដឹង",
+    "en": "Articles & Knowledge Base"
+  },
+  "articles.section.search_placeholder_index": {
+    "zh": "搜索文章标题或摘要...",
+    "km": "ស្វែងរកចំណងជើងអត្ថបទឬសេចក្តីសង្ខេប...",
+    "en": "Search article title or summary..."
+  },
+  "articles.section.loading_index": {
+    "zh": "加载中...",
+    "km": "កំពុងផ្ទុក...",
+    "en": "Loading..."
+  },
+  "articles.section.loading_full": {
+    "zh": "正在加载文章...",
+    "km": "កំពុងផ្ទុកអត្ថបទ...",
+    "en": "Loading article..."
+  },
+  "articles.section.empty_title": {
+    "zh": "没有找到文章",
+    "km": "មិនឃើញអត្ថបទ",
+    "en": "No articles found"
+  },
+  "articles.section.empty_subtitle": {
+    "zh": "该分类下暂无文章或搜索无结果",
+    "km": "មិនមានអត្ថបទក្នុងប្រភេទនេះ ឬការស្វែងរកគ្មានលទ្ធផល",
+    "en": "No articles in this category or no search results"
+  },
+  "articles.section.read_time_template": {
+    "zh": "${readTime} 分钟阅读",
+    "km": "${readTime} ការអាន",
+    "en": "${readTime} min read"
+  },
+  "articles.section.view_all": {
+    "zh": "查看全部文章",
+    "km": "មើលអត្ថបទទាំងអស់",
+    "en": "View All Articles"
+  },
+  "modal.article.close_index": {
+    "zh": "关闭",
+    "km": "បិទ",
+    "en": "Close"
+  },
+  "modal.article.no_content_index": {
+    "zh": "暂无内容",
+    "km": "មិនមានមាតិកា",
+    "en": "No content"
+  }
+}

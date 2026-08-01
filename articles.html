@@ -63,10 +63,31 @@ body {
 
 /* Modal backdrop */
 .modal-backdrop { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); }
+
+/* ===== 联系方式悬浮球 ===== */
+.contact-fab { position: fixed; right: 1rem; bottom: 1rem; z-index: 40; display: flex; flex-direction: column; align-items: flex-end; gap: 0.625rem; }
+.contact-fab__panel { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.5rem; background: #fff; border: 2px solid #fcd34d; border-radius: 1rem; box-shadow: 0 12px 30px -8px rgba(0,0,0,0.25); opacity: 0; transform: translateY(8px) scale(0.96); pointer-events: none; transition: opacity 0.22s ease, transform 0.22s ease; width: max-content; }
+.contact-fab.open .contact-fab__panel { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.contact-fab__item { display: flex; align-items: center; gap: 0.625rem; padding: 0.5rem 0.75rem; border-radius: 0.625rem; font-size: 0.8125rem; font-weight: 700; color: #0f172a; transition: background 0.15s ease, transform 0.15s ease; white-space: nowrap; }
+.contact-fab__item:hover { background: #fef3c7; transform: translateX(-2px); }
+.contact-fab__item i { width: 1.25rem; text-align: center; }
+.contact-fab__icon--tg { color: #0ea5e9; } .contact-fab__icon--wa { color: #22c55e; } .contact-fab__icon--call { color: #f59e0b; }
+.contact-fab__ball { width: 3.5rem; height: 3.5rem; border-radius: 9999px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px -4px rgba(217,119,6,0.55); border: 2px solid #fff; cursor: pointer; transition: transform 0.2s ease; position: relative; }
+.contact-fab__ball:hover { transform: scale(1.06); }
+.contact-fab__ball i { font-size: 1.25rem; animation: fabPulse 1.05s ease-in-out infinite alternate; }
+.contact-fab.open .contact-fab__ball i { animation: none; }
+@keyframes fabPulse { from { transform: rotate(0deg) scale(1); } to { transform: rotate(-12deg) scale(1.12); } }
+.contact-fab__badge { position: absolute; top: -0.15rem; right: -0.15rem; width: 0.75rem; height: 0.75rem; background: #ef4444; border: 2px solid #fff; border-radius: 9999px; }
+.contact-fab__ball-label { position: absolute; right: 4rem; top: 50%; transform: translateY(-50%); background: #0f172a; color: #fff; font-size: 0.6875rem; font-weight: 700; padding: 0.25rem 0.5rem; border-radius: 0.375rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.18s ease; }
+.contact-fab__ball:hover .contact-fab__ball-label { opacity: 1; }
+@media (max-width: 640px) { .contact-fab__ball { width: 3rem; height: 3rem; } .contact-fab__ball-label { display: none; } }
+@media (prefers-reduced-motion: reduce) { .contact-fab__ball i { animation: none; } .contact-fab__panel, .contact-fab__ball { transition: none; } }
 </style>
+<!-- i18n -->
+<script src="/js/i18n.js"></script>
 </head>
 
-<body class="min-h-screen bg-slate-50 text-slate-900">
+<body class="min-h-screen bg-slate-50 text-slate-900" data-page="articles">
 
 <!-- ==================== NAVBAR ==================== -->
 <nav class="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200">
@@ -79,20 +100,21 @@ body {
         </div>
         <span class="text-lg font-black text-slate-900 tracking-tight">B·W CABLE</span>
       </a>
+      <div id="langSwitcher" class="relative ml-2"></div>
 
       <!-- Desktop menu -->
       <div class="hidden md:flex items-center gap-1 text-sm font-bold">
         <a href="index.html#calculators" class="px-3 py-2 rounded-lg text-slate-700 hover:bg-amber-50 hover:text-amber-600 transition-all flex items-center gap-1.5">
-          <i class="fa-solid fa-calculator text-amber-400"></i> គណនាករ <span class="text-xs text-slate-400">/ 工程计算器</span>
+          <i class="fa-solid fa-calculator text-amber-400"></i> <span data-i18n="nav.calculators">工程计算器</span>
         </a>
         <a href="products.html" class="px-3 py-2 rounded-lg text-slate-700 hover:bg-amber-50 hover:text-amber-600 transition-all flex items-center gap-1.5">
-          <i class="fa-solid fa-box-open text-amber-500"></i> ផលិតផល <span class="text-xs text-slate-400">/ 产品分类</span>
+          <i class="fa-solid fa-box-open text-amber-500"></i> <span data-i18n="nav.products">产品分类</span>
         </a>
         <a href="articles.html" class="px-3 py-2 rounded-lg text-amber-600 bg-amber-50 transition-all flex items-center gap-1.5">
-          <i class="fa-solid fa-newspaper text-amber-400"></i> អត្ថបទ <span class="text-xs text-slate-400">/ 文章</span>
+          <i class="fa-solid fa-newspaper text-amber-400"></i> <span data-i18n="nav.articles">文章</span>
         </a>
         <a href="index.html" onclick="openContactModal(); return false;" class="ml-1 px-4 py-2 rounded-lg bg-amber-400 hover:bg-amber-500 text-slate-950 font-black shadow-md border-2 border-amber-500 transition-all transform hover:scale-[1.03] active:scale-95 flex items-center gap-1.5">
-          <i class="fa-solid fa-phone"></i> ទំនាក់ទំនង <span class="text-xs opacity-70">/ 联系</span>
+          <i class="fa-solid fa-phone"></i> <span data-i18n="nav.contact">联系</span>
         </a>
       </div>
 
@@ -104,10 +126,10 @@ body {
 
     <!-- Mobile menu (collapsed) -->
     <div id="mobile-menu" class="hidden md:hidden pb-4 space-y-1 border-t border-slate-200 pt-3">
-      <a href="index.html#calculators" class="block px-3 py-2.5 rounded-lg text-slate-700 font-bold hover:bg-amber-50"><i class="fa-solid fa-calculator text-amber-400 w-5"></i> គណនាករ / 工程计算器</a>
-      <a href="products.html" class="block px-3 py-2.5 rounded-lg text-slate-700 font-bold hover:bg-amber-50"><i class="fa-solid fa-box-open text-amber-500 w-5"></i> ផលិតផល / 产品分类</a>
-      <a href="articles.html" class="block px-3 py-2.5 rounded-lg text-amber-600 font-bold bg-amber-50"><i class="fa-solid fa-newspaper text-amber-400 w-5"></i> អត្ថបទ / 文章资讯</a>
-      <a href="index.html" onclick="openContactModal(); return false;" class="block px-3 py-2.5 rounded-lg bg-amber-400 text-slate-950 font-black text-center"><i class="fa-solid fa-phone w-5"></i> ទំនាក់ទំនង / 联系我们</a>
+      <a href="index.html#calculators" class="block px-3 py-2.5 rounded-lg text-slate-700 font-bold hover:bg-amber-50"><i class="fa-solid fa-calculator text-amber-400 w-5"></i> <span data-i18n="nav.calculators">工程计算器</span></a>
+      <a href="products.html" class="block px-3 py-2.5 rounded-lg text-slate-700 font-bold hover:bg-amber-50"><i class="fa-solid fa-box-open text-amber-500 w-5"></i> <span data-i18n="nav.products">产品分类</span></a>
+      <a href="articles.html" class="block px-3 py-2.5 rounded-lg text-amber-600 font-bold bg-amber-50"><i class="fa-solid fa-newspaper text-amber-400 w-5"></i> <span data-i18n="nav.articles_mobile">文章资讯</span></a>
+      <a href="index.html" onclick="openContactModal(); return false;" class="block px-3 py-2.5 rounded-lg bg-amber-400 text-slate-950 font-black text-center"><i class="fa-solid fa-phone w-5"></i> <span data-i18n="nav.contact_us">联系我们</span></a>
     </div>
   </div>
 </nav>
@@ -127,16 +149,18 @@ body {
   </div>
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 text-center">
     <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-xs font-bold mb-5">
-      <i class="fa-solid fa-graduation-cap text-amber-400"></i> Knowledge Base / មជ្ឈមណ្ឌលចំណេះដឹង
+      <i class="fa-solid fa-graduation-cap text-amber-400"></i> <span data-i18n="articles.section.badge">知识库</span>
     </div>
     <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black mb-4 leading-tight">
-      អត្ថបទ <span class="text-amber-400">&</span> 文章知识库
+      <span data-i18n="articles.section.title_with_amp">文章知识库</span>
+      <span class="text-amber-400">&</span>
+      <span data-i18n="articles.section.title">文章知识库</span>
     </h1>
-    <p class="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto mb-8 leading-relaxed">
+    <p class="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto mb-8 leading-relaxed" data-i18n="articles.section.subtitle">
       柬埔寨电工、土木工程与建筑装饰的专业知识库 —— 从基础接线到配电设计，从混凝土配比到室内装修，助力您的每一个工程项目。
     </p>
     <a href="index.html" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl text-sm font-bold transition-all">
-      <i class="fa-solid fa-arrow-left text-xs"></i> ត្រឡប់ទៅទំព័រដើម / 返回首页
+      <i class="fa-solid fa-arrow-left text-xs"></i> <span data-i18n="articles.section.back_home">返回首页</span>
     </a>
   </div>
 </section>
@@ -149,18 +173,18 @@ body {
     <!-- Search Bar -->
     <div class="mb-4 relative">
       <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
-      <input type="text" id="article-search" placeholder="ស្វែងរកចំណងជើង / 搜索文章标题或摘要..."
+      <input type="text" id="article-search" placeholder="搜索文章标题或摘要…" data-i18n-ph="articles.section.search_placeholder"
         class="w-full bg-white border-2 border-slate-300 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-500 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none transition-all">
     </div>
 
     <!-- Category Filter Pills -->
     <div id="article-filters" class="flex flex-wrap gap-2">
-      <button class="filter-pill active px-4 py-2 rounded-xl text-sm font-semibold bg-amber-500 text-slate-950 shadow-lg" data-filter="all">ទាំងអស់ / 全部</button>
-      <button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-200 text-slate-700 font-bold hover:bg-slate-300" data-filter="អគ្គិសនី">⚡ អគ្គិសនី / 电力</button>
-      <button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-200 text-slate-700 font-bold hover:bg-slate-300" data-filter="សំណង់">🧱 សំណង់ / 土木</button>
-      <button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-200 text-slate-700 font-bold hover:bg-slate-300" data-filter="តុបតែង">🎨 តុបតែង / 装饰</button>
-      <button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-200 text-slate-700 font-bold hover:bg-slate-300" data-filter="វ៉ាយតម្លៃ">🏠 វ៉ាយតម្លៃ / 造价</button>
-      <button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-200 text-slate-700 font-bold hover:bg-slate-300" data-filter="សុវត្ថិភាព">⚠️ សុវត្ថិភាព / 安全</button>
+      <button class="filter-pill active px-4 py-2 rounded-xl text-sm font-semibold bg-amber-500 text-slate-950 shadow-lg" data-filter="all" data-i18n="articles.filter.all">全部</button>
+      <button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-200 text-slate-700 font-bold hover:bg-slate-300" data-filter="អគ្គិសនី" data-i18n="articles.filter.electrical">⚡ 电力</button>
+      <button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-200 text-slate-700 font-bold hover:bg-slate-300" data-filter="សំណង់" data-i18n="articles.filter.civil">🧱 土木</button>
+      <button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-200 text-slate-700 font-bold hover:bg-slate-300" data-filter="តុបតែង" data-i18n="articles.filter.decoration">🎨 装饰</button>
+      <button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-200 text-slate-700 font-bold hover:bg-slate-300" data-filter="វ៉ាយតម្លៃ" data-i18n="articles.filter.costing">🏠 造价</button>
+      <button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-200 text-slate-700 font-bold hover:bg-slate-300" data-filter="សុវត្ថិភាព" data-i18n="articles.filter.safety">⚠️ 安全</button>
     </div>
   </div>
 
@@ -172,7 +196,7 @@ body {
     <div class="col-span-3 text-center py-16">
       <div class="inline-flex items-center gap-3 text-slate-500">
         <i class="fa-solid fa-circle-notch fa-spin text-amber-500 text-2xl"></i>
-        <span>ផ្ទុកឡើង / 加载中...</span>
+        <span data-i18n="articles.section.loading">加载中…</span>
       </div>
     </div>
   </div>
@@ -180,18 +204,18 @@ body {
   <!-- No Results -->
   <div id="articles-empty" class="hidden text-center py-16">
     <div class="p-4 bg-slate-100 rounded-full w-fit mx-auto mb-4"><i class="fa-solid fa-newspaper text-2xl text-slate-600"></i></div>
-    <h3 class="text-base font-semibold text-slate-700 mb-1">មិនឃើញអត្ថបទ / 没有找到文章</h3>
-    <p class="text-slate-500 text-sm">សូមសាកល្បងឱ្យមេត្រីវិធី / 请尝试其他搜索词或分类</p>
+    <h3 class="text-base font-semibold text-slate-700 mb-1" data-i18n="articles.section.empty_title">没有找到文章</h3>
+    <p class="text-slate-500 text-sm" data-i18n="articles.section.empty_subtitle">请尝试其他搜索词或分类</p>
   </div>
 
   <!-- Pagination -->
   <div id="pagination-container" class="hidden mt-10 flex items-center justify-center gap-2 flex-wrap">
     <button id="prev-btn" class="page-btn px-4 bg-white border-2 border-slate-300 text-slate-700 hover:border-amber-400 hover:text-amber-600">
-      <i class="fa-solid fa-chevron-left text-xs mr-1"></i> មុន / 上一页
+      <i class="fa-solid fa-chevron-left text-xs mr-1"></i> <span data-i18n="articles.section.prev_page">上一页</span>
     </button>
     <div id="page-numbers" class="flex items-center gap-1.5"></div>
     <button id="next-btn" class="page-btn px-4 bg-white border-2 border-slate-300 text-slate-700 hover:border-amber-400 hover:text-amber-600">
-      បន្ទាប់ / 下一页 <i class="fa-solid fa-chevron-right text-xs ml-1"></i>
+      <span data-i18n="articles.section.next_page">下一页</span> <i class="fa-solid fa-chevron-right text-xs ml-1"></i>
     </button>
   </div>
 </section>
@@ -199,9 +223,9 @@ body {
 <!-- ==================== FOOTER ==================== -->
 <footer class="border-t border-slate-200 bg-white py-8">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <div class="text-sm text-slate-500 font-medium">© 2026 B·W CABLE Cambodia. ដំណោះរក់ខ្សឹបឡើងឯកឯកទេសនៅកម្ពុជា</div>
+    <div class="text-sm text-slate-500 font-medium" data-i18n="footer.copyright">© 2026 B·W CABLE Cambodia. 在柬埔寨独立经营</div>
     <div class="text-xs text-slate-400 mt-2">
-      <a href="https://www.vecteezy.com/free-photos/phnom-penh" target="_blank" rel="noopener sponsored" class="text-amber-600 hover:underline">Hero background from Vecteezy</a>
+      <a href="https://www.vecteezy.com/free-photos/phnom-penh" target="_blank" rel="noopener sponsored" class="text-amber-600 hover:underline" data-i18n="footer.hero_credit">Hero 背景来源 Vecteezy</a>
     </div>
   </div>
 </footer>
@@ -230,15 +254,15 @@ body {
     <!-- Content Body -->
     <div id="article-modal-body" class="article-content p-6 md:p-8 overflow-y-auto leading-relaxed space-y-4 text-slate-700 text-sm md:text-base border-t border-slate-200/40">
       <div class="text-center py-12 text-slate-500">
-        <i class="fa-solid fa-circle-notch fa-spin text-amber-500 text-3xl mb-3"></i><br>ផ្ទុកអត្ថបទ / 正在加载文章...
+        <i class="fa-solid fa-circle-notch fa-spin text-amber-500 text-3xl mb-3"></i><br><span data-i18n="modal.article.loading">正在加载文章…</span>
       </div>
     </div>
     <!-- Footer -->
     <div class="p-4 border-t border-slate-200 bg-slate-50 flex justify-between shrink-0">
       <button onclick="closeArticleModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-sm rounded-xl transition-all duration-300 min-h-[44px]">
-        <i class="fa-solid fa-xmark mr-1"></i> បិទ / 关闭
+        <i class="fa-solid fa-xmark mr-1"></i> <span data-i18n="modal.article.close">关闭</span>
       </button>
-      <span class="text-xs text-slate-400 self-center">B·W CABLE 文章知识库</span>
+      <span class="text-xs text-slate-400 self-center" data-i18n="modal.article.footer_brand">B·W CABLE 文章知识库</span>
     </div>
   </div>
 </div>
@@ -252,21 +276,21 @@ body {
     <div class="p-5 sm:p-6 bg-gradient-to-br from-amber-50 to-white border-b border-slate-200">
       <div class="flex items-center gap-3">
         <div class="p-2 bg-amber-500/10 rounded-lg"><i class="fa-solid fa-location-dot text-amber-400"></i></div>
-        <h2 class="text-lg sm:text-xl font-black text-slate-900">ទំនាក់ទំនង</h2>
-        <span class="text-xs text-slate-500 ml-1">联系我们 · Contact</span>
+        <h2 class="text-lg sm:text-xl font-black text-slate-900" data-i18n="modal.contact.title">联系我们</h2>
+        <span class="text-xs text-slate-500 ml-1" data-i18n="modal.contact.subtitle">联系我们</span>
       </div>
     </div>
     <div class="p-5 sm:p-6">
       <ul class="space-y-3 text-sm text-slate-700 font-medium leading-relaxed">
-        <li class="flex items-start gap-3"><i class="fa-solid fa-location-dot text-amber-500 w-5 mt-0.5"></i><span><strong>អាសយដ្ឋាន / 地址:</strong><br>ឃ្លាំងស្តុកភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា — 金边仓库, 柬埔寨<br><a href="https://maps.app.goo.gl/Cuz5kVpj9SdNQPrA7" target="_blank" rel="noopener" class="text-amber-600 font-bold hover:underline">查看 Google 地图位置 →</a></span></li>
-        <li class="flex items-start gap-3"><i class="fa-solid fa-phone text-amber-500 w-5 mt-0.5"></i><span><strong>ទូរស័ព្ទ / 电话:</strong><br><a href="tel:+855979889321" class="text-amber-600 font-bold hover:underline">+855 97 988 9321</a></span></li>
+        <li class="flex items-start gap-3"><i class="fa-solid fa-location-dot text-amber-500 w-5 mt-0.5"></i><span><strong data-i18n="modal.contact.address_label">地址:</strong><br><span data-i18n="modal.contact.address_value">金边仓库, 柬埔寨</span><br><a href="https://maps.app.goo.gl/Cuz5kVpj9SdNQPrA7" target="_blank" rel="noopener" class="text-amber-600 font-bold hover:underline" data-i18n="modal.contact.view_map">查看 Google 地图位置 →</a></span></li>
+        <li class="flex items-start gap-3"><i class="fa-solid fa-phone text-amber-500 w-5 mt-0.5"></i><span><strong data-i18n="modal.contact.phone_label">电话:</strong><br><a href="tel:+855****9321" class="text-amber-600 font-bold hover:underline">+855 97 988 9321</a></span></li>
         <li class="flex items-start gap-3"><i class="fa-brands fa-telegram text-amber-500 w-5 mt-0.5"></i><span><strong>Telegram:</strong> <a href="tg://resolve?phone=855979889321" target="_blank" rel="noopener" class="text-amber-600 font-bold hover:underline">@bwcable_kh</a></span></li>
         <li class="flex items-start gap-3"><i class="fa-brands fa-whatsapp text-amber-500 w-5 mt-0.5"></i><span><strong>WhatsApp:</strong> <a href="https://wa.me/855979889321" target="_blank" rel="noopener" class="text-amber-600 font-bold hover:underline">+855 97 988 9321</a></span></li>
-        <li class="flex items-start gap-3"><i class="fa-regular fa-clock text-amber-500 w-5 mt-0.5"></i><span><strong>ម៉ោងធ្វើការ / 工作时间:</strong><br>ច័ន្ទ - សុក្រ 08:00–18:00 周一至周五 8:00-18:00</span></li>
+        <li class="flex items-start gap-3"><i class="fa-regular fa-clock text-amber-500 w-5 mt-0.5"></i><span><strong data-i18n="modal.contact.working_hours_label">工作时间:</strong><br><span data-i18n="modal.contact.working_hours_value">周一至周五 8:00-18:00</span></span></li>
       </ul>
       <div class="flex flex-wrap gap-3 mt-6">
         <a href="tg://resolve?phone=855979889321" target="_blank" rel="noopener" class="px-4 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md"><i class="fa-brands fa-telegram"></i> Telegram</a>
-        <a href="tel:+855979889321" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md"><i class="fa-solid fa-phone"></i> ទូរស័ព្ទ / 电话</a>
+        <a href="tel:+855****9321" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md"><i class="fa-solid fa-phone"></i> <span data-i18n="modal.contact.call_button">电话</span></a>
         <a href="https://wa.me/855979889321" target="_blank" rel="noopener" class="px-4 py-2.5 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
       </div>
     </div>
@@ -284,7 +308,7 @@ body {
 
   // ---- Markdown Parser ----
   function parseMarkdown(md) {
-    if (!md) return '<p class="text-slate-500">暂无内容</p>';
+    if (!md) return '<p class="text-slate-500">' + __I18N__.t('modal.article.no_content', '暂无内容') + '</p>';
     let html = md;
     html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     html = html.replace(/```(\w*)\n([\s\S]*?)```/g, function(_, lang, code) {
@@ -316,11 +340,11 @@ body {
 
   // ---- Category config ----
   const CATEGORY_CONFIG = {
-    'អគ្គិសនី': { emoji: '⚡', label: '电力', color: 'bg-amber-500/15 text-amber-400 border-amber-500/25' },
-    'សំណង់': { emoji: '🧱', label: '土木工程', color: 'bg-orange-500/15 text-orange-400 border-orange-500/25' },
-    'តុបតែង': { emoji: '🎨', label: '装饰', color: 'bg-purple-500/15 text-purple-400 border-purple-500/25' },
-    'វ៉ាយតម្លៃ': { emoji: '🏠', label: '造价', color: 'bg-blue-500/15 text-blue-400 border-blue-500/25' },
-    'សុវត្ថិភាព': { emoji: '⚠️', label: '安全', color: 'bg-red-500/15 text-red-400 border-red-500/25' },
+    'អគ្គិសនី': { emoji: '⚡', label: __I18N__.t('articles.filter.electrical_long', '电力'), labelKey: 'articles.filter.electrical_long', color: 'bg-amber-500/15 text-amber-400 border-amber-500/25' },
+    'សំណង់': { emoji: '🧱', label: __I18N__.t('articles.filter.civil_long', '土木工程'), labelKey: 'articles.filter.civil_long', color: 'bg-orange-500/15 text-orange-400 border-orange-500/25' },
+    'តុបតែង': { emoji: '🎨', label: __I18N__.t('articles.filter.decoration_long', '装饰'), labelKey: 'articles.filter.decoration_long', color: 'bg-purple-500/15 text-purple-400 border-purple-500/25' },
+    'វ៉ាយតម្លៃ': { emoji: '🏠', label: __I18N__.t('articles.filter.costing_long', '造价'), labelKey: 'articles.filter.costing_long', color: 'bg-blue-500/15 text-blue-400 border-blue-500/25' },
+    'សុវត្ថិភាព': { emoji: '⚠️', label: __I18N__.t('articles.filter.safety_long', '安全'), labelKey: 'articles.filter.safety_long', color: 'bg-red-500/15 text-red-400 border-red-500/25' },
   };
 
   // ---- State ----
@@ -415,7 +439,10 @@ body {
     if (totalItems > 0) {
       const showingStart = totalItems === 0 ? 0 : start + 1;
       const showingEnd = Math.min(start + PER_PAGE, totalItems);
-      countEl.textContent = 'សរុប ' + totalItems + ' អត្ថបទ / 共 ' + totalItems + ' 篇文章 — 显示 ' + showingStart + '–' + showingEnd + ' 条';
+      countEl.textContent = __I18N__.t('articles.section.count_template')
+        .replace('{total}', totalItems)
+        .replace('{start}', showingStart)
+        .replace('{end}', showingEnd);
     } else {
       countEl.textContent = '';
     }
@@ -441,11 +468,11 @@ body {
           <img src="${cover}" alt="" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity" onerror="this.src='${FALLBACK_IMG}'">
           <div class="absolute inset-0 bg-gradient-to-t from-slate-100/80 via-slate-100/20 to-transparent"></div>
           <div class="absolute top-3 left-3">
-            <span class="px-2.5 py-1 bg-slate-100/80 backdrop-blur-md ${cat.color} text-xs font-bold rounded-full border">${cat.emoji} ${cat.label}</span>
+            <span class="px-2.5 py-1 bg-slate-100/80 backdrop-blur-md ${cat.color} text-xs font-bold rounded-full border">${cat.emoji} ${cat.labelKey ? __I18N__.t(cat.labelKey, cat.label) : cat.label}</span>
           </div>
           <div class="absolute bottom-3 right-3">
             <span class="px-2 py-1 bg-slate-200/90 backdrop-blur-sm text-slate-700 font-bold text-xs rounded-md flex items-center gap-1">
-              <i class="fa-regular fa-clock text-[10px]"></i> ${readTime} ការអាន
+              <i class="fa-regular fa-clock text-[10px]"></i> ${__I18N__.t('articles.card.read_time_template', '{minutes} 分钟阅读').replace('{minutes}', readTime)}
             </span>
           </div>
         </div>
@@ -461,7 +488,7 @@ body {
           </div>
           <div class="pt-3 border-t border-slate-200 flex justify-between items-center">
             <span class="text-sm text-amber-400 font-semibold flex items-center gap-2 group-hover:translate-x-1 transition-transform duration-300">
-              អានបន្ត / 阅读全文 <i class="fa-solid fa-arrow-right text-xs"></i>
+              ${__I18N__.t('articles.card.read_full', '阅读全文')} <i class="fa-solid fa-arrow-right text-xs"></i>
             </span>
             <div class="flex items-center gap-1 text-slate-500 text-xs"><i class="fa-regular fa-eye"></i> ${article.views || 0}</div>
           </div>
@@ -557,11 +584,11 @@ body {
     titleEl.textContent = article.title;
     const cat = CATEGORY_CONFIG[article.category] || { emoji: '📄', label: article.category, color: 'bg-slate-200 text-slate-600 border-slate-300' };
     catEl.className = 'inline-block px-3 py-1 backdrop-blur-md text-xs font-bold rounded-full border ' + cat.color;
-    catEl.textContent = cat.emoji + ' ' + cat.label;
+    catEl.textContent = cat.emoji + ' ' + (cat.labelKey ? __I18N__.t(cat.labelKey, cat.label) : cat.label);
     dateEl.innerHTML = '<i class="fa-regular fa-calendar mr-1"></i> ' + new Date(article.date).toLocaleDateString('km-KH', { year: 'numeric', month: 'long', day: 'numeric' });
-    viewsEl.innerHTML = '<i class="fa-regular fa-eye mr-1"></i> ' + (article.views || 0) + ' ការអាន';
+    viewsEl.innerHTML = '<i class="fa-regular fa-eye mr-1"></i> ' + __I18N__.t('modal.article.views_template', '{views} 次浏览').replace('{views}', (article.views || 0));
     const readTime = Math.max(2, Math.ceil((article.content || article.excerpt || '').length / 500));
-    viewsEl.innerHTML += ' • ' + readTime + ' ការអាន';
+    viewsEl.innerHTML += ' • ' + __I18N__.t('modal.article.read_time_label', '{minutes} 分钟阅读').replace('{minutes}', readTime);
 
     bodyEl.innerHTML = parseMarkdown(article.content);
 
@@ -658,6 +685,42 @@ body {
 
 })();
 </script>
+
+  <!-- ==================== 联系方式悬浮球 ==================== -->
+  <div class="contact-fab" id="contact-fab">
+    <div class="contact-fab__panel" role="menu" aria-label="联系我们">
+      <a class="contact-fab__item" href="tg://resolve?phone=855979889321" target="_blank" rel="noopener">
+        <i class="fa-brands fa-telegram contact-fab__icon--tg"></i> Telegram
+      </a>
+      <a class="contact-fab__item" href="https://wa.me/855979889321" target="_blank" rel="noopener">
+        <i class="fa-brands fa-whatsapp contact-fab__icon--wa"></i> WhatsApp
+      </a>
+      <a class="contact-fab__item" href="tel:+855979889321">
+        <i class="fa-solid fa-phone contact-fab__icon--call"></i> <span data-i18n="contact.fab.phone">电话</span>
+      </a>
+    </div>
+    <button type="button" class="contact-fab__ball" id="contact-fab-btn" aria-label="联系我们 / Contact" aria-expanded="false" aria-controls="contact-fab-panel">
+      <span class="contact-fab__ball-label" data-i18n="contact.fab.label">联系我们</span>
+      <i class="fa-solid fa-phone"></i>
+      <span class="contact-fab__badge"></span>
+    </button>
+  </div>
+  <script>
+  (function () {
+    var fab = document.getElementById('contact-fab');
+    var btn = document.getElementById('contact-fab-btn');
+    if (!fab || !btn) return;
+    function toggle(force) {
+      var open = typeof force === 'boolean' ? force : !fab.classList.contains('open');
+      fab.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) { e.stopPropagation(); toggle(); });
+    document.addEventListener('click', function (e) { if (!fab.contains(e.target)) toggle(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') toggle(false); });
+    window.addEventListener('scroll', function () { toggle(false); }, { passive: true });
+  })();
+  </script>
 
 </body>
 </html>

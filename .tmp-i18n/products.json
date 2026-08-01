@@ -1,0 +1,272 @@
+{
+  "title.products": {
+    "zh": "产品分类",
+    "km": "ប្រភេទផលិតផល",
+    "en": "Product Categories"
+  },
+  "nav.calculators": {
+    "zh": "工程计算器",
+    "km": "គណនាករ",
+    "en": "Engineering Calculators"
+  },
+  "nav.products": {
+    "zh": "产品分类",
+    "km": "ផលិតផល",
+    "en": "Products"
+  },
+  "nav.articles": {
+    "zh": "文章资讯",
+    "km": "អត្ថបទ",
+    "en": "Articles"
+  },
+  "nav.contact": {
+    "zh": "联系我们",
+    "km": "ទំនាក់ទំនង",
+    "en": "Contact"
+  },
+  "nav.location": {
+    "zh": "金边",
+    "km": "ភ្នំពេញ",
+    "en": "Phnom Penh"
+  },
+  "nav.brand.industrial": {
+    "zh": "工业级",
+    "km": "INDUSTRIAL",
+    "en": "INDUSTRIAL"
+  },
+  "products.section.badge": {
+    "zh": "产品分类",
+    "km": "PRODUCTS",
+    "en": "PRODUCTS"
+  },
+  "products.section.heading": {
+    "zh": "产品分类",
+    "km": "ប្រភេទផលិតផល",
+    "en": "Product Categories"
+  },
+  "products.section.subheading": {
+    "zh": "家装布线 / 工程电力主干 / 电焊专用 / 设备软线与花线",
+    "km": "ប្រភេទផលិតផល",
+    "en": "Household Wiring / Power Distribution / Welding Cables / Equipment Flexible Cords"
+  },
+  "products.section.search_placeholder": {
+    "zh": "搜索型号、规格或产品名称",
+    "km": "Search model...",
+    "en": "Search model, spec or product name..."
+  },
+  "products.section.filter_all": {
+    "zh": "全部",
+    "km": "全部",
+    "en": "All"
+  },
+  "products.section.no_match": {
+    "zh": "未匹配到任何产品",
+    "km": "No matching products",
+    "en": "No matching products"
+  },
+  "products.section.spec_count": {
+    "zh": "规格",
+    "km": "规格",
+    "en": "specs"
+  },
+  "products.section.view_details": {
+    "zh": "查看详情",
+    "km": "ព័ត៌មានលំអិត",
+    "en": "View Details"
+  },
+  "modal.product.tag": {
+    "zh": "规格",
+    "km": "规格",
+    "en": "Spec"
+  },
+  "modal.product.voltage": {
+    "zh": "电压",
+    "km": "វ៉ុល",
+    "en": "Voltage"
+  },
+  "modal.product.conductor": {
+    "zh": "导体",
+    "km": "ខឹបរ",
+    "en": "Conductor"
+  },
+  "modal.product.insulation": {
+    "zh": "绝缘",
+    "km": "អ៊ីម៉ាញ៉េស",
+    "en": "Insulation"
+  },
+  "modal.product.sheath": {
+    "zh": "护套",
+    "km": "ស្គ្រី",
+    "en": "Sheath"
+  },
+  "modal.product.temp": {
+    "zh": "长期工作温度",
+    "km": "Temp",
+    "en": "Operating Temperature"
+  },
+  "modal.product.install": {
+    "zh": "安装温度",
+    "km": "Install",
+    "en": "Installation Temperature"
+  },
+  "modal.product.usage": {
+    "zh": "用途",
+    "km": "យុទ្ធភាព",
+    "en": "Application"
+  },
+  "modal.product.features": {
+    "zh": "特性",
+    "km": "លក្ខណៈសម្បត្តិ",
+    "en": "Features"
+  },
+  "modal.product.standard": {
+    "zh": "标准",
+    "km": "ស្តង់ដារ",
+    "en": "Standard"
+  },
+  "modal.product.packaging": {
+    "zh": "包装",
+    "km": "កូត",
+    "en": "Packaging"
+  },
+  "modal.product.radius": {
+    "zh": "弯曲半径",
+    "km": "Bending Radius",
+    "en": "Bending Radius"
+  },
+  "modal.product.spec_table": {
+    "zh": "规格截面表",
+    "km": "Spec Table",
+    "en": "Specification Table"
+  },
+  "modal.product.spec_disclaimer": {
+    "zh": "参考值 · 以随货规格书为准",
+    "km": "参考值 · 以随货规格书为准",
+    "en": "Reference values · Subject to delivered spec sheet"
+  },
+  "modal.product.installation": {
+    "zh": "敷设与环境",
+    "km": "Installation",
+    "en": "Installation & Environment"
+  },
+  "modal.product.selection": {
+    "zh": "选型与施工要点",
+    "km": "Selection",
+    "en": "Selection & Construction Notes"
+  },
+  "modal.product.variants": {
+    "zh": "派生型号",
+    "km": "Variants",
+    "en": "Variants"
+  },
+  "modal.product.copy_spec": {
+    "zh": "复制规格",
+    "km": "Copy",
+    "en": "Copy Spec"
+  },
+  "modal.product.inquire": {
+    "zh": "询价",
+    "km": "ទំនាក់ទំនង",
+    "en": "Inquire"
+  },
+  "modal.product.consult": {
+    "zh": "咨询",
+    "km": "WhatsApp",
+    "en": "WhatsApp"
+  },
+  "modal.product.spec_header.spec": {
+    "zh": "规格",
+    "km": "规格",
+    "en": "Specification"
+  },
+  "modal.product.spec_header.conductor_structure": {
+    "zh": "导体结构",
+    "km": "导体结构",
+    "en": "Conductor Structure"
+  },
+  "modal.product.spec_header.outer_diameter": {
+    "zh": "外径 mm",
+    "km": "外径 mm",
+    "en": "Outer Diameter mm"
+  },
+  "modal.product.spec_header.reference_weight": {
+    "zh": "参考重量",
+    "km": "参考重量",
+    "en": "Reference Weight"
+  },
+  "modal.product.spec_header.ampacity_air": {
+    "zh": "载流量 空气30℃",
+    "km": "载流量 空气30℃",
+    "en": "Ampacity Air 30°C"
+  },
+  "modal.product.spec_header.ampacity_buried": {
+    "zh": "载流量 埋地25℃",
+    "km": "载流量 埋地25℃",
+    "en": "Ampacity Buried 25°C"
+  },
+  "modal.product.spec_header.reference_ampacity": {
+    "zh": "参考载流量",
+    "km": "参考载流量",
+    "en": "Reference Ampacity"
+  },
+  "modal.product.copied": {
+    "zh": "已复制规格",
+    "km": "Copied",
+    "en": "Copied"
+  },
+  "modal.contact.title": {
+    "zh": "联系我们",
+    "km": "ទំនាក់ទំនង",
+    "en": "Contact"
+  },
+  "modal.contact.subtitle": {
+    "zh": "联系我们",
+    "km": "Contact",
+    "en": "Contact"
+  },
+  "modal.contact.address_label": {
+    "zh": "地址",
+    "km": "អាសយដ្ឋាន",
+    "en": "Address"
+  },
+  "modal.contact.address_value": {
+    "zh": "金边仓库, 柬埔寨",
+    "km": "ឃ្លាំងស្តុកភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា",
+    "en": "Phnom Penh Warehouse, Kingdom of Cambodia"
+  },
+  "modal.contact.view_map": {
+    "zh": "查看 Google 地图位置 →",
+    "km": "查看 Google 地图位置 →",
+    "en": "View on Google Maps →"
+  },
+  "modal.contact.phone_label": {
+    "zh": "电话",
+    "km": "ទូរស័ព្ទ",
+    "en": "Phone"
+  },
+  "modal.contact.hours_label": {
+    "zh": "营业时间",
+    "km": "ម៉ោងធ្វើការ",
+    "en": "Business Hours"
+  },
+  "modal.contact.hours_value_km": {
+    "zh": "周一至周六 07:00 – 18:00",
+    "km": "ចន្លោះ ០៨៖០០−១៧៖៣០ (ច័ន្ទ-សៅរ៍)",
+    "en": "Mon–Sat 07:00 – 18:00"
+  },
+  "footer.copyright": {
+    "zh": "© 2026 B·W CABLE Cambodia. 独立电线资讯平台.",
+    "km": "© 2026 B·W CABLE Cambodia. 独立电线资讯平台.",
+    "en": "© 2026 B·W CABLE Cambodia. Independent cable information platform."
+  },
+  "nav.fab.label": {
+    "zh": "联系我们",
+    "km": "ទំនាក់ទំនង",
+    "en": "Contact"
+  },
+  "nav.fab.phone": {
+    "zh": "电话",
+    "km": "ទូរស័ព្ទ",
+    "en": "Phone"
+  }
+}

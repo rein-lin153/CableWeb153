@@ -12,6 +12,9 @@
 (function () {
     'use strict';
 
+    // ===================== i18n 快捷方式 =====================
+    const t = (key, fb) => window.__I18N__ ? window.__I18N__.t(key, fb) : (fb || key);
+
     // ===================== 通用工具 =====================
     const $ = (id) => document.getElementById(id);
 
@@ -47,7 +50,7 @@
 
     /** 空值提示 */
     function needAll(names) {
-        return `<div class="text-red-500"><i class="fa-solid fa-triangle-exclamation mr-1"></i>请填写：${names.join('、')}</div>`;
+        return `<div class="text-red-500"><i class="fa-solid fa-triangle-exclamation mr-1"></i>${t('calc.result.need_all','请填写：')}${names.join('、')}</div>`;
     }
 
     // ===================== 1. 缆线载流量与电压降 =====================
@@ -94,19 +97,19 @@
         const dV = phase === 'three' ? (root3 * rho * length * current) / area : (2 * rho * length * current) / area;
         const dVPct = (dV / voltage) * 100;
 
-        const matName = material === 'aluminum' ? '铝 Aluminum' : '铜 Copper';
+        const matName = material === 'aluminum' ? t('calc.card1.option.aluminum','铝 Aluminum') : t('calc.card1.option.copper','铜 Copper');
         const pass = dVPct <= 5;
-        const phaseName = phase === 'three' ? '三相 400V' : '单相 230V';
+        const phaseName = phase === 'three' ? t('calc.card1.option.three','三相 400V') : t('calc.card1.option.single','单相 230V');
 
         setResult('cable-result', `
             <div class="space-y-1.5">
-                <div>系统：${hl(phaseName)} ｜ 材质：${matName}</div>
-                <div>计算电流：${hl(current.toFixed(1), ' A')}（PF=0.85）</div>
-                <div>推荐线径：${hl(area, ' mm²')} ｜ 该规格载流量 ${hl(allowA, ' A')}</div>
-                <div>电压降：${hl(dV.toFixed(2), ' V')} (${hl(dVPct.toFixed(2), '%')})</div>
+                <div>${t('calc.result.system','系统：')}${hl(phaseName)} ｜ ${t('calc.result.material','材质：')}${matName}</div>
+                <div>${t('calc.result.calc_current','计算电流：')}${hl(current.toFixed(1), ' A')}（PF=0.85）</div>
+                <div>${t('calc.result.recommend_wire','推荐线径：')}${hl(area, ' mm²')} ｜ ${t('calc.result.ampacity','该规格载流量')} ${hl(allowA, ' A')}</div>
+                <div>${t('calc.result.voltage_drop','电压降：')}${hl(dV.toFixed(2), ' V')} (${hl(dVPct.toFixed(2), '%')})</div>
                 <div class="text-xs ${pass ? 'text-emerald-600' : 'text-red-500'} font-bold mt-1">
                     <i class="fa-solid ${pass ? 'fa-circle-check' : 'fa-triangle-exclamation'} mr-1"></i>
-                    ${pass ? '合格（电压降 ≤ 5%）' : '不合格，电压降 > 5%，建议增大线径或缩短距离'}
+                    ${pass ? t('calc.result.pass','合格（电压降 ≤ 5%）') : t('calc.result.fail','不合格，电压降 > 5%，建议增大线径或缩短距离')}
                 </div>
             </div>
         `);
@@ -131,10 +134,10 @@
 
         setResult('copper-result', `
             <div class="space-y-1.5">
-                <div>规格：${hl(area, ' mm²')} × ${cores} 芯 × ${hl(lengthM, ' m')}</div>
-                <div>纯铜重量：${hl(massKg.toFixed(2), ' kg')}</div>
-                <div>估算市值（按 $${pricePerKg}/kg）：${hl('$' + valueUsd.toFixed(2), '')}</div>
-                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>铜价随市场波动，以上为近似参考</div>
+                <div>${t('calc.result.spec','规格：')}${hl(area, ' mm²')} × ${cores} 芯 × ${hl(lengthM, ' m')}</div>
+                <div>${t('calc.result.copper_weight','纯铜重量：')}${hl(massKg.toFixed(2), ' kg')}</div>
+                <div>${t('calc.result.est_value','估算市值（按 $')}${pricePerKg}/kg）：${hl('$' + valueUsd.toFixed(2), '')}</div>
+                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${t('calc.result.copper_note','铜价随市场波动，以上为近似参考')}</div>
             </div>
         `);
     }
@@ -155,7 +158,7 @@
         row.className = 'flex flex-wrap gap-2 items-center bg-slate-50 p-3 rounded-xl border border-slate-200';
         row.innerHTML = `
             <span class="text-xs font-bold text-slate-500 w-6">#${id}</span>
-            <input type="text" class="device-name flex-1 min-w-[120px] bg-white border-2 border-slate-300 rounded-lg px-3 py-2 text-sm font-bold placeholder-slate-400 focus:border-amber-500 outline-none" placeholder="设备名称">
+            <input type="text" class="device-name flex-1 min-w-[120px] bg-white border-2 border-slate-300 rounded-lg px-3 py-2 text-sm font-bold placeholder-slate-400 focus:border-amber-500 outline-none" placeholder="${t('calc.result.device_name_placeholder','设备名称')}">
             <input type="number" class="device-kw w-24 bg-white border-2 border-slate-300 rounded-lg px-3 py-2 text-sm font-bold placeholder-slate-400 focus:border-amber-500 outline-none" placeholder="kW" step="0.1">
             <input type="number" class="device-kf w-20 bg-white border-2 border-slate-300 rounded-lg px-3 py-2 text-sm font-bold placeholder-slate-400 focus:border-amber-500 outline-none" placeholder="kf" value="0.8" step="0.05" min="0" max="1">
             <button type="button" class="device-del px-3 py-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg text-sm font-bold transition"><i class="fa-solid fa-trash"></i></button>
@@ -168,7 +171,7 @@
         let totalKw = 0;
         let detail = [];
         rows.forEach((r, i) => {
-            const name = (r.querySelector('.device-name').value || `设备${i + 1}`).trim();
+            const name = (r.querySelector('.device-name').value || `${t('calc.result.device_default','设备')}${i + 1}`).trim();
             const kw = parseFloat(r.querySelector('.device-kw').value);
             const kf = parseFloat(r.querySelector('.device-kf').value);
             if (!isNaN(kw) && !isNaN(kf)) {
@@ -192,12 +195,12 @@
 
         setResult('distribution-result', `
             <div class="space-y-1.5">
-                <div>有效总负荷：${hl(totalKw.toFixed(1), ' kW')}</div>
+                <div>${t('calc.result.valid_load','有效总负荷：')}${hl(totalKw.toFixed(1), ' kW')}</div>
                 <div>${detail.join('')}</div>
-                <div class="border-t border-slate-200 mt-1 pt-1">总电流（三相400V，pf=0.85）：${hl(I.toFixed(1), ' A')}</div>
-                <div>推荐主断路器：${hl(breaker, ' A')}（按 I×1.25 选标）</div>
-                <div>推荐主电缆：铜 ${hl(cableSize, ' mm²')}</div>
-                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>kf 为利用系数/需用系数，家用 0.6~0.8、商用 0.7~0.9</div>
+                <div class="border-t border-slate-200 mt-1 pt-1">${t('calc.result.total_current','总电流（三相400V，pf=0.85）：')}${hl(I.toFixed(1), ' A')}</div>
+                <div>${t('calc.result.recommend_breaker','推荐主断路器：')}${hl(breaker, ' A')}（按 I×1.25 选标）</div>
+                <div>${t('calc.result.recommend_cable','推荐主电缆：铜')} ${hl(cableSize, ' mm²')}</div>
+                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${t('calc.result.kf_note','kf 为利用系数/需用系数，家用 0.6~0.8、商用 0.7~0.9')}</div>
             </div>
         `);
     }
@@ -215,29 +218,29 @@
         let result = '';
         try {
             if (unknown === 'p') {
-                if (v === null || i === null) return setResult('power-conv-result', needAll(['电压 V', '电流 I']));
+                if (v === null || i === null) return setResult('power-conv-result', needAll([t('calc.card4.option.unknown_v','电压 V'), t('calc.card4.option.unknown_i','电流 I')]));
                 const usePf = pf === null ? 0.85 : pf;
                 const pKw = (factor * v * i * usePf) / 1000;
-                result = `<div>功率 P = ${hl((phase === 'three' ? '√3' : '1') + '·V·I·PF')} / 1000</div><div>P = ${hl(pKw.toFixed(3), ' kW')}${pf === null ? '（PF 默认 0.85）' : ''}</div>`;
+                result = `<div>${t('calc.result.power_p','功率 P = ')}${hl((phase === 'three' ? '√3' : '1') + '·V·I·PF')} / 1000</div><div>P = ${hl(pKw.toFixed(3), ' kW')}${pf === null ? t('calc.result.pf_default','（PF 默认 0.85）') : ''}</div>`;
             } else if (unknown === 'i') {
-                if (p === null || v === null) return setResult('power-conv-result', needAll(['功率 P', '电压 V']));
+                if (p === null || v === null) return setResult('power-conv-result', needAll([t('calc.card4.option.unknown_p','功率 P'), t('calc.card4.option.unknown_v','电压 V')]));
                 const usePf = pf === null ? 0.85 : pf;
                 const cur = (p * 1000) / (factor * v * usePf);
-                result = `<div>电流 I = P×1000 / (${phase === 'three' ? '√3·' : ''}V·PF)</div><div>I = ${hl(cur.toFixed(2), ' A')}${pf === null ? '（PF 默认 0.85）' : ''}</div>`;
+                result = `<div>${t('calc.result.current_i','电流 I = P×1000 / (')}${phase === 'three' ? '√3·' : ''}V·PF)</div><div>I = ${hl(cur.toFixed(2), ' A')}${pf === null ? t('calc.result.pf_default','（PF 默认 0.85）') : ''}</div>`;
             } else if (unknown === 'v') {
-                if (p === null || i === null) return setResult('power-conv-result', needAll(['功率 P', '电流 I']));
+                if (p === null || i === null) return setResult('power-conv-result', needAll([t('calc.card4.option.unknown_p','功率 P'), t('calc.card4.option.unknown_i','电流 I')]));
                 const usePf = pf === null ? 0.85 : pf;
                 const vol = (p * 1000) / (factor * i * usePf);
-                result = `<div>电压 V = P×1000 / (${phase === 'three' ? '√3·' : ''}I·PF)</div><div>V = ${hl(vol.toFixed(2), ' V')}${pf === null ? '（PF 默认 0.85）' : ''}</div>`;
+                result = `<div>${t('calc.result.voltage_v','电压 V = P×1000 / (')}${phase === 'three' ? '√3·' : ''}I·PF)</div><div>V = ${hl(vol.toFixed(2), ' V')}${pf === null ? t('calc.result.pf_default','（PF 默认 0.85）') : ''}</div>`;
             } else if (unknown === 'pf') {
-                if (p === null || v === null || i === null) return setResult('power-conv-result', needAll(['功率 P', '电压 V', '电流 I']));
+                if (p === null || v === null || i === null) return setResult('power-conv-result', needAll([t('calc.card4.option.unknown_p','功率 P'), t('calc.card4.option.unknown_v','电压 V'), t('calc.card4.option.unknown_i','电流 I')]));
                 const powerFactor = (p * 1000) / (factor * v * i);
-                result = `<div>功率因数 PF = P×1000 / (${phase === 'three' ? '√3·' : ''}V·I)</div><div>PF = ${hl(powerFactor.toFixed(3), '')} (需 ≤ 1)</div>${powerFactor > 1 ? '<div class="text-xs text-red-500">⚠ 计算结果 > 1，输入数据可能不一致</div>' : ''}`;
+                result = `<div>${t('calc.result.pf','功率因数 PF = P×1000 / (')}${phase === 'three' ? '√3·' : ''}V·I)</div><div>PF = ${hl(powerFactor.toFixed(3), '')} ${t('calc.result.pf_need_le1',' (需 ≤ 1)')}</div>${powerFactor > 1 ? `<div class="text-xs text-red-500">${t('calc.result.pf_warning','⚠ 计算结果 > 1，输入数据可能不一致')}</div>` : ''}`;
             }
         } catch (e) {
-            result = `<div class="text-red-500">计算错误</div>`;
+            result = `<div class="text-red-500">${t('calc.result.calc_error','计算错误')}</div>`;
         }
-        setResult('power-conv-result', `<div class="space-y-1.5">${result}<div class="text-xs text-slate-500">系统：${phase === 'three' ? '三相' : '单相'}</div></div>`);
+        setResult('power-conv-result', `<div class="space-y-1.5">${result}<div class="text-xs text-slate-500">${t('calc.result.system','系统：')}${phase === 'three' ? t('calc.result.phase_three','三相') : t('calc.result.phase_single','单相')}</div></div>`);
     }
 
     // ===================== 5. 变压器电流 =====================
@@ -251,10 +254,10 @@
         const i2 = (s * 1000) / (root3 * v2 * 1000); // 二次侧 A
         setResult('transformer-result', `
             <div class="space-y-1.5">
-                <div>容量：${hl(s, ' kVA')}</div>
-                <div>一次侧（22kV）：${hl(i1.toFixed(2), ' A')}</div>
-                <div>二次侧（0.4kV）：${hl(i2.toFixed(2), ' A')}</div>
-                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>I = S / (√3 · V)；按柬埔寨电网 22kV/0.4kV 标称</div>
+                <div>${t('calc.result.capacity','容量：')}${hl(s, ' kVA')}</div>
+                <div>${t('calc.result.primary_side','一次侧（22kV）：')}${hl(i1.toFixed(2), ' A')}</div>
+                <div>${t('calc.result.secondary_side','二次侧（0.4kV）：')}${hl(i2.toFixed(2), ' A')}</div>
+                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${t('calc.result.transformer_note','I = S / (√3 · V)；按柬埔寨电网 22kV/0.4kV 标称')}</div>
             </div>
         `);
     }
@@ -271,10 +274,10 @@
         const dcI = (power * 1000) / voltage;
         setResult('acdc-result', `
             <div class="space-y-1.5">
-                <div>AC 三相电流：I = P / (√3·V·PF) = ${hl(acI.toFixed(2), ' A')}</div>
-                <div>DC 直流电流：I = P / V = ${hl(dcI.toFixed(2), ' A')}</div>
-                <div>电流比 DC/AC = ${hl((dcI / acI).toFixed(2), '×')}</div>
-                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>DC 无功率因数与无功损耗，电流通常更大；AC 适合远距离、DC 适合储能/光伏</div>
+                <div>${t('calc.result.ac_current','AC 三相电流：I = P / (√3·V·PF) = ')}${hl(acI.toFixed(2), ' A')}</div>
+                <div>${t('calc.result.dc_current','DC 直流电流：I = P / V = ')}${hl(dcI.toFixed(2), ' A')}</div>
+                <div>${t('calc.result.current_ratio','电流比 DC/AC = ')}${hl((dcI / acI).toFixed(2), '×')}</div>
+                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${t('calc.result.acdc_note','DC 无功率因数与无功损耗，电流通常更大；AC 适合远距离、DC 适合储能/光伏')}</div>
             </div>
         `);
     }
@@ -312,16 +315,16 @@
             // 商业单一价 ~ 920 ៛/kWh（近似）
             const rate = 920;
             riel = kwh * rate;
-            detail = `<div class="text-xs">全量 ${hl(rate, ' ៛/kWh')}</div>`;
+            detail = `<div class="text-xs">${t('calc.result.full_rate','全量 ')}${hl(rate, ' ៛/kWh')}</div>`;
         }
         const usd = riel / 4100; // 1 USD ≈ 4100 ៛
-        const typeName = type === 'residential' ? '住宅 Residential' : '商业 Commercial';
+        const typeName = type === 'residential' ? t('calc.card7.option.residential','住宅 Residential') : t('calc.card7.option.commercial','商业 Commercial');
         setResult('edc-result', `
             <div class="space-y-1.5">
-                <div>类型：${hl(typeName)} ｜ 用量：${hl(kwh, ' kWh')}</div>
+                <div>${t('calc.result.type','类型：')}${hl(typeName)} ｜ ${t('calc.result.usage','用量：')}${hl(kwh, ' kWh')}</div>
                 ${detail}
-                <div class="border-t border-slate-200 mt-1 pt-1">电费：${hl(riel.toLocaleString(), ' ៛')} ≈ ${hl('$' + usd.toFixed(2), '')}</div>
-                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>阶梯电价近似值，实际以 EDC 账单为准（1 USD ≈ 4100 ៛）</div>
+                <div class="border-t border-slate-200 mt-1 pt-1">${t('calc.result.electricity_fee','电费：')}${hl(riel.toLocaleString(), ' ៛')} ≈ ${hl('$' + usd.toFixed(2), '')}</div>
+                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${t('calc.result.edc_note','阶梯电价近似值，实际以 EDC 账单为准（1 USD ≈ 4100 ៛）')}</div>
             </div>
         `);
     }
@@ -342,12 +345,12 @@
         const totalW = fixtures * ledW;
         setResult('lighting-result', `
             <div class="space-y-1.5">
-                <div>房间面积：${hl(area.toFixed(1), ' m²')}（${L}×${W}×高${H || '-' }）</div>
-                <div>目标照度：${hl(lux, ' lux')}</div>
-                <div>单灯流明：${hl(lumens, ' lm')}（${ledW}W × 100 lm/W）</div>
-                <div>利用系数 CU=0.7 维护系数 MF=0.8</div>
-                <div class="border-t border-slate-200 mt-1 pt-1">需要灯具数：${hl(fixtures, ' 盏')}</div>
-                <div>总功率：${hl(totalW, ' W')}</div>
+                <div>${t('calc.result.room_area','房间面积：')}${hl(area.toFixed(1), ' m²')}（${L}×${W}×高${H || '-' }）</div>
+                <div>${t('calc.result.target_lux','目标照度：')}${hl(lux, ' lux')}</div>
+                <div>${t('calc.result.lumens_per_lamp','单灯流明：')}${hl(lumens, ' lm')}（${ledW}W × 100 lm/W）</div>
+                <div>${t('calc.result.cu_mf','利用系数 CU=0.7 维护系数 MF=0.8')}</div>
+                <div class="border-t border-slate-200 mt-1 pt-1">${t('calc.result.need_fixtures','需要灯具数：')}${hl(fixtures, ' 盏')}</div>
+                <div>${t('calc.result.total_power','总功率：')}${hl(totalW, ' W')}</div>
                 <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>N = E·A / (Φ·CU·MF)</div>
             </div>
         `);
@@ -373,11 +376,11 @@
         const bendR = d * bendRatio;
         setResult('conduit-result', `
             <div class="space-y-1.5">
-                <div>电缆：外径 ${d}mm × ${count} 根（${type === 'armored' ? '铠装' : '普通'}）</div>
-                <div>填充率标准：${hl((fillRatio * 100).toFixed(0), '%')}</div>
-                <div>需管内径 ≥ ${hl(pipeInner.toFixed(1), ' mm')} → 推荐 ${hl(pipe, ' mm')} PVC/GI 管</div>
-                <div>最小弯曲半径：${hl(bendR.toFixed(0), ' mm')}（${bendRatio}×D）</div>
-                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>普通电缆填充 ≤ 40%，铠装 ≤ 60%；弯曲半径普通 ≥ 6D，铠装 ≥ 10D</div>
+                <div>${t('calc.result.cable_info','电缆：外径')} ${d}mm × ${count} ${t('calc.result.roots','根')}（${type === 'armored' ? t('calc.card9.option.armored','铠装') : t('calc.card9.option.general','普通')}）</div>
+                <div>${t('calc.result.fill_rate','填充率标准：')}${hl((fillRatio * 100).toFixed(0), '%')}</div>
+                <div>${t('calc.result.need_inner_dia','需管内径 ≥ ')}${hl(pipeInner.toFixed(1), ' mm')} → ${t('calc.result.recommend_pipe','推荐')}${hl(pipe, ' mm')} PVC/GI 管</div>
+                <div>${t('calc.result.min_bend_radius','最小弯曲半径：')}${hl(bendR.toFixed(0), ' mm')}（${bendRatio}×D）</div>
+                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${t('calc.result.conduit_note','普通电缆填充 ≤ 40%，铠装 ≤ 60%；弯曲半径普通 ≥ 6D，铠装 ≥ 10D')}</div>
             </div>
         `);
     }
@@ -398,12 +401,12 @@
         const sandM3 = mortarM3 * 1.0;
         setResult('brick-result', `
             <div class="space-y-1.5">
-                <div>墙面积：${hl(wallArea.toFixed(2), ' m²')}（${L}×${H}，厚 18cm 墙）</div>
-                <div>红砖数量：${hl(bricks.toLocaleString(), ' 块')}（柬埔寨 4×8×18cm）</div>
-                <div>砌筑砂浆：${hl(mortarM3.toFixed(2), ' m³')}</div>
-                <div>水泥：${hl(cementBags, ' 袋')}（50kg/袋）</div>
-                <div>砂子：${hl(sandM3.toFixed(2), ' m³')}</div>
-                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>未含抹灰面积；双面抹灰需另计砂浆与水泥</div>
+                <div>${t('calc.result.wall_area','墙面积：')}${hl(wallArea.toFixed(2), ' m²')}（${L}×${H}，厚 18cm 墙）</div>
+                <div>${t('calc.result.brick_count','红砖数量：')}${hl(bricks.toLocaleString(), ' 块')}（柬埔寨 4×8×18cm）</div>
+                <div>${t('calc.result.mortar','砌筑砂浆：')}${hl(mortarM3.toFixed(2), ' m³')}</div>
+                <div>${t('calc.result.cement','水泥：')}${hl(cementBags, ' 袋')}（50kg/袋）</div>
+                <div>${t('calc.result.sand','砂子：')}${hl(sandM3.toFixed(2), ' m³')}</div>
+                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${t('calc.result.brick_note','未含抹灰面积；双面抹灰需另计砂浆与水泥')}</div>
             </div>
         `);
     }
@@ -418,8 +421,8 @@
         const weight = 0.00617 * d * d * L;
         setResult('rebar-result', `
             <div class="space-y-1.5">
-                <div>规格：${hl(d, ' mm')} 直径 × ${hl(L, ' m')}</div>
-                <div>钢筋重量：${hl(weight.toFixed(2), ' kg')}</div>
+                <div>${t('calc.result.spec','规格：')}${hl(d, ' mm')} 直径 × ${hl(L, ' m')}</div>
+                <div>${t('calc.result.rebar_weight','钢筋重量：')}${hl(weight.toFixed(2), ' kg')}</div>
                 <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>m = 0.00617 × d² × L（ρ=7.85 g/cm³）</div>
             </div>
         `);
@@ -444,10 +447,10 @@
         const glueBags = Math.ceil(glueKg / 20);
         setResult('tile-result', `
             <div class="space-y-1.5">
-                <div>房间面积：${hl(area.toFixed(2), ' m²')}（含 5% 损耗 ${(area * waste).toFixed(2)} m²）</div>
-                <div>瓷砖规格：${size}×${size}cm（单块 ${tileArea.toFixed(2)} m²）</div>
-                <div>需瓷砖：${hl(tilesNeeded.toLocaleString(), ' 块')} ｜ 约 ${hl(boxes, ' 箱')}/${perBox}块/箱</div>
-                <div>瓷砖胶泥：${hl(glueBags, ' 袋')}（20kg/袋，~5kg/m²）</div>
+                <div>${t('calc.result.room_area','房间面积：')}${hl(area.toFixed(2), ' m²')}（含 5% 损耗 ${(area * waste).toFixed(2)} m²）</div>
+                <div>${t('calc.result.tile_area','瓷砖规格：')}${size}×${size}cm（单块 ${tileArea.toFixed(2)} m²）</div>
+                <div>${t('calc.result.need_tiles','需瓷砖：')}${hl(tilesNeeded.toLocaleString(), ' 块')} ｜ 约 ${hl(boxes, ' 箱')}/${perBox}块/箱</div>
+                <div>${t('calc.result.tile_glue','瓷砖胶泥：')}${hl(glueBags, ' 袋')}（20kg/袋，~5kg/m²）</div>
             </div>
         `);
     }
@@ -466,9 +469,9 @@
         const primerBuckets = Math.ceil(primerL / 12);
         setResult('paint-result', `
             <div class="space-y-1.5">
-                <div>刷漆面积：${hl(area.toFixed(1), ' m²')}（两遍）</div>
-                <div>面漆用量：${hl(liters.toFixed(1), ' L')} → ${hl(buckets, ' 桶')}/18L（覆盖 ~10 m²/L/遍）</div>
-                <div>底漆建议：${hl(primerBuckets, ' 桶')}/12L（一遍，~12 m²/L）</div>
+                <div>${t('calc.result.paint_area','刷漆面积：')}${hl(area.toFixed(1), ' m²')}（两遍）</div>
+                <div>${t('calc.result.paint_topcoat','面漆用量：')}${hl(liters.toFixed(1), ' L')} → ${hl(buckets, ' 桶')}/18L（覆盖 ~10 m²/L/遍）</div>
+                <div>${t('calc.result.paint_primer','底漆建议：')}${hl(primerBuckets, ' 桶')}/12L（一遍，~12 m²/L）</div>
             </div>
         `);
     }

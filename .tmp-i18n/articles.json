@@ -1,0 +1,287 @@
+{
+  "title.articles": {
+    "zh": "B·W CABLE — 文章知识库",
+    "km": "B·W CABLE — អត្ថបទ",
+    "en": "B·W CABLE — Articles"
+  },
+  "nav.brand": {
+    "zh": "B·W CABLE",
+    "km": "B·W CABLE",
+    "en": "B·W CABLE"
+  },
+  "nav.calculators": {
+    "zh": "工程计算器",
+    "km": "គណនាករ",
+    "en": "Engineering Calculators"
+  },
+  "nav.products": {
+    "zh": "产品分类",
+    "km": "ផលិតផល",
+    "en": "Products"
+  },
+  "nav.articles": {
+    "zh": "文章",
+    "km": "អត្ថបទ",
+    "en": "Articles"
+  },
+  "nav.articles_mobile": {
+    "zh": "文章资讯",
+    "km": "អត្ថបទ",
+    "en": "Articles & News"
+  },
+  "nav.contact": {
+    "zh": "联系",
+    "km": "ទំនាក់ទំនង",
+    "en": "Contact"
+  },
+  "nav.contact_us": {
+    "zh": "联系我们",
+    "km": "ទំនាក់ទំនង",
+    "en": "Contact Us"
+  },
+  "nav.menu": {
+    "zh": "菜单",
+    "km": "ម៉ឺនុយ",
+    "en": "Menu"
+  },
+  "articles.section.badge": {
+    "zh": "知识库",
+    "km": "មជ្ឈមណ្ឌលចំណេះដឹង",
+    "en": "Knowledge Base"
+  },
+  "articles.section.title": {
+    "zh": "文章知识库",
+    "km": "អត្ថបទ",
+    "en": "Articles"
+  },
+  "articles.section.title_with_amp": {
+    "zh": "文章知识库",
+    "km": "អត្ថបទ",
+    "en": "Articles"
+  },
+  "articles.section.subtitle": {
+    "zh": "柬埔寨电工、土木工程与建筑装饰的专业知识库 —— 从基础接线到配电设计，从混凝土配比到室内装修，助力您的每一个工程项目。",
+    "km": "នេះគឺជាមជ្ឈមណ្ឌលចំណេះដឹងឯកទេសលក្ខខណ្ឌខាងវិស័យអគ្គិសនី សំណង់ និងតុបតែងនៅកម្ពុជា ដោយផ្តើមពីប្រព័ន្ធតភ្ជាប់រហូតដល់ការរចនាផ្គដំឡើងភ្លើង និងការប្រើប្រាស់កុងក្រាយ និងការតុបតែងផ្ទះ ដែរជួយសម្រួលដល់គ្រប់គម្រោងសំណង់របស់អ្នក។",
+    "en": "A professional knowledge base for Cambodian electrical, civil engineering and decoration — from basic wiring to power distribution design, from concrete proportions to interior finishing, powering every one of your projects."
+  },
+  "articles.section.back_home": {
+    "zh": "返回首页",
+    "km": "ត្រឡប់ទៅទំព័រដើម",
+    "en": "Back to Home"
+  },
+  "articles.section.search_placeholder": {
+    "zh": "搜索文章标题或摘要…",
+    "km": "ស្វែងរកចំណងជើង",
+    "en": "Search article title or summary..."
+  },
+  "articles.section.loading": {
+    "zh": "加载中…",
+    "km": "ផ្ទុកឡើង",
+    "en": "Loading..."
+  },
+  "articles.section.empty_title": {
+    "zh": "没有找到文章",
+    "km": "មិនឃើញអត្ថបទ",
+    "en": "No articles found"
+  },
+  "articles.section.empty_subtitle": {
+    "zh": "请尝试其他搜索词或分类",
+    "km": "សូមសាកល្បងឱ្យមេត្រីវិធី",
+    "en": "Please try other search keywords or categories"
+  },
+  "articles.section.count_template": {
+    "zh": "共 {total} 篇文章 — 显示 {start}–{end} 条",
+    "km": "សរុប {total} អត្ថបទ — បង្ហាញ {start}–{end}",
+    "en": "Total {total} articles — Showing {start}–{end}"
+  },
+  "articles.section.prev_page": {
+    "zh": "上一页",
+    "km": "មុន",
+    "en": "Previous"
+  },
+  "articles.section.next_page": {
+    "zh": "下一页",
+    "km": "បន្ទាប់",
+    "en": "Next"
+  },
+  "articles.filter.all": {
+    "zh": "全部",
+    "km": "ទាំងអស់",
+    "en": "All"
+  },
+  "articles.filter.electrical": {
+    "zh": "电力",
+    "km": "អគ្គិសនី",
+    "en": "Electrical"
+  },
+  "articles.filter.civil": {
+    "zh": "土木",
+    "km": "សំណង់",
+    "en": "Civil"
+  },
+  "articles.filter.decoration": {
+    "zh": "装饰",
+    "km": "តុបតែង",
+    "en": "Decoration"
+  },
+  "articles.filter.costing": {
+    "zh": "造价",
+    "km": "វ៉ាយតម្លៃ",
+    "en": "Costing"
+  },
+  "articles.filter.safety": {
+    "zh": "安全",
+    "km": "សុវត្ថិភាព",
+    "en": "Safety"
+  },
+  "articles.filter.electrical_long": {
+    "zh": "电力",
+    "km": "អគ្គិសនី",
+    "en": "Electrical"
+  },
+  "articles.filter.civil_long": {
+    "zh": "土木工程",
+    "km": "សំណង់",
+    "en": "Civil Engineering"
+  },
+  "articles.filter.decoration_long": {
+    "zh": "装饰",
+    "km": "តុបតែង",
+    "en": "Decoration"
+  },
+  "articles.filter.costing_long": {
+    "zh": "造价",
+    "km": "វ៉ាយតម្លៃ",
+    "en": "Cost Estimation"
+  },
+  "articles.filter.safety_long": {
+    "zh": "安全",
+    "km": "សុវត្ថិភាព",
+    "en": "Safety"
+  },
+  "articles.card.read_full": {
+    "zh": "阅读全文",
+    "km": "អានបន្ត",
+    "en": "Read full article"
+  },
+  "articles.card.read_time_template": {
+    "zh": "{minutes} 分钟阅读",
+    "km": "{minutes} ការអាន",
+    "en": "{minutes} min read"
+  },
+  "articles.card.read_time_unit": {
+    "zh": "分钟阅读",
+    "km": "ការអាន",
+    "en": "min read"
+  },
+  "modal.article.close": {
+    "zh": "关闭",
+    "km": "បិទ",
+    "en": "Close"
+  },
+  "modal.article.loading": {
+    "zh": "正在加载文章…",
+    "km": "ផ្ទុកអត្ថបទ",
+    "en": "Loading article..."
+  },
+  "modal.article.no_content": {
+    "zh": "暂无内容",
+    "km": "មិនមានមាតិកានៅឡើយ",
+    "en": "No content yet"
+  },
+  "modal.article.footer_brand": {
+    "zh": "B·W CABLE 文章知识库",
+    "km": "B·W CABLE មជ្ឈមណ្ឌលអត្ថបទ",
+    "en": "B·W CABLE Knowledge Base"
+  },
+  "modal.article.views_template": {
+    "zh": "{views} 次浏览",
+    "km": "{views} ការអាន",
+    "en": "{views} views"
+  },
+  "modal.article.read_time_label": {
+    "zh": "{minutes} 分钟阅读",
+    "km": "{minutes} ការអាន",
+    "en": "{minutes} min read"
+  },
+  "modal.article.meta_date_label": {
+    "zh": "日期",
+    "km": "កាលបរិច្ឆេទ",
+    "en": "Date"
+  },
+  "modal.article.meta_views_label": {
+    "zh": "浏览",
+    "km": "ការអាន",
+    "en": "Views"
+  },
+  "modal.article.meta_readtime_label": {
+    "zh": "阅读时长",
+    "km": "រយៈពេលអាន",
+    "en": "Read time"
+  },
+  "modal.contact.title": {
+    "zh": "联系我们",
+    "km": "ទំនាក់ទំនង",
+    "en": "Contact Us"
+  },
+  "modal.contact.subtitle": {
+    "zh": "联系我们",
+    "km": "ទំនាក់ទំនង",
+    "en": "Contact"
+  },
+  "modal.contact.address_label": {
+    "zh": "地址",
+    "km": "អាសយដ្ឋាន",
+    "en": "Address"
+  },
+  "modal.contact.address_value": {
+    "zh": "金边仓库, 柬埔寨",
+    "km": "ឃ្លាំងស្តុកភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា",
+    "en": "Phnom Penh Warehouse, Cambodia"
+  },
+  "modal.contact.view_map": {
+    "zh": "查看 Google 地图位置 →",
+    "km": "មើលទីតាំងនៅលើផែនទី Google →",
+    "en": "View on Google Maps →"
+  },
+  "modal.contact.phone_label": {
+    "zh": "电话",
+    "km": "ទូរស័ព្ទ",
+    "en": "Phone"
+  },
+  "modal.contact.working_hours_label": {
+    "zh": "工作时间",
+    "km": "ម៉ោងធ្វើការ",
+    "en": "Working Hours"
+  },
+  "modal.contact.working_hours_value": {
+    "zh": "周一至周五 8:00-18:00",
+    "km": "ច័ន្ទ - សុក្រ 08:00–18:00",
+    "en": "Mon - Fri 08:00–18:00"
+  },
+  "modal.contact.call_button": {
+    "zh": "电话",
+    "km": "ទូរស័ព្ទ",
+    "en": "Call"
+  },
+  "footer.copyright": {
+    "zh": "© 2026 B·W CABLE Cambodia. 在柬埔寨独立经营",
+    "km": "© 2026 B·W CABLE Cambodia. ប្រតិបត្តិការឯកឯកទេសនៅកម្ពុជា",
+    "en": "© 2026 B·W CABLE Cambodia. Independently operated in Cambodia"
+  },
+  "footer.hero_credit": {
+    "zh": "Hero 背景来源 Vecteezy",
+    "km": "ផ្ទៃខាងក្រោយ Hero ពី Vecteezy",
+    "en": "Hero background from Vecteezy"
+  },
+  "contact.fab.label": {
+    "zh": "联系我们",
+    "km": "ទំនាក់ទំនង",
+    "en": "Contact Us"
+  },
+  "contact.fab.phone": {
+    "zh": "电话",
+    "km": "ទូរស័ព្ទ",
+    "en": "Phone"
+  }
+}

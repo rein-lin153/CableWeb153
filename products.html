@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>B·W CABLE — 产品分类 / Products</title>
+  <title data-i18n="title.products">B·W CABLE — 产品分类 / Products</title>
 
   <link rel="icon" type="image/png" href="/logo.png" />
   <link rel="apple-touch-icon" href="/logo.png" />
@@ -45,10 +45,31 @@
       transform: scale(1);
       opacity: 1;
     }
+
+    /* ===== 联系方式悬浮球 ===== */
+    .contact-fab { position: fixed; right: 1rem; bottom: 1rem; z-index: 40; display: flex; flex-direction: column; align-items: flex-end; gap: 0.625rem; }
+    .contact-fab__panel { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.5rem; background: #fff; border: 2px solid #fcd34d; border-radius: 1rem; box-shadow: 0 12px 30px -8px rgba(0,0,0,0.25); opacity: 0; transform: translateY(8px) scale(0.96); pointer-events: none; transition: opacity 0.22s ease, transform 0.22s ease; width: max-content; }
+    .contact-fab.open .contact-fab__panel { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+    .contact-fab__item { display: flex; align-items: center; gap: 0.625rem; padding: 0.5rem 0.75rem; border-radius: 0.625rem; font-size: 0.8125rem; font-weight: 700; color: #0f172a; transition: background 0.15s ease, transform 0.15s ease; white-space: nowrap; }
+    .contact-fab__item:hover { background: #fef3c7; transform: translateX(-2px); }
+    .contact-fab__item i { width: 1.25rem; text-align: center; }
+    .contact-fab__icon--tg { color: #0ea5e9; } .contact-fab__icon--wa { color: #22c55e; } .contact-fab__icon--call { color: #f59e0b; }
+    .contact-fab__ball { width: 3.5rem; height: 3.5rem; border-radius: 9999px; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px -4px rgba(217,119,6,0.55); border: 2px solid #fff; cursor: pointer; transition: transform 0.2s ease; position: relative; }
+    .contact-fab__ball:hover { transform: scale(1.06); }
+    .contact-fab__ball i { font-size: 1.25rem; animation: fabPulse 1.05s ease-in-out infinite alternate; }
+    .contact-fab.open .contact-fab__ball i { animation: none; }
+    @keyframes fabPulse { from { transform: rotate(0deg) scale(1); } to { transform: rotate(-12deg) scale(1.12); } }
+    .contact-fab__badge { position: absolute; top: -0.15rem; right: -0.15rem; width: 0.75rem; height: 0.75rem; background: #ef4444; border: 2px solid #fff; border-radius: 9999px; }
+    .contact-fab__ball-label { position: absolute; right: 4rem; top: 50%; transform: translateY(-50%); background: #0f172a; color: #fff; font-size: 0.6875rem; font-weight: 700; padding: 0.25rem 0.5rem; border-radius: 0.375rem; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.18s ease; }
+    .contact-fab__ball:hover .contact-fab__ball-label { opacity: 1; }
+    @media (max-width: 640px) { .contact-fab__ball { width: 3rem; height: 3rem; } .contact-fab__ball-label { display: none; } }
+    @media (prefers-reduced-motion: reduce) { .contact-fab__ball i { animation: none; } .contact-fab__panel, .contact-fab__ball { transition: none; } }
   </style>
+    <!-- i18n -->
+    <script src="/js/i18n.js"></script>
 </head>
 
-<body class="bg-slate-100 text-slate-900 min-h-screen antialiased">
+<body class="bg-slate-100 text-slate-900 min-h-screen antialiased" data-page="products">
 
   <nav class="border-b-2 border-amber-400 bg-white/95 sticky top-0 z-40 backdrop-blur-md shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -60,30 +81,29 @@
             <span class="font-extrabold text-xl tracking-tight text-slate-900">B·W <span
                 class="text-amber-500">CABLE</span></span>
           </a>
-          <span
+          <span data-i18n="nav.brand.industrial"
             class="text-[10px] sm:text-xs bg-amber-400 text-slate-900 px-2 py-0.5 rounded-full font-black ml-2 border-2 border-amber-500">INDUSTRIAL</span>
+          <div id="langSwitcher" class="relative ml-1"></div>
           <span
-            class="hidden lg:inline text-xs text-slate-500 font-semibold ml-2 border-l border-slate-300 pl-3">ភ្នំពេញ ·
+            class="hidden lg:inline text-xs text-slate-500 font-semibold ml-2 border-l border-slate-300 pl-3" data-i18n="nav.location">ភ្នំពេញ ·
             Phnom Penh</span>
         </div>
         <div class="hidden md:flex items-center gap-1 text-sm font-bold">
           <a href="index.html#calculators"
             class="px-3 py-2 rounded-lg text-slate-700 hover:bg-amber-50 hover:text-amber-600 transition-all flex items-center gap-1.5">
-            <i class="fa-solid fa-calculator text-amber-400"></i> គណនាករ <span class="text-xs text-slate-400">/
-              工程计算器</span>
+            <i class="fa-solid fa-calculator text-amber-400"></i> <span data-i18n="nav.calculators"></span>
           </a>
           <a href="products.html"
             class="px-3 py-2 rounded-lg text-amber-600 bg-amber-50 transition-all flex items-center gap-1.5">
-            <i class="fa-solid fa-box-open text-amber-500"></i> ផលិតផល <span class="text-xs text-slate-400">/
-              产品分类</span>
+            <i class="fa-solid fa-box-open text-amber-500"></i> <span data-i18n="nav.products"></span>
           </a>
           <a href="article.html"
             class="px-3 py-2 rounded-lg text-slate-700 hover:bg-amber-50 hover:text-amber-600 transition-all flex items-center gap-1.5">
-            <i class="fa-solid fa-newspaper text-amber-400"></i> អត្ថបទ <span class="text-xs text-slate-400">/ 文章</span>
+            <i class="fa-solid fa-newspaper text-amber-400"></i> <span data-i18n="nav.articles"></span>
           </a>
           <a href="#" onclick="openContactModal(); return false;"
             class="ml-1 px-4 py-2 rounded-lg bg-amber-400 hover:bg-amber-500 text-slate-950 font-black shadow-md border-2 border-amber-500 transition-all transform hover:scale-[1.03] active:scale-95 flex items-center gap-1.5">
-            <i class="fa-solid fa-phone"></i> ទំនាក់ទំនង <span class="text-xs opacity-70">/ 联系</span>
+            <i class="fa-solid fa-phone"></i> <span data-i18n="nav.contact"></span>
           </a>
         </div>
         <button id="mobile-menu-btn" aria-label="Menu"
@@ -93,13 +113,13 @@
       </div>
       <div id="mobile-menu" class="hidden md:hidden pb-4 space-y-1 border-t border-slate-200 pt-3">
         <a href="index.html#calculators" class="block px-3 py-2.5 rounded-lg text-slate-700 font-bold hover:bg-amber-50"><i
-            class="fa-solid fa-calculator text-amber-400 w-5"></i> គណនាករ / 工程计算器</a>
+            class="fa-solid fa-calculator text-amber-400 w-5"></i> <span data-i18n="nav.calculators"></span></a>
         <a href="products.html" class="block px-3 py-2.5 rounded-lg text-amber-600 font-bold bg-amber-50"><i
-            class="fa-solid fa-box-open text-amber-500 w-5"></i> ផលិតផល / 产品分类</a>
+            class="fa-solid fa-box-open text-amber-500 w-5"></i> <span data-i18n="nav.products"></span></a>
         <a href="article.html" class="block px-3 py-2.5 rounded-lg text-slate-700 font-bold hover:bg-amber-50"><i
-            class="fa-solid fa-newspaper text-amber-400 w-5"></i> អត្ថបទ / 文章资讯</a>
+            class="fa-solid fa-newspaper text-amber-400 w-5"></i> <span data-i18n="nav.articles_mobile"></span></a>
         <a href="#" onclick="openContactModal(); return false;" class="block px-3 py-2.5 rounded-lg bg-amber-400 text-slate-950 font-black text-center"><i
-            class="fa-solid fa-phone w-5"></i> ទំនាក់ទំនង / 联系我们</a>
+            class="fa-solid fa-phone w-5"></i> <span data-i18n="nav.contact_us"></span></a>
       </div>
     </div>
   </nav>
@@ -114,12 +134,12 @@
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 fade-up">
       <div class="flex items-center gap-2 mb-2">
         <div class="p-2 bg-white/15 backdrop-blur-sm border border-white/25 rounded-full text-xs font-bold">
-          <i class="fa-solid fa-box-open"></i> PRODUCTS
+          <i class="fa-solid fa-box-open"></i> <span data-i18n="products.section.badge">PRODUCTS</span>
         </div>
       </div>
-      <h1 class="text-2xl sm:text-4xl font-black tracking-tight drop-shadow-lg">ប្រភេទផលិតផល</h1>
-      <p class="text-sm sm:text-base text-slate-200 mt-2 font-medium">产品分类 / Product Categories</p>
-      <p class="text-xs text-slate-300 mt-1 font-medium">家装布线 / 工程电力主干 / 电焊专用 / 设备软线与花线</p>
+      <h1 class="text-2xl sm:text-4xl font-black tracking-tight drop-shadow-lg" data-i18n="products.section.heading">ប្រភេទផលិតផល</h1>
+      <p class="text-sm sm:text-base text-slate-200 mt-2 font-medium" data-i18n="marquee.subheading">产品分类 / Product Categories</p>
+      <p class="text-xs text-slate-300 mt-1 font-medium" data-i18n="products.section.subheading">家装布线 / 工程电力主干 / 电焊专用 / 设备软线与花线</p>
     </div>
   </section>
 
@@ -128,15 +148,16 @@
       <div class="flex flex-col sm:flex-row gap-3">
         <div class="relative flex-1">
           <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
-          <input id="product-search" type="text" placeholder="搜索型号、规格或产品名称 / Search model..."
+          <input id="product-search" type="text"
+            data-i18n-ph="products.section.search_placeholder"
+            placeholder="搜索型号、规格或产品名称 / Search model..."
             class="w-full bg-slate-50 border-2 border-slate-300 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-500 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none transition-all">
         </div>
         <div class="flex flex-wrap gap-2" id="category-filters">
           <!-- filter pills injected by renderFilterPills() after data loaded -->
         </div>
       </div>
-      <div id="search-empty" class="hidden text-center py-10 text-slate-500 text-sm">未匹配到任何产品 / No matching products
-      </div>
+      <div id="search-empty" class="hidden text-center py-10 text-slate-500 text-sm" data-i18n="products.section.no_match"></div>
     </div>
   </section>
 
@@ -145,7 +166,7 @@
   </section>
 
   <footer class="mt-16 border-t border-slate-200 py-8 text-center text-xs text-slate-500">
-    <div>© 2026 B·W CABLE Cambodia. 独立电线资讯平台.</div>
+    <div data-i18n="footer.copyright">© 2026 B·W CABLE Cambodia. 独立电线资讯平台.</div>
   </footer>
 
   <div id="product-modal"
@@ -175,89 +196,87 @@
               <p id="product-modal-sub" class="text-xs text-slate-500 font-semibold mt-1"></p>
             </div>
             <span id="product-modal-tag"
-              class="shrink-0 px-2.5 py-1 bg-amber-50 border border-amber-200 text-amber-700 text-[11px] font-black rounded-lg">规格</span>
+              class="shrink-0 px-2.5 py-1 bg-amber-50 border border-amber-200 text-amber-700 text-[11px] font-black rounded-lg" data-i18n="modal.product.tag"></span>
           </div>
           <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <div class="text-[10px] font-black text-slate-400 uppercase">វ៉ុល / 电压</div>
+              <div class="text-[10px] font-black text-slate-400 uppercase" data-i18n="modal.product.voltage"></div>
               <div id="product-modal-voltage" class="text-sm font-bold text-slate-900 mt-1"></div>
             </div>
             <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <div class="text-[10px] font-black text-slate-400 uppercase">ខឹបរ / 导体</div>
+              <div class="text-[10px] font-black text-slate-400 uppercase" data-i18n="modal.product.conductor"></div>
               <div id="product-modal-conductor" class="text-sm font-bold text-slate-900 mt-1"></div>
             </div>
             <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <div class="text-[10px] font-black text-slate-400 uppercase">អ៊ីម៉ាញ៉េស / 绝缘</div>
+              <div class="text-[10px] font-black text-slate-400 uppercase" data-i18n="modal.product.insulation"></div>
               <div id="product-modal-insulation" class="text-sm font-bold text-slate-900 mt-1"></div>
             </div>
             <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <div class="text-[10px] font-black text-slate-400 uppercase">ស្គ្រី / 护套</div>
+              <div class="text-[10px] font-black text-slate-400 uppercase" data-i18n="modal.product.sheath"></div>
               <div id="product-modal-sheath" class="text-sm font-bold text-slate-900 mt-1"></div>
             </div>
             <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <div class="text-[10px] font-black text-slate-400 uppercase">长期工作温度 / Temp</div>
+              <div class="text-[10px] font-black text-slate-400 uppercase" data-i18n="modal.product.temp"></div>
               <div id="product-modal-temp" class="text-sm font-bold text-slate-900 mt-1"></div>
             </div>
             <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
-              <div class="text-[10px] font-black text-slate-400 uppercase">安装温度 / Install</div>
+              <div class="text-[10px] font-black text-slate-400 uppercase" data-i18n="modal.product.install"></div>
               <div id="product-modal-install" class="text-sm font-bold text-slate-900 mt-1"></div>
             </div>
           </div>
           <div class="mt-4 space-y-3 text-sm text-slate-700">
             <div>
-              <div class="text-[10px] font-black text-slate-400 uppercase">យុទ្ធភាព / 用途</div>
+              <div class="text-[10px] font-black text-slate-400 uppercase" data-i18n="modal.product.usage"></div>
               <p id="product-modal-usage" class="text-sm mt-1 leading-relaxed"></p>
             </div>
             <div>
-              <div class="text-[10px] font-black text-slate-400 uppercase">លក្ខណៈសម្បត្តិ / 特性</div>
+              <div class="text-[10px] font-black text-slate-400 uppercase" data-i18n="modal.product.features"></div>
               <p id="product-modal-features" class="text-sm mt-1 leading-relaxed whitespace-pre-line"></p>
             </div>
             <div>
-              <div class="text-[10px] font-black text-slate-400 uppercase">ស្តង់ដារ / 标准</div>
+              <div class="text-[10px] font-black text-slate-400 uppercase" data-i18n="modal.product.standard"></div>
               <p id="product-modal-standard" class="text-sm mt-1 whitespace-pre-line"></p>
             </div>
             <div>
-              <div class="text-[10px] font-black text-slate-400 uppercase">កូត / 包装</div>
+              <div class="text-[10px] font-black text-slate-400 uppercase" data-i18n="modal.product.packaging"></div>
               <p id="product-modal-packaging" class="text-sm mt-1"></p>
             </div>
             <div>
-              <div class="text-[10px] font-black text-slate-400 uppercase">弯曲半径 / Bending Radius</div>
+              <div class="text-[10px] font-black text-slate-400 uppercase" data-i18n="modal.product.radius"></div>
               <p id="product-modal-radius" class="text-sm mt-1"></p>
             </div>
           </div>
           <div id="product-modal-specs-wrap" class="mt-5 hidden">
             <div class="flex items-center justify-between mb-2">
-              <div class="text-[10px] font-black text-slate-400 uppercase">规格截面表 / Spec Table</div>
-              <div class="text-[9px] text-slate-400 font-semibold">参考值 · 以随货规格书为准</div>
+              <div class="text-[10px] font-black text-slate-400 uppercase" data-i18n="modal.product.spec_table"></div>
+              <div class="text-[9px] text-slate-400 font-semibold" data-i18n="modal.product.spec_disclaimer"></div>
             </div>
             <div class="overflow-x-auto rounded-xl border border-slate-200">
               <table class="w-full text-[11px]" id="product-modal-specs-table"></table>
             </div>
           </div>
           <div id="product-modal-installation-wrap" class="mt-4 hidden">
-            <div class="text-[10px] font-black text-slate-400 uppercase mb-1">敷设与环境 / Installation</div>
+            <div class="text-[10px] font-black text-slate-400 uppercase mb-1" data-i18n="modal.product.installation"></div>
             <p id="product-modal-installation" class="text-sm text-slate-700 leading-relaxed whitespace-pre-line"></p>
           </div>
           <div id="product-modal-selection-wrap" class="mt-4 hidden">
-            <div class="text-[10px] font-black text-slate-400 uppercase mb-1">选型与施工要点 / Selection</div>
+            <div class="text-[10px] font-black text-slate-400 uppercase mb-1" data-i18n="modal.product.selection"></div>
             <p id="product-modal-selection" class="text-sm text-slate-700 leading-relaxed whitespace-pre-line"></p>
           </div>
           <div id="product-modal-variants-wrap" class="mt-4 hidden">
-            <div class="text-[10px] font-black text-slate-400 uppercase mb-1">派生型号 / Variants</div>
+            <div class="text-[10px] font-black text-slate-400 uppercase mb-1" data-i18n="modal.product.variants"></div>
             <div id="product-modal-variants" class="flex flex-wrap gap-1.5"></div>
           </div>
           <p id="product-modal-note" class="mt-3 text-[10px] text-slate-400 leading-relaxed"></p>
           <div class="mt-5 flex flex-wrap gap-3">
             <button onclick="copySpec()"
               class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black transition-all text-sm border-2 border-slate-900">
-              <i class="fa-regular fa-copy"></i> 复制规格 / Copy
+              <i class="fa-regular fa-copy"></i> <span data-i18n="modal.product.copy_spec"></span>
             </button>
-            <a href="tel:+855979889321"
-              class="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-500 text-slate-950 font-black border-2 border-amber-500 transition-all text-sm">ទំនាក់ទំនង
-              / 询价</a>
+            <a href="tel:+855****9321"
+              class="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-500 text-slate-950 font-black border-2 border-amber-500 transition-all text-sm"><span data-i18n="modal.product.inquire"></span></a>
             <a href="https://wa.me/855979889321" target="_blank" rel="noopener"
-              class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-black transition-all text-sm border-2 border-emerald-600">WhatsApp
-              / 咨询</a>
+              class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-black transition-all text-sm border-2 border-emerald-600"><span data-i18n="modal.product.consult"></span></a>
           </div>
         </div>
       </div>
@@ -273,19 +292,19 @@
       <div class="p-5 sm:p-6 bg-gradient-to-br from-amber-50 to-white border-b border-slate-200">
         <div class="flex items-center gap-3">
           <div class="p-2 bg-amber-500/10 rounded-lg"><i class="fa-solid fa-location-dot text-amber-400"></i></div>
-          <h2 class="text-lg sm:text-xl font-black text-slate-900">ទំនាក់ទំនង</h2>
-          <span class="text-xs text-slate-500 ml-1">联系我们 · Contact</span>
+          <h2 class="text-lg sm:text-xl font-black text-slate-900" data-i18n="modal.contact.title"></h2>
+          <span class="text-xs text-slate-500 ml-1" data-i18n="modal.contact.subtitle"></span>
         </div>
       </div>
       <div class="p-5 sm:p-6">
         <ul class="space-y-3 text-sm text-slate-700 font-medium leading-relaxed">
-          <li class="flex items-start gap-3"><i class="fa-solid fa-location-dot text-amber-500 w-5 mt-0.5"></i><span><strong>អាសយដ្ឋាន / 地址:</strong><br>ឃ្លាំងស្តុកភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា — 金边仓库, 柬埔寨<br><a href="https://maps.app.goo.gl/Cuz5kVpj9SdNQPrA7" target="_blank" rel="noopener" class="text-amber-600 font-bold hover:underline">查看 Google 地图位置 →</a></span></li>
-          <li class="flex items-start gap-3"><i class="fa-solid fa-phone text-amber-500 w-5 mt-0.5"></i><span><strong>ទូរស័ព្ទ / 电话:</strong><br><a href="tel:+855979889321" class="text-amber-600 font-bold hover:underline">+855 97 988 9321</a></span></li>
-          <li class="flex items-start gap-3"><i class="fa-solid fa-clock w-5 mt-0.5" style="color:#f59e0b"></i><span><strong>ម៉ោងធ្វើការ / 营业:</strong><br>ចន្លោះ ០៨៖០០−១៧៖៣០ (ច័ន្ទ-សៅរ៍)<br>周一至周六 07:00 – 18:00</span></li>
+          <li class="flex items-start gap-3"><i class="fa-solid fa-location-dot text-amber-500 w-5 mt-0.5"></i><span><strong data-i18n="modal.contact.address_label"></strong>:<br><span data-i18n="modal.contact.address_value"></span><br><a href="https://maps.app.goo.gl/Cuz5kVpj9SdNQPrA7" target="_blank" rel="noopener" class="text-amber-600 font-bold hover:underline" data-i18n="modal.contact.view_map"></a></span></li>
+          <li class="flex items-start gap-3"><i class="fa-solid fa-phone text-amber-500 w-5 mt-0.5"></i><span><strong data-i18n="modal.contact.phone_label"></strong>:<br><a href="tel:+855****9321" class="text-amber-600 font-bold hover:underline">+855 97 988 9321</a></span></li>
+          <li class="flex items-start gap-3"><i class="fa-solid fa-clock w-5 mt-0.5" style="color:#f59e0b"></i><span><strong data-i18n="modal.contact.hours_label"></strong>:<br><span data-i18n="modal.contact.hours_value_km"></span></span></li>
         </ul>
         <div class="flex flex-wrap gap-3 mt-6">
           <a href="tg://resolve?phone=855979889321" target="_blank" rel="noopener" class="px-4 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md"><i class="fa-brands fa-telegram"></i> Telegram</a>
-          <a href="tel:+855979889321" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md"><i class="fa-solid fa-phone"></i> ទូរស័ព្ទ / 电话</a>
+          <a href="tel:+855979889321" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md"><i class="fa-solid fa-phone"></i> <span data-i18n="modal.contact.call_button"></span></a>
           <a href="https://wa.me/855979889321" target="_blank" rel="noopener" class="px-4 py-2.5 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
         </div>
       </div>
@@ -360,7 +379,7 @@
     function renderFilterPills() {
       var box = document.getElementById('category-filters');
       if (!box) return;
-      var html = '<button class="filter-pill active px-4 py-2 rounded-xl text-sm font-semibold bg-amber-500 text-slate-950 shadow-lg" data-cat="all">全部 All</button>';
+      var html = '<button class="filter-pill active px-4 py-2 rounded-xl text-sm font-semibold bg-amber-500 text-slate-950 shadow-lg" data-cat="all">' + __I18N__.t('products.section.filter_all') + '</button>';
       for (var i = 0; i < CATEGORIES.length; i++) {
         var c = CATEGORIES[i];
         html += '<button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-200 text-slate-700 font-bold hover:bg-slate-300" data-cat="' + esc(c.id) + '">' + esc(c.label) + '</button>';
@@ -447,9 +466,9 @@
         var buttons = '';
         for (var bi = 0; bi < out.length; bi++) {
           var p = out[bi];
-          buttons += '<button data-cat="' + cat.id + '" data-pid="' + p.id + '" type="button" class="w-full text-left border-2 ' + c.outline + ' rounded-xl p-3 flex gap-3 items-center bg-white hover:bg-slate-50 transition group"><div class="h-20 w-24 rounded-lg bg-slate-200 overflow-hidden shrink-0 border border-slate-200 pointer-events-none"><img src="' + p.img + '" alt="" class="w-full h-full object-cover" loading="lazy" draggable="false"></div><div class="min-w-0"><div class="text-xs font-black ' + c.accent + ' truncate group-hover:underline">' + esc(p.name) + ' <span class="font-semibold text-slate-600">/ ' + esc(p.label) + '</span></div><div class="text-[11px] text-slate-600 mt-1 line-clamp-2">' + nl(p.usage) + '</div><span class="inline-block mt-2 text-[10px] font-black text-slate-900 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded">ព័ត៌មានលំអិត / 查看详情</span></div></button>';
+          buttons += '<button data-cat="' + cat.id + '" data-pid="' + p.id + '" type="button" class="w-full text-left border-2 ' + c.outline + ' rounded-xl p-3 flex gap-3 items-center bg-white hover:bg-slate-50 transition group"><div class="h-20 w-24 rounded-lg bg-slate-200 overflow-hidden shrink-0 border border-slate-200 pointer-events-none"><img src="' + p.img + '" alt="" class="w-full h-full object-cover" loading="lazy" draggable="false"></div><div class="min-w-0"><div class="text-xs font-black ' + c.accent + ' truncate group-hover:underline">' + esc(p.name) + ' <span class="font-semibold text-slate-600">/ ' + esc(p.label) + '</span></div><div class="text-[11px] text-slate-600 mt-1 line-clamp-2">' + nl(p.usage) + '</div><span class="inline-block mt-2 text-[10px] font-black text-slate-900 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded">' + __I18N__.t('products.section.view_details') + '</span></div></button>';
         }
-        html += '<article class="card-hover bg-white border-2 ' + c.outline + ' rounded-2xl shadow-md overflow-hidden flex flex-col ' + c.hover + '"><div class="h-36 bg-gradient-to-br ' + c.bg + ' relative"><div class="absolute inset-0 flex items-center justify-center"><i class="fa-solid ' + cat.icon + ' text-5xl opacity-60"></i></div><span class="absolute top-3 left-3 px-2.5 py-1 bg-white/85 backdrop-blur text-slate-900 text-xs font-black rounded-full border ' + c.outline + '">' + esc(cat.label) + '</span><span class="absolute top-3 right-3 px-2 py-1 bg-slate-900/70 backdrop-blur text-white text-[10px] font-black rounded-full">' + out.length + ' 规格</span></div><div class="p-5 flex-1 flex flex-col"><h3 class="font-black text-slate-900 text-base mb-0.5">' + esc(cat.title) + '</h3><p class="text-xs text-slate-500 mb-3 font-semibold">' + esc(cat.label) + '</p><p class="text-sm text-slate-600 leading-relaxed mb-4">' + esc(cat.desc) + '</p><div class="mt-auto grid grid-cols-1 gap-3">' + buttons + '</div></div></article>';
+        html += '<article class="card-hover bg-white border-2 ' + c.outline + ' rounded-2xl shadow-md overflow-hidden flex flex-col ' + c.hover + '"><div class="h-36 bg-gradient-to-br ' + c.bg + ' relative"><div class="absolute inset-0 flex items-center justify-center"><i class="fa-solid ' + cat.icon + ' text-5xl opacity-60"></i></div><span class="absolute top-3 left-3 px-2.5 py-1 bg-white/85 backdrop-blur text-slate-900 text-xs font-black rounded-full border ' + c.outline + '">' + esc(cat.label) + '</span><span class="absolute top-3 right-3 px-2 py-1 bg-slate-900/70 backdrop-blur text-white text-[10px] font-black rounded-full">' + out.length + ' ' + __I18N__.t('products.section.spec_count') + '</span></div><div class="p-5 flex-1 flex flex-col"><h3 class="font-black text-slate-900 text-base mb-0.5">' + esc(cat.title) + '</h3><p class="text-xs text-slate-500 mb-3 font-semibold">' + esc(cat.label) + '</p><p class="text-sm text-slate-600 leading-relaxed mb-4">' + esc(cat.desc) + '</p><div class="mt-auto grid grid-cols-1 gap-3">' + buttons + '</div></div></article>';
       }
       grid.innerHTML = html;
       document.getElementById('search-empty').classList.toggle('hidden', anyVisible);
@@ -519,8 +538,8 @@
           // 动态表头：默认 5 列；若某行有 6 列则用电力类表头
           var ncols = p.specs[0].length;
           var headers = p.specHeaders || (ncols >= 6
-            ? ['规格', '导体结构', '外径 mm', '参考重量', '载流量 空气30℃', '载流量 埋地25℃']
-            : ['规格', '导体结构', '外径 mm', '参考重量', '参考载流量']);
+            ? [__I18N__.t('modal.product.spec_header.spec'), __I18N__.t('modal.product.spec_header.conductor_structure'), __I18N__.t('modal.product.spec_header.outer_diameter'), __I18N__.t('modal.product.spec_header.reference_weight'), __I18N__.t('modal.product.spec_header.ampacity_air'), __I18N__.t('modal.product.spec_header.ampacity_buried')]
+            : [__I18N__.t('modal.product.spec_header.spec'), __I18N__.t('modal.product.spec_header.conductor_structure'), __I18N__.t('modal.product.spec_header.outer_diameter'), __I18N__.t('modal.product.spec_header.reference_weight'), __I18N__.t('modal.product.spec_header.reference_ampacity')]);
           var thead = document.createElement('thead');
           thead.className = 'bg-slate-100 text-slate-600';
           var htr = document.createElement('tr');
@@ -585,19 +604,19 @@
     window.copySpec = function () {
       if (!currentProduct) return;
       var p = currentProduct;
-      var lines = [p.name + ' | ' + p.label, '电压: ' + p.voltage, '导体: ' + p.conductor, '绝缘: ' + p.insulation, '护套: ' + p.sheath, '温度: ' + p.temp, '安装: ' + p.install, '弯曲半径: ' + p.radius, '用途: ' + p.usage, '特性: ' + p.features, '标准: ' + p.standard, '包装: ' + p.packaging];
+      var lines = [p.name + ' | ' + p.label, __I18N__.t('modal.product.voltage') + ': ' + p.voltage, __I18N__.t('modal.product.conductor') + ': ' + p.conductor, __I18N__.t('modal.product.insulation') + ': ' + p.insulation, __I18N__.t('modal.product.sheath') + ': ' + p.sheath, __I18N__.t('modal.product.temp') + ': ' + p.temp, __I18N__.t('modal.product.install') + ': ' + p.install, __I18N__.t('modal.product.radius') + ': ' + p.radius, __I18N__.t('modal.product.usage') + ': ' + p.usage, __I18N__.t('modal.product.features') + ': ' + p.features, __I18N__.t('modal.product.standard') + ': ' + p.standard, __I18N__.t('modal.product.packaging') + ': ' + p.packaging];
       if (p.specs && p.specs.length) {
         lines.push('');
-        lines.push('规格截面表（参考值）:');
-        lines.push('规格 | 导体结构 | 外径mm | 参考重量 | 参考载流量');
+        lines.push(__I18N__.t('modal.product.spec_table') + ':');
+        lines.push(__I18N__.t('modal.product.spec_header.spec') + ' | ' + __I18N__.t('modal.product.spec_header.conductor_structure') + ' | ' + __I18N__.t('modal.product.spec_header.outer_diameter') + ' | ' + __I18N__.t('modal.product.spec_header.reference_weight') + ' | ' + __I18N__.t('modal.product.spec_header.reference_ampacity'));
         for (var i = 0; i < p.specs.length; i++) { lines.push(p.specs[i].join(' | ')); }
       }
-      if (p.installation) lines.push('', '敷设与环境: ' + p.installation);
-      if (p.selection) lines.push('', '选型与施工: ' + p.selection);
-      if (p.variants && p.variants.length) lines.push('', '派生型号: ' + p.variants.join('、'));
+      if (p.installation) lines.push('', __I18N__.t('modal.product.installation') + ': ' + p.installation);
+      if (p.selection) lines.push('', __I18N__.t('modal.product.selection') + ': ' + p.selection);
+      if (p.variants && p.variants.length) lines.push('', __I18N__.t('modal.product.variants') + ': ' + p.variants.join('、'));
       if (p.note) lines.push('', p.note);
       var text = lines.join('\\n');
-      if (navigator.clipboard) { navigator.clipboard.writeText(text).then(function () { alert('已复制规格 / Copied'); }); }
+      if (navigator.clipboard) { navigator.clipboard.writeText(text).then(function () { alert(__I18N__.t('modal.product.copied')); }); }
     };
 
     modal.addEventListener('click', function (e) { if (e.target === modal) closeProductModal(); });
@@ -656,6 +675,42 @@
     };
     document.getElementById('contact-modal')?.addEventListener('click', function (e) { if (e.target.id === 'contact-modal') closeContactModal(); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeContactModal(); });
+  </script>
+
+  <!-- ==================== 联系方式悬浮球 ==================== -->
+  <div class="contact-fab" id="contact-fab">
+    <div class="contact-fab__panel" role="menu" aria-label="联系我们">
+      <a class="contact-fab__item" href="tg://resolve?phone=855979889321" target="_blank" rel="noopener">
+        <i class="fa-brands fa-telegram contact-fab__icon--tg"></i> Telegram
+      </a>
+      <a class="contact-fab__item" href="https://wa.me/855979889321" target="_blank" rel="noopener">
+        <i class="fa-brands fa-whatsapp contact-fab__icon--wa"></i> WhatsApp
+      </a>
+      <a class="contact-fab__item" href="tel:+855****9321">
+        <i class="fa-solid fa-phone contact-fab__icon--call"></i> <span data-i18n="nav.fab.phone"></span>
+      </a>
+    </div>
+    <button type="button" class="contact-fab__ball" id="contact-fab-btn" aria-label="联系我们 / Contact" aria-expanded="false" aria-controls="contact-fab-panel">
+      <span class="contact-fab__ball-label" data-i18n="nav.fab.label"></span>
+      <i class="fa-solid fa-phone"></i>
+      <span class="contact-fab__badge"></span>
+    </button>
+  </div>
+  <script>
+  (function () {
+    var fab = document.getElementById('contact-fab');
+    var btn = document.getElementById('contact-fab-btn');
+    if (!fab || !btn) return;
+    function toggle(force) {
+      var open = typeof force === 'boolean' ? force : !fab.classList.contains('open');
+      fab.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+    btn.addEventListener('click', function (e) { e.stopPropagation(); toggle(); });
+    document.addEventListener('click', function (e) { if (!fab.contains(e.target)) toggle(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') toggle(false); });
+    window.addEventListener('scroll', function () { toggle(false); }, { passive: true });
+  })();
   </script>
 
 </body>
