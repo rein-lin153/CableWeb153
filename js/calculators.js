@@ -541,6 +541,35 @@
         `);
     }
 
+    // ===================== 14. 住宅/排屋造价估算 =====================
+    // 档次默认单价（$ / m²），柬埔寨近似参考
+    const COST_GRADE_DEFAULT = { basic: 250, standard: 350, premium: 500 };
+    const COST_GRADE_NAME = { basic: t('calc.cost.option.basic','普通'), standard: t('calc.cost.option.standard','标准'), premium: t('calc.cost.option.premium','精装') };
+    function calcConstructionCost() {
+        const area = num('cost-area');
+        const grade = val('cost-grade') || 'standard';
+        const unitInput = num('cost-unit');
+        const unit = unitInput !== null ? unitInput : COST_GRADE_DEFAULT[grade];
+        const laborPct = num('cost-labor') !== null ? num('cost-labor') : 20;
+        if (area === null) return setResult('cost-result', needAll(['建筑面积 m²']));
+
+        const materialCost = area * unit;            // 材料主体造价
+        const laborCost = materialCost * (laborPct / 100); // 人工费
+        const total = materialCost + laborCost;
+
+        const gradeName = COST_GRADE_NAME[grade] || t('calc.cost.option.standard','标准');
+        setResult('cost-result', `
+            <div class="space-y-1.5">
+                <div>${t('calc.result.cost_grade','档次：')}${hl(gradeName)} ｜ ${t('calc.result.cost_area','建筑面积：')}${hl(area, ' m²')}</div>
+                <div>${t('calc.result.cost_unit','单价：')}${hl('$' + unit, ' /m²')}${unitInput !== null ? '' : t('calc.result.cost_unit_default','（按档次默认）')}</div>
+                <div class="border-t border-slate-200 mt-1 pt-1">${t('calc.result.cost_material','材料造价：')}${hl('$' + materialCost.toLocaleString(undefined, { maximumFractionDigits: 0 }))}</div>
+                <div>${t('calc.result.cost_labor','人工费(' + laborPct + '%)：')}${hl('$' + laborCost.toLocaleString(undefined, { maximumFractionDigits: 0 }))}</div>
+                <div class="text-sm ${'text-amber-700'} font-black mt-1">${t('calc.result.cost_total','总造价：')}${hl('$' + total.toLocaleString(undefined, { maximumFractionDigits: 0 }), '')}</div>
+                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${t('calc.result.cost_note','近似估算，未含土地、设计费、税费；实际以当地报价为准')}</div>
+            </div>
+        `);
+    }
+
     // ===================== 绑定 =====================
     function bind(id, fn) {
         const el = $(id);
@@ -565,6 +594,17 @@
         // 装饰
         bind('btn-tile', calcTile);
         bind('btn-paint', calcPaint);
+        // 造价
+        bind('btn-cost', calcConstructionCost);
+
+        // 造价档次下拉联动：切换档次时若单价输入为空则填默认值
+        const costGradeSel = $('cost-grade');
+        if (costGradeSel) {
+            costGradeSel.addEventListener('change', () => {
+                const u = $('cost-unit');
+                if (u && u.value === '') u.value = COST_GRADE_DEFAULT[costGradeSel.value] || 350;
+            });
+        }
 
         // 瓷砖尺寸按钮切换
         document.querySelectorAll('.tile-size-btn').forEach(btn => {
