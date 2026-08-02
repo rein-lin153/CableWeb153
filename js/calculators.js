@@ -312,7 +312,7 @@
     }
 
     // ===================== 7. EDC 电费 =====================
-    // 柬埔寨 EDC 阶梯电价（近似，៛/kWh）——住宅 2024 起阶梯，商业单一价
+    // 柬埔寨 EDC 阶梯电价（近似，៛/kWh）—— admin 后台可配置；空时用内置默认
     function calcEdc() {
         const type = val('edc-type');
         const kwh = num('edc-kwh');
@@ -320,33 +320,30 @@
         let riel = 0;
         let detail = '';
         if (type === 'residential') {
-            // 住宅阶梯（近似 ៛/kWh）：1-50: 610, 51-100: 770, 101-200: 920, 201-300: 1090, 301-400: 1280, >400: 1480
-            const tiers = [
-                { upTo: 50, rate: 610 },
-                { upTo: 100, rate: 770 },
-                { upTo: 200, rate: 920 },
-                { upTo: 300, rate: 1090 },
-                { upTo: 400, rate: 1280 },
-                { upTo: Infinity, rate: 1480 },
-            ];
+            // admin 配置的住宅阶梯；upTo >= 99999 视为无上限
+            const tiers = (Array.isArray(CALC_CONFIG.edcTiers) && CALC_CONFIG.edcTiers.length)
+                ? CALC_CONFIG.edcTiers
+                : [{ upTo: 50, rate: 610 }, { upTo: 100, rate: 770 }, { upTo: 200, rate: 920 }, { upTo: 300, rate: 1090 }, { upTo: 400, rate: 1280 }, { upTo: 99999, rate: 1480 }];
             let remain = kwh, prev = 0;
             const segs = [];
-            for (const t of tiers) {
+            for (const tier of tiers) {
                 if (remain <= 0) break;
-                const used = Math.min(remain, t.upTo - prev);
-                riel += used * t.rate;
-                segs.push(`${prev + 1}-${Math.min(kwh, t.upTo)}kWh × ${t.rate}៛`);
-                prev = t.upTo;
+                const cap = tier.upTo >= 99999 ? Infinity : tier.upTo;
+                const used = Math.min(remain, cap - prev);
+                riel += used * tier.rate;
+                const upper = tier.upTo >= 99999 ? kwh : Math.min(kwh, tier.upTo);
+                segs.push(`${prev + 1}-${upper}kWh × ${tier.rate}៛`);
+                prev = tier.upTo >= 99999 ? prev + used : tier.upTo;
                 remain -= used;
             }
             detail = `<div class="text-xs space-y-0.5">${segs.map(s => `<div>${s}</div>`).join('')}</div>`;
         } else {
-            // 商业单一价 ~ 920 ៛/kWh（近似）
-            const rate = 920;
+            // 商业单一价（admin 可配置）
+            const rate = (typeof CALC_CONFIG.edcCommercialRate === 'number' && CALC_CONFIG.edcCommercialRate) ? CALC_CONFIG.edcCommercialRate : 920;
             riel = kwh * rate;
             detail = `<div class="text-xs">${t('calc.result.full_rate','全量 ')}${hl(rate, ' ៛/kWh')}</div>`;
         }
-        const usd = riel / 4100; // 1 USD ≈ 4100 ៛
+        const usd = riel / (CALC_CONFIG.edcUsdRielRate || 4100); // 1 USD ≈ 4100 ៛
         const typeName = type === 'residential' ? t('calc.card7.option.residential','住宅 Residential') : t('calc.card7.option.commercial','商业 Commercial');
         setResult('edc-result', `
             <div class="space-y-1.5">
