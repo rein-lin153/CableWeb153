@@ -618,9 +618,47 @@
       try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : null; } catch (_) { return null; }
     }
 
+    // 规整 categoryId：KV 历史由旧版 admin 写入，categories 的 id 是 slugId('cat')
+    // 生成的 cat\d+（如 cat1785686538638663），products 的 categoryId 还混用了
+    // 规范 slug（household/power/welding/flexible）与 cat\d+。assembleCategories 依赖
+    // 字符串相等 p.categoryId === c.id 拼装分组，若不规整会拼不上 → 某些分类下空。
+    // 这里把 cat\d+ categories id 按 order 升序映射到规范 slug 表，同步改写
+    // prods[].categoryId 命中的 cat\d+；已是规范 slug 的保留。幂等：再跑一次无变化。
+    var CANON_SLUGS = ['household', 'power', 'welding', 'flexible'];
+    function normalizeIds(cats, prods) {
+      if (!Array.isArray(cats) || !cats.length) return [cats, prods];
+      var hasCatNum = false;
+      for (var i = 0; i < cats.length; i++) {
+        if (cats[i] && /^cat\d+$/.test(String(cats[i].id))) { hasCatNum = true; break; }
+      }
+      if (!hasCatNum) return [cats, prods]; // 已是规范 slug，无需处理
+      // 仅当分类个数与规范表一致时按 order 对齐替换，避免破坏其它形态数据
+      if (cats.length !== CANON_SLUGS.length) return [cats, prods];
+      var sorted = cats.slice().sort(function (a, b) {
+        var ao = Number(a && a.order), bo = Number(b && b.order);
+        if (isNaN(ao)) ao = 9999; if (isNaN(bo)) bo = 9999;
+        return ao - bo;
+      });
+      var idMap = {}; // 旧 cat\d+ id -> 规范 slug
+      for (var k = 0; k < sorted.length; k++) {
+        var oldId = sorted[k] && sorted[k].id;
+        if (oldId && /^cat\d+$/.test(String(oldId))) {
+          idMap[oldId] = CANON_SLUGS[k];
+        }
+      }
+      if (!Object.keys(idMap).length) return [cats, prods];
+      var newCats = cats.map(function (c) { return idMap[c.id] ? Object.assign({}, c, { id: idMap[c.id] }) : c; });
+      var newProds = Array.isArray(prods) ? prods.map(function (p) {
+        if (p && idMap[p.categoryId]) return Object.assign({}, p, { categoryId: idMap[p.categoryId] });
+        return p;
+      }) : prods;
+      return [newCats, newProds];
+    }
+
     function applyData(cats, prods) {
-      CAT_SOURCE = Array.isArray(cats) ? cats : [];
-      PROD_SOURCE = Array.isArray(prods) ? prods : [];
+      var norm = normalizeIds(cats, prods);
+      CAT_SOURCE = Array.isArray(norm[0]) ? norm[0] : [];
+      PROD_SOURCE = Array.isArray(norm[1]) ? norm[1] : [];
       CATEGORIES = assembleCategories(CAT_SOURCE, PROD_SOURCE);
       localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(CAT_SOURCE));
       localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(PROD_SOURCE));
@@ -646,9 +684,13 @@
       box.innerHTML = html;
     }
 
-    // 一次性自愈：heuristic 判断 cats/prods 是否缺失多语言字段（早期 KV/admin 写入的
+    // 一次性自愈：判断 products 是否缺失多语言字段（早期 KV/admin 写入的
     // 数据没有 label_en/label_km 等，导致 L() 在 km/en 下回退到中文 → 切语言卡片不变）。
-    // 判定任一为真即视为陈旧，返回 true 让 loadData 清缓存改走 inline + data/*.json。
+    // 只看 products 自身字段，不再因 categories 的 cat\d+ 旧 admin id 拒收 /api——
+    // 因为：admin 上传的真实图片 URL（pexels 等）就存在 products KV 里，
+    // 若因 categories id 形式把整条 /api 判陈旧丢弃，会回退到 data/*.json 旧相对路径图，
+    // 造成"前端不读后端 URL"的 bug。categories 拿 cat\d+ id 仍可正常渲染
+    //（label/title/label_en 齐全），其 id 形式由 normalizeIds() 在 applyData 内规整。
     function isStaleSource(cats, prods) {
       if (!Array.isArray(prods) || !prods.length) return true;
       var hasEn = false, hasKm = false;
@@ -656,12 +698,7 @@
         if (prods[i] && prods[i].label_en) hasEn = true;
         if (prods[i] && prods[i].label_km) hasKm = true;
       }
-      if (!hasEn && !hasKm) return true;             // 产品完全缺多语言字段
-      if (Array.isArray(cats)) {
-        for (var j = 0; j < cats.length; j++) {
-          if (cats[j] && /^cat\d+$/.test(String(cats[j].id))) return true; // 旧 admin 数字 id
-        }
-      }
+      if (!hasEn && !hasKm) return true;             // 产品完全缺多语言字段→陈旧
       return false;
     }
 
@@ -808,10 +845,14 @@
         openProduct(btn.dataset.cat, btn.dataset.pid);
       }
     });
-    // 图片加载失败时隐藏碎裂图标（error 事件不冒泡，需用捕获阶段）
+    // 图片加载失败时回退通用占位图（pexels CDN 偶发被拦或 url 拼错、相对路径缺图）。
+    // error 事件不冒泡，需用捕获阶段；用 dataset 标记防回环（fallback 仍失败则隐藏碎裂图标）。
     document.getElementById('categories-grid').addEventListener('error', function (e) {
       var t = e.target;
-      if (t && t.tagName === 'IMG') { t.style.visibility = 'hidden'; }
+      if (!t || t.tagName !== 'IMG') return;
+      if (t.dataset.fallbackApplied) { t.style.visibility = 'hidden'; return; }
+      t.dataset.fallbackApplied = '1';
+      t.src = FALLBACK_IMG;
     }, true);
     window.openProduct = function (catId, prodId) {
       try {
@@ -825,7 +866,7 @@
         var missing = ids.filter(function (id) { return !document.getElementById(id); });
         if (missing.length) { console.error('missing modal fields', missing); }
         document.getElementById('product-modal-img').src = p.img;
-        document.getElementById('product-modal-img').onerror = function () { this.style.opacity = '0.3'; };
+        document.getElementById('product-modal-img').onerror = function () { this.onerror = null; this.src = FALLBACK_IMG; };
         document.getElementById('product-modal-badge').textContent = p.name + ' · ' + (cat ? L(cat, 'label') : '');
         document.getElementById('product-modal-category').textContent = cat ? L(cat, 'title') : '';
         document.getElementById('product-modal-title').textContent = p.name;
