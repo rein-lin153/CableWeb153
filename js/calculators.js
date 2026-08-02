@@ -15,6 +15,35 @@
     // ===================== i18n 快捷方式 =====================
     const t = (key, fb) => window.__I18N__ ? window.__I18N__.t(key, fb) : (fb || key);
 
+    // ===================== 计算器默认配置（来自 /api/calc-config） =====================
+    // admin 后台可配置；公开页读取作为默认值。铜重计算器允许用户在页面临时覆盖铜价。
+    const CALC_CONFIG = {
+        copperPriceUsdPerKg: 9,
+        edcCommercialRate: 920,
+        edcUsdRielRate: 4100,
+        edcNotes: 'EDC 阶梯近似值，请管理员后台更新为最新电价',
+        edcTiers: [
+            { upTo: 50, rate: 610 }, { upTo: 100, rate: 770 }, { upTo: 200, rate: 920 },
+            { upTo: 300, rate: 1090 }, { upTo: 400, rate: 1280 }, { upTo: 99999, rate: 1480 }
+        ]
+    };
+    async function loadCalcConfig() {
+        try {
+            const res = await fetch('/api/calc-config');
+            if (res.ok) {
+                const data = await res.json();
+                if (data && typeof data === 'object' && !Array.isArray(data)) {
+                    Object.assign(CALC_CONFIG, data);
+                }
+            }
+        } catch (e) { /* 静默：保持内置默认 */ }
+        // 把默认铜价填入铜重卡片的输入框（若已渲染且未填）
+        const cuInput = $('cu-price');
+        if (cuInput && (cuInput.value === '' || cuInput.value === undefined)) {
+            cuInput.value = CALC_CONFIG.copperPriceUsdPerKg;
+        }
+    }
+
     // ===================== 通用工具 =====================
     const $ = (id) => document.getElementById(id);
 
@@ -128,8 +157,8 @@
         // 体积 = 面积(mm²) × 长度(m) × 芯数 → cm³ : 1 mm²·m = 1 cm³
         const volumeCm3 = area * lengthM * cores;
         const massKg = (volumeCm3 * density) / 1000; // g→kg
-        // 市价占位：铜 ~ $9/kg
-        const pricePerKg = 9;
+        // 铜价：优先读页面输入框（可临时覆盖），空则用 admin 配置默认值
+        const pricePerKg = num('cu-price') !== null ? num('cu-price') : CALC_CONFIG.copperPriceUsdPerKg;
         const valueUsd = massKg * pricePerKg;
 
         setResult('copper-result', `
@@ -519,6 +548,9 @@
 
         // 配电列表初始一行
         renderDeviceList();
+
+        // 拉取 admin 配置（铜价/电价/汇率默认值），异步不阻塞绑定
+        loadCalcConfig();
     }
 
     if (document.readyState === 'loading') {
