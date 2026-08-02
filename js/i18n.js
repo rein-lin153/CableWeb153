@@ -411,9 +411,9 @@
             "products.section.spec_count": "规格",
             "products.section.subheading": "家装布线 / 工程电力主干 / 电焊专用 / 设备软线与花线",
             "products.section.view_details": "查看详情",
-            "title.articles": "B·W CABLE — 文章知识库",
+            "title.articles": "B·W CABLE 文章知识库 — 柬埔寨电缆选型与电工/建筑科普",
             "title.index": "B·W CABLE — 柬埔寨专业电工与建筑计算门户",
-            "title.products": "产品分类"
+            "title.products": "B·W CABLE 产品分类 — 柬埔寨电缆目录 (BVR/YJV/YH) · 金边发货"
         },
         km: {
             "articles.card.read_full": "អានបន្ត",
@@ -792,9 +792,9 @@
             "products.section.spec_count": "បញ្ជាក់",
             "products.section.subheading": "ប្រភេទផលិតផល",
             "products.section.view_details": "ព័ត៌មានលំអិត",
-            "title.articles": "B·W CABLE — អត្ថបទ",
+            "title.articles": "B·W CABLE អត្ថបទ — ការជ្រើសរើសខ្សែភ្លើង និងគន្លឹះអគ្គិសនី/សំណង់នៅកម្ពុជា",
             "title.index": "B·W CABLE — គណនាករអគ្គិសនីនិងសំណង់ឯកទេសនៅកម្ពុជា",
-            "title.products": "ប្រភេទផលិតផល"
+            "title.products": "B·W CABLE ប្រភេទខ្សែភ្លើង — បញ្ជីខ្សែកម្ពុជា (BVR/YJV/YH) · ឃ្លាំងភ្នំពេញ"
         },
         en: {
             "articles.card.read_full": "Read full article",
@@ -1173,9 +1173,9 @@
             "products.section.spec_count": "specs",
             "products.section.subheading": "Household Wiring / Power Distribution / Welding Cables / Equipment Flexible Cords",
             "products.section.view_details": "View Details",
-            "title.articles": "B·W CABLE — Articles",
+            "title.articles": "B·W CABLE Articles — Cambodia Cable Sizing & Electrical/Construction Guides",
             "title.index": "B·W CABLE — Cambodian Electrical & Construction Calculators Portal",
-            "title.products": "Product Categories"
+            "title.products": "B·W CABLE Product Catalog — Cambodia Cable Categories (BVR/YJV/YH) · Phnom Penh"
         }
     };
 
