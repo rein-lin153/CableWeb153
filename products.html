@@ -582,7 +582,12 @@
           .filter(function (p) { return p.categoryId === c.id; })
           .sort(function (a, b) { return (Number(a.order) || 0) - (Number(b.order) || 0); });
         nested.push({
-          id: c.id, title: c.title, label: c.label, desc: c.desc,
+          id: c.id,
+          title: c.title, label: c.label,
+          // 多语言字段透传（categories.json 新增）：
+          label_en: c.label_en || '',
+          label_km: c.label_km || '',   // 一般留空，km 时用 title
+          desc: c.desc, desc_km: c.desc_km || '', desc_en: c.desc_en || '',
           color: c.color, icon: c.icon, img: c.img, order: c.order,
           products: cProducts
         });
@@ -667,9 +672,30 @@
 
     function esc(s) {
       if (s == null) return '';
-      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return String(s).replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
     }
     function nl(s) { return s ? esc(s).replace(/\n/g, '<br>') : ''; }
+
+    // 多语言字段选择器 (products.html 局部)。
+    // 用法: L(obj, 'label') → obj.label / obj.label_km / obj.label_en 之一
+    //   obj 为 flatten 数据源元素 (CAT_SOURCE / PROD_SOURCE / INLINE_* / 嵌套对象)。
+    // 约定: 高棉语优先用 {field}_km，否则类别用 title（已是 km），否则回退中文 {field}；
+    //       英文用 {field}_en，否则回退中文 {field}。
+    // 这一步让产品/分类卡片在不同语言下显示本地化的 label/desc/usage 等。
+    function L(obj, field) {
+      if (!obj) return '';
+      var lang = (window.__I18N__ && window.__I18N__.lang) || 'km';
+      if (lang === 'km') {
+        var km = obj[field + '_km'];
+        if (km) return km;
+        // 类别 label 高棉语等同于 title（categories.json 的 title 即 km）
+        if (field === 'label' && obj.title) return obj.title;
+      } else if (lang === 'en') {
+        var en = obj[field + '_en'];
+        if (en) return en;
+      }
+      return obj[field] != null ? obj[field] : '';
+    }
 
     function colorClasses(name) {
       var map = {

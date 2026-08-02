@@ -828,8 +828,7 @@ body {
     grid.innerHTML = pageItems.map(article => {
       const cat = CATEGORY_CONFIG[article.category] || { emoji: '📄', label: article.category, color: 'bg-slate-200 text-slate-600 border-slate-300' };
       const cover = article.coverImage || FALLBACK_IMG;
-      const d = new Date(article.date);
-      const dateStr = d.toLocaleDateString('km-KH', { year: 'numeric', month: 'short', day: 'numeric' });
+      const dateStr = formatArticleDate(article.date);
       const readTime = Math.max(2, Math.ceil((article.content || article.excerpt || '').length / 500));
 
       return `
@@ -928,6 +927,25 @@ body {
     });
   }
 
+  // ---- Format date per current i18n language ----
+  // 使用 __I18N__.lang 决定格式，确保 zh/km/en 各显示母语风格：
+  //   zh: "2026年8月4日"；km: 高棉语数字+月份（"៤ សីហា ២០២៦"）；en: "Aug 4, 2026"
+  const KH_MONTHS = ['មករា','កុម្ភៈ','មីនា','មេសា','ឧសភា','មិថុនា','កក្កដា','សីហា','កញ្ញា','តុលា','វិច្ឆិកា','ធ្នូ'];
+  function toKhmerNum(n) { return String(n).replace(/\d/g, d => '០១២៣៤៥៦៧៨៩'[d]); }
+  function formatArticleDate(dateStr) {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return '';
+    const lang = (window.__I18N__ && window.__I18N__.lang) || 'km';
+    if (lang === 'zh') {
+      return `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+    }
+    if (lang === 'en') {
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+    // km (default)
+    return `${toKhmerNum(d.getDate())} ${KH_MONTHS[d.getMonth()]} ${toKhmerNum(d.getFullYear())}`;
+  }
+
   // ---- HTML escape ----
   function escHtml(s) {
     const d = document.createElement('div');
@@ -955,7 +973,7 @@ body {
     const cat = CATEGORY_CONFIG[article.category] || { emoji: '📄', label: article.category, color: 'bg-slate-200 text-slate-600 border-slate-300' };
     catEl.className = 'inline-block px-3 py-1 backdrop-blur-md text-xs font-bold rounded-full border ' + cat.color;
     catEl.textContent = cat.emoji + ' ' + (cat.labelKey ? __I18N__.t(cat.labelKey, cat.label) : cat.label);
-    dateEl.innerHTML = '<i class="fa-regular fa-calendar mr-1"></i> ' + new Date(article.date).toLocaleDateString('km-KH', { year: 'numeric', month: 'long', day: 'numeric' });
+    dateEl.innerHTML = '<i class="fa-regular fa-calendar mr-1"></i> ' + formatArticleDate(article.date);
     viewsEl.innerHTML = '<i class="fa-regular fa-eye mr-1"></i> ' + __I18N__.t('modal.article.views_template', '{views} 次浏览').replace('{views}', (article.views || 0));
     const readTime = Math.max(2, Math.ceil((article.content || article.excerpt || '').length / 500));
     viewsEl.innerHTML += ' • ' + __I18N__.t('modal.article.read_time_label', '{minutes} 分钟阅读').replace('{minutes}', readTime);
@@ -1051,6 +1069,9 @@ body {
   });
 
   // ---- Init ----
+  // 语言切换后重新渲染，让卡片日期 / 阅读时间 / 分类标签跟随新语言刷新
+  window.addEventListener('i18n:langchange', function () { renderPage(); });
+
   loadArticles();
 
 })();

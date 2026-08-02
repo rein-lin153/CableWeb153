@@ -427,9 +427,18 @@
             const INLINE_CATEGORIES = [
                 {id: 'household', num: '01', kh: 'ខ្សែសាងសង់គ្រួសារ', zh: '家装布电线', en: 'Household Wiring', color: 'amber', icon: 'fa-house-chimney', img: 'assets/images/products/household-wiring.jpg', models: ['BVR','BVVB','RVV','RVS'], desc: '住宅明装/穿管布线', order: 1},
                 {id: 'power', num: '02', kh: 'ខ្សែភ្លើងស្នូង', zh: '电力主干电缆', en: 'Power Feeder Cable', color: 'rose', icon: 'fa-tower-broadcast', img: 'assets/images/products/power-cable.jpg', models: ['YJV','YJLV'], desc: '工业/建筑电力主干', order: 2},
-                {id: 'welding', num: '03', kh: 'ខ្សែម៉ាស៊ីនប្រសិនស្នា', zh: '电焊机电缆', en: 'Welding Cable', color: 'slate', icon: 'fa-fire-flame-curved', img: 'assets/images/products/welding-cable.jpg', models: ['YH'], desc: '电焊机二次回路', order: 3},
+                {id: 'welding', num: '03', kh: 'ខ្សែម៉ាស៊ីនប្រសិនស្នា', zh: '电焊机专用电缆', en: 'Welding Cable', color: 'slate', icon: 'fa-fire-flame-curved', img: 'assets/images/products/welding-cable.jpg', models: ['YH'], desc: '电焊机二次回路', order: 3},
                 {id: 'flexible', num: '04', kh: 'ខ្សែទន់ និងខ្សែឆ្កាង', zh: '设备软线与花线', en: 'Flexible & Cord', color: 'emerald', icon: 'fa-plug', img: 'assets/images/products/flexible.jpg', models: ['RVV','RVS','VAF'], desc: '家电/灯具/弱电连接', order: 4}
             ];
+
+            // 根据当前语言返回分类显示名（cat 来源可能是 INLINE_CATEGORIES 的 kh/zh/en 字段，
+            // 或来自权威数据的 title(km)/label(zh)；label 在 en 模式下也作回退）。
+            function catName(cat) {
+                const l = window.__I18N__ ? window.__I18N__.lang : 'km';
+                if (l === 'km') return cat.kh || cat.title || cat.label || '';
+                if (l === 'en') return cat.en || cat.label || cat.title || cat.kh || '';
+                return cat.zh || cat.label || cat.title || cat.kh || '';
+            }
 
             // 与 products.html 一致的 localStorage 键名；products.html 的 applyData() 会把权威数据写入这两个键
             const STORAGE_KEY_CATEGORIES = 'bw_cable_categories';
@@ -450,9 +459,9 @@
                     merged.push({
                         id: c.id,
                         num: String((merged.length + 1)).padStart(2, '0'),
-                        kh: c.title || c.label || '',
-                        zh: c.label || c.title || '',
-                        en: c.label || '',
+                        kh: c.kh || c.title || c.label || '',
+                        zh: c.zh || c.label || c.title || '',
+                        en: c.en || c.label || c.title || '',
                         color: c.color, icon: c.icon, img: c.img,
                         models: models && models.length ? models.slice(0, 8) : (c.models || []),
                         desc: c.desc || '',
@@ -489,7 +498,7 @@
                         const imgLayer = (showImages && cat.img)
                             ? `<img src="${cat.img}" alt="${cat.zh}" class="h-24 w-full object-cover opacity-90 relative" loading="lazy" onerror="this.remove(); this.parentElement.querySelector('.cat-icon-fallback')?.classList.remove('hidden')">`
                             : '';
-                        html += `<div class="cat-slide"><a href="products.html#${cat.id}" class="group block bg-white border-2 ${c.pill} rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 min-h-[140px] flex flex-col"><div class="h-24 bg-gradient-to-br ${c.bg} relative flex items-center justify-center">${iconFallback}${imgLayer}<span class="absolute top-2 left-2 px-2 py-1 bg-white/85 backdrop-blur ${c.badge} text-xs font-black rounded-full border">${cat.num} · ${cat.zh}</span></div><div class="p-3 flex-1 flex flex-col"><h3 class="font-black text-slate-900 text-sm mb-1">${cat.kh}</h3><p class="text-[11px] text-slate-500 mb-2 font-semibold">${cat.zh} · ${cat.en}</p><div class="flex flex-wrap gap-1 mb-2">${cat.models.map(m => `<span class="px-1.5 py-0.5 ${c.pill} text-[10px] font-black rounded">${m}</span>`).join('')}</div><div class="text-[10px] text-slate-500 mb-2 line-clamp-1">${cat.desc}</div><span class="mt-auto inline-flex items-center gap-1.5 text-sm font-bold ${c.accent} hover:underline self-start"><span data-i18n="marquee.view_category">${t('marquee.view_category', '查看该分类')}</span> <i class="fa-solid fa-arrow-right text-xs"></i></span></div></a></div>`;
+                        html += `<div class="cat-slide"><a href="products.html#${cat.id}" class="group block bg-white border-2 ${c.pill} rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 min-h-[140px] flex flex-col"><div class="h-24 bg-gradient-to-br ${c.bg} relative flex items-center justify-center">${iconFallback}${imgLayer}<span class="absolute top-2 left-2 px-2 py-1 bg-white/85 backdrop-blur ${c.badge} text-xs font-black rounded-full border">${cat.num} · ${catName(cat)}</span></div><div class="p-3 flex-1 flex flex-col"><h3 class="font-black text-slate-900 text-sm mb-1">${catName(cat)}</h3><p class="text-[11px] text-slate-500 mb-2 font-semibold">${cat.zh || cat.label || ''} · ${cat.en || cat.label || ''}</p><div class="flex flex-wrap gap-1 mb-2">${cat.models.map(m => `<span class="px-1.5 py-0.5 ${c.pill} text-[10px] font-black rounded">${m}</span>`).join('')}</div><div class="text-[10px] text-slate-500 mb-2 line-clamp-1">${cat.desc}</div><span class="mt-auto inline-flex items-center gap-1.5 text-sm font-bold ${c.accent} hover:underline self-start"><span data-i18n="marquee.view_category">${t('marquee.view_category', '查看该分类')}</span> <i class="fa-solid fa-arrow-right text-xs"></i></span></div></a></div>`;
                     });
                 }
                 track.innerHTML = html;
@@ -535,6 +544,14 @@
 
             // 仅当本地没有权威缓存时才需要走网络；有缓存时直接用缓存结果即可（图片已就绪）
             if (!cached) loadAuthority();
+
+            // 语言切换后用最新语言重渲染 marquee 卡片
+            let _renderedCats = categories;
+            const _origRender = renderCards;
+            renderCards = function (cats, showImages) { _renderedCats = cats; _origRender(cats, showImages); };
+            window.addEventListener('i18n:langchange', function () {
+                if (_renderedCats && _renderedCats.length) _origRender(_renderedCats, true);
+            });
         })();
         </script>
     </section>
@@ -982,18 +999,18 @@
                 <div class="p-6 sm:p-8 bg-gradient-to-br from-amber-50 to-white">
                     <div class="flex items-center gap-3 mb-3">
                         <div class="p-2 bg-amber-500/10 rounded-lg"><i class="fa-solid fa-location-dot text-amber-400"></i></div>
-                        <h2 class="text-xl sm:text-2xl font-black text-slate-900">ទំនាក់ទំនង</h2>
-                        <span class="text-xs text-slate-500 ml-1">联系我们 · Contact</span>
+                        <h2 class="text-xl sm:text-2xl font-black text-slate-900" data-i18n="modal.contact.title">ទំនាក់ទំនង</h2>
+                        <span class="text-xs text-slate-500 ml-1" data-i18n="modal.contact.subtitle">联系我们 · Contact</span>
                     </div>
                     <ul class="space-y-3 text-sm text-slate-700 font-medium leading-relaxed mt-5">
-                        <li class="flex items-start gap-3"><i class="fa-solid fa-location-dot text-amber-500 w-5 mt-0.5"></i><span><strong>អាសយដ្ឋាន / 地址:</strong><br>ឃ្លាំងស្តុកភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា — 金边仓库, 柬埔寨<br><a href="https://maps.app.goo.gl/Cuz5kVpj9SdNQPrA7" target="_blank" rel="noopener" class="text-amber-600 font-bold hover:underline">查看 Google 地图位置 →</a></span></li>
-                        <li class="flex items-start gap-3"><i class="fa-solid fa-phone text-amber-500 w-5 mt-0.5"></i><span><strong>ទូរស័ព្ទ / 电话:</strong><br><a href="tel:+855979889321" class="text-amber-600 font-bold hover:underline">+855 97 988 9321</a></span></li>
-                        <li class="flex items-start gap-3"><i class="fa-solid fa-clock text-amar-500 w-5 mt-0.5" style="color:#f59e0b"></i><span><strong>ម៉ោងធ្វើការ / 营业:</strong><br>ចន្លោះ ០៨៖០០−១៧៖៣០ (ច័ន្ទ-សៅរ៍)<br>周一至周六 07:00 – 18:00</span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-location-dot text-amber-500 w-5 mt-0.5"></i><span><strong data-i18n="modal.contact.address_label">អាសយដ្ឋាន / 地址:</strong><br><span data-i18n="modal.contact.address_value">ឃ្លាំងស្តុកភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា — 金边仓库, 柬埔寨</span><br><a href="https://maps.app.goo.gl/Cuz5kVpj9SdNQPrA7" target="_blank" rel="noopener" class="text-amber-600 font-bold hover:underline" data-i18n="modal.contact.view_map">查看 Google 地图位置 →</a></span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-phone text-amber-500 w-5 mt-0.5"></i><span><strong data-i18n="modal.contact.phone_label">ទូរស័ព្ទ / 电话:</strong><br><a href="tel:+855979889321" class="text-amber-600 font-bold hover:underline">+855 97 988 9321</a></span></li>
+                        <li class="flex items-start gap-3"><i class="fa-solid fa-clock w-5 mt-0.5" style="color:#f59e0b"></i><span><strong data-i18n="modal.contact.hours_label">ម៉ោងធ្វើការ / 营业:</strong><br><span data-i18n="contact.hours_km">ចន្លោះ ០៨៖០០−១៧៖៣០ (ច័ន្ទ-សៅរ៍)</span> <span data-i18n="contact.hours_zh">周一至周六 07:00 – 18:00</span></span></li>
                     </ul>
                     <!-- Contact buttons -->
                     <div class="flex flex-wrap gap-3 mt-6">
                         <a href="tg://resolve?phone=855979889321" target="_blank" rel="noopener" class="px-4 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md"><i class="fa-brands fa-telegram"></i> Telegram</a>
-                        <a href="tel:+855979889321" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md"><i class="fa-solid fa-phone"></i> ទូរស័ព្ទ / 电话</a>
+                        <a href="tel:+855979889321" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md"><i class="fa-solid fa-phone"></i> <span data-i18n="modal.contact.call_button">ទូរស័ព្ទ / 电话</span></a>
                         <a href="https://wa.me/855979889321" target="_blank" rel="noopener" class="px-4 py-2.5 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
                     </div>
                 </div>
@@ -1005,15 +1022,14 @@
                     <div class="absolute -bottom-12 -left-8 w-44 h-44 bg-emerald-300/15 rounded-full blur-2xl"></div>
                     <div class="relative h-full min-h-[260px] flex flex-col items-center justify-center text-center text-slate-500 px-8 py-8">
                         <i class="fa-solid fa-map-location-dot text-4xl mb-3 opacity-60 group-hover:text-amber-500 group-hover:scale-110 transition-all"></i>
-                        <p class="font-black text-sm text-slate-700">ផែនទីឃ្លាំងស្តុក / 仓库位置图</p>
-                        <p class="text-xs mt-1 text-slate-500">Phnom Penh Warehouse · 金边仓库</p>
+                        <p class="font-black text-sm text-slate-700" data-i18n="contact.map_title">ផែនទីឃ្លាំងស្តុក / 仓库位置图</p>
+                        <p class="text-xs mt-1 text-slate-500" data-i18n="contact.map_caption">Phnom Penh Warehouse · 金边仓库</p>
                         <span class="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white border-2 border-slate-200 text-slate-700 font-bold text-sm shadow-sm group-hover:border-amber-400 group-hover:text-amber-600 group-hover:shadow-md transition-all">
                             <i class="fa-brands fa-google"></i>
-                            មើលក្នុង Google Maps
-                            <span class="text-slate-400">/ 在 Google 地图打开</span>
+                            <span data-i18n="contact.btn.gmaps">មើលក្នុង Google Maps</span>
                             <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
                         </span>
-                        <p class="text-[10px] mt-3 text-slate-400">មួយចុចនឹងនាំទៅ Google Maps — 点击新窗口打开 Google 地图</p>
+                        <p class="text-[10px] mt-3 text-slate-400" data-i18n="contact.btn.gmaps.hint">មួយចុចនឹងនាំទៅ Google Maps — 点击新窗口打开 Google 地图</p>
                     </div>
                 </a>
             </div>
@@ -1024,8 +1040,8 @@
     <section id="articles" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 scroll-mt-24">
         <div class="flex items-center gap-3 mb-6">
             <div class="p-2 bg-amber-500/10 rounded-lg"><i class="fa-solid fa-newspaper text-amber-400"></i></div>
-            <h2 class="text-xl font-black text-slate-900">文章资讯</h2>
-            <span class="text-xs text-slate-500 ml-1">Articles &amp; Knowledge Base</span>
+            <h2 class="text-xl font-black text-slate-900" data-i18n="articles.section.heading_index">文章资讯</h2>
+            <span class="text-xs text-slate-500 ml-1" data-i18n="articles.section.tag_index">Articles & Knowledge Base</span>
         </div>
 
         <!-- Category Filter Pills -->
@@ -1041,7 +1057,7 @@
         <!-- Search Bar -->
         <div class="mb-6 relative">
             <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
-            <input type="text" id="article-search" placeholder="搜索文章标题或摘要..." class="w-full bg-white/80 border border-2 border-slate-300 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-500 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none transition-all">
+            <input type="text" id="article-search" data-i18n-ph="articles.section.search_placeholder_index" placeholder="搜索文章标题或摘要..." class="w-full bg-white/80 border border-2 border-slate-300 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-500 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none transition-all">
         </div>
 
         <!-- Article Grid -->
@@ -1049,7 +1065,7 @@
             <div class="col-span-3 text-center py-12">
                 <div class="inline-flex items-center gap-3 text-slate-500">
                     <i class="fa-solid fa-circle-notch fa-spin text-amber-500"></i>
-                    <span>加载中...</span>
+                    <span data-i18n="articles.section.loading_index">加载中...</span>
                 </div>
             </div>
         </div>
@@ -1057,22 +1073,22 @@
         <!-- No Results State -->
         <div id="articles-empty" class="hidden text-center py-16">
             <div class="p-4 bg-slate-100 rounded-full w-fit mx-auto mb-4"><i class="fa-solid fa-newspaper text-2xl text-slate-600"></i></div>
-            <h3 class="text-base font-semibold text-slate-700 mb-1">没有找到文章</h3>
-            <p class="text-slate-500 text-sm">该分类下暂无文章或搜索无结果</p>
+            <h3 class="text-base font-semibold text-slate-700 mb-1" data-i18n="articles.section.empty_title">没有找到文章</h3>
+            <p class="text-slate-500 text-sm" data-i18n="articles.section.empty_subtitle">该分类下暂无文章或搜索无结果</p>
         </div>
                         <!-- View All Articles CTA -->
                         <div class="text-center mt-8" id="articles-cta">
                             <a href="articles.html" class="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl shadow-lg transition-all transform hover:scale-[1.03] active:scale-95">
-                                查看全部文章 <i class="fa-solid fa-arrow-right"></i>
+                                <span data-i18n="articles.section.view_all">查看全部文章</span> <i class="fa-solid fa-arrow-right"></i>
                             </a>
                         </div>
     </section>
 
     <footer class="mt-16 border-t border-slate-200 py-8 text-center text-xs text-slate-500">
-        <div>© 2026 B·W CABLE Cambodia. 独立电线资讯平台.</div>
+        <div><span data-i18n="footer.copyright">© 2026 B·W CABLE Cambodia. 独立经营</span> — <span data-i18n="footer.tagline">独立电线资讯平台</span>.</div>
         <div class="mt-1.5 text-[11px] text-slate-400">
-            Hero 背景 / Hero background:
-            <a href="https://www.vecteezy.com/free-photos/phnom-penh" target="_blank" rel="noopener sponsored" class="text-amber-600 hover:underline">Vecteezy 提供的金边图片</a>
+            <span data-i18n="footer.hero_credit_label">Hero 背景 / Hero background:</span>
+            <a href="https://www.vecteezy.com/free-photos/phnom-penh" target="_blank" rel="noopener sponsored" class="text-amber-600 hover:underline" data-i18n="hero.credit.link">Vecteezy 提供的金边图片</a>
         </div>
     </footer>
 
@@ -1098,14 +1114,15 @@
                 <span id="article-modal-readtime"><i class="fa-regular fa-clock mr-1"></i></span>
             </div>
             <!-- Content Body -->
+            <!-- Content Body -->
             <div id="article-modal-body" class="article-content p-6 md:p-8 overflow-y-auto leading-relaxed space-y-4 text-slate-700 text-sm md:text-base border-t border-slate-200/40">
                 <div class="text-center py-12 text-slate-500">
-                    <i class="fa-solid fa-circle-notch fa-spin text-amber-500 text-3xl mb-3"></i><br>正在加载文章...
+                    <i class="fa-solid fa-circle-notch fa-spin text-amber-500 text-3xl mb-3"></i><br><span data-i18n="modal.article.loading">正在加载文章...</span>
                 </div>
             </div>
             <!-- Footer -->
             <div class="p-4 border-t border-slate-200 bg-slate-50 flex justify-end shrink-0">
-                <button onclick="closeArticleModal()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm rounded-xl transition-all duration-300 min-h-[44px]">关闭</button>
+                <button onclick="closeArticleModal()" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm rounded-xl transition-all duration-300 min-h-[44px]"><span data-i18n="modal.article.close">关闭</span></button>
             </div>
         </div>
     </div>
@@ -1119,19 +1136,19 @@
             <div class="p-5 sm:p-6 bg-gradient-to-br from-amber-50 to-white border-b border-slate-200">
                 <div class="flex items-center gap-3">
                     <div class="p-2 bg-amber-500/10 rounded-lg"><i class="fa-solid fa-location-dot text-amber-400"></i></div>
-                    <h2 class="text-lg sm:text-xl font-black text-slate-900">ទំនាក់ទំនង</h2>
-                    <span class="text-xs text-slate-500 ml-1">联系我们 · Contact</span>
+                    <h2 class="text-lg sm:text-xl font-black text-slate-900" data-i18n="modal.contact.title">ទំនាក់ទំនង</h2>
+                    <span class="text-xs text-slate-500 ml-1" data-i18n="modal.contact.subtitle">联系我们 · Contact</span>
                 </div>
             </div>
             <div class="p-5 sm:p-6">
                 <ul class="space-y-3 text-sm text-slate-700 font-medium leading-relaxed">
-                    <li class="flex items-start gap-3"><i class="fa-solid fa-location-dot text-amber-500 w-5 mt-0.5"></i><span><strong>អាសយដ្ឋាន / 地址:</strong><br>ឃ្លាំងស្តុកភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា — 金边仓库, 柬埔寨<br><a href="https://maps.app.goo.gl/Cuz5kVpj9SdNQPrA7" target="_blank" rel="noopener" class="text-amber-600 font-bold hover:underline">查看 Google 地图位置 →</a></span></li>
-                    <li class="flex items-start gap-3"><i class="fa-solid fa-phone text-amber-500 w-5 mt-0.5"></i><span><strong>ទូរស័ព្ទ / 电话:</strong><br><a href="tel:+855979889321" class="text-amber-600 font-bold hover:underline">+855 97 988 9321</a></span></li>
-                    <li class="flex items-start gap-3"><i class="fa-solid fa-clock w-5 mt-0.5" style="color:#f59e0b"></i><span><strong>ម៉ោងធ្វើការ / 营业:</strong><br>ចន្លោះ ០៨៖០០−១៧៖៣០ (ច័ន្ទ-សៅរ៍)<br>周一至周六 07:00 – 18:00</span></li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-location-dot text-amber-500 w-5 mt-0.5"></i><span><strong data-i18n="modal.contact.address_label">អាសយដ្ឋាន / 地址:</strong><br><span data-i18n="modal.contact.address_value">ឃ្លាំងស្តុកភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា — 金边仓库, 柬埔寨</span><br><a href="https://maps.app.goo.gl/Cuz5kVpj9SdNQPrA7" target="_blank" rel="noopener" class="text-amber-600 font-bold hover:underline" data-i18n="modal.contact.view_map">查看 Google 地图位置 →</a></span></li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-phone text-amber-500 w-5 mt-0.5"></i><span><strong data-i18n="modal.contact.phone_label">ទូរស័ព្ទ / 电话:</strong><br><a href="tel:+855979889321" class="text-amber-600 font-bold hover:underline">+855 97 988 9321</a></span></li>
+                    <li class="flex items-start gap-3"><i class="fa-solid fa-clock w-5 mt-0.5" style="color:#f59e0b"></i><span><strong data-i18n="modal.contact.hours_label">ម៉ោងធ្វើការ / 营业:</strong><br><span data-i18n="contact.hours_km">ចន្លោះ ០៨៖០០−១៧៖៣០ (ច័ន្ទ-សៅរ៍)</span> <span data-i18n="contact.hours_zh">周一至周六 07:00 – 18:00</span></span></li>
                 </ul>
                 <div class="flex flex-wrap gap-3 mt-6">
                     <a href="tg://resolve?phone=855979889321" target="_blank" rel="noopener" class="px-4 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md"><i class="fa-brands fa-telegram"></i> Telegram</a>
-                    <a href="tel:+855979889321" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md"><i class="fa-solid fa-phone"></i> ទូរស័ព្ទ / 电话</a>
+                    <a href="tel:+855979889321" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md"><i class="fa-solid fa-phone"></i> <span data-i18n="modal.contact.call_button">ទូរស័ព្ទ / 电话</span></a>
                     <a href="https://wa.me/855979889321" target="_blank" rel="noopener" class="px-4 py-2.5 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl text-sm transition-all flex items-center gap-2 shadow-md"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
                 </div>
             </div>
