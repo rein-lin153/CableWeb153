@@ -1079,7 +1079,7 @@ body {
 
   <!-- ==================== 联系方式悬浮球 ==================== -->
   <div class="contact-fab" id="contact-fab">
-    <div class="contact-fab__panel" role="menu" aria-label="联系我们">
+    <div class="contact-fab__panel" role="menu" id="contact-fab-panel" data-i18n-aria="nav.fab.panel_label" aria-label="ទំនាក់ទំនង">
       <a class="contact-fab__item" href="tg://resolve?phone=855979889321" target="_blank" rel="noopener">
         <i class="fa-brands fa-telegram contact-fab__icon--tg"></i> Telegram
       </a>
@@ -1087,11 +1087,11 @@ body {
         <i class="fa-brands fa-whatsapp contact-fab__icon--wa"></i> WhatsApp
       </a>
       <a class="contact-fab__item" href="tel:+855979889321">
-        <i class="fa-solid fa-phone contact-fab__icon--call"></i> <span data-i18n="contact.fab.phone">电话</span>
+        <i class="fa-solid fa-phone contact-fab__icon--call"></i> <span data-i18n="nav.fab.phone">ទូរស័ព្ទ</span>
       </a>
     </div>
-    <button type="button" class="contact-fab__ball" id="contact-fab-btn" aria-label="联系我们 / Contact" aria-expanded="false" aria-controls="contact-fab-panel">
-      <span class="contact-fab__ball-label" data-i18n="contact.fab.label">联系我们</span>
+    <button type="button" class="contact-fab__ball" id="contact-fab-btn" data-i18n-aria="nav.fab.label" aria-label="ទំនាក់ទំនង" aria-expanded="false" aria-controls="contact-fab-panel">
+      <span class="contact-fab__ball-label" data-i18n="nav.fab.label">ទំនាក់ទំនង</span>
       <i class="fa-solid fa-phone"></i>
       <span class="contact-fab__badge"></span>
     </button>

@@ -394,6 +394,7 @@
             "hero.brand": "B·W CABLE",
             "hero.btn_calc": "进入工程计算器",
             "hero.credit.link": "Vecteezy 提供的金边图片",
+            "hero.image_alt": "金边夜景天际线",
             "hero.description": "为柬埔寨住宅、车辆及工业项目提供高品质电线电缆的制造、批发与配送。",
             "hero.subtitle": "电线电缆 · 工业与建筑电气耗材专业制造",
             "hero.title": "电线电缆与商业电气耗材",
@@ -488,6 +489,7 @@
             "nav.contact_us": "联系我们",
             "nav.fab.label": "联系我们",
             "nav.fab.phone": "电话",
+            "nav.fab.panel_label": "联系我们",
             "nav.location": "金边",
             "nav.language_label": "语言 / Language：",
             "nav.menu": "菜单",
@@ -864,6 +866,7 @@
             "hero.brand": "B·W CABLE",
             "hero.btn_calc": "ចូលគណនាករ",
             "hero.credit.link": "រូបភាពភ្នំពេញដោយ Vecteezy",
+            "hero.image_alt": "ទិដ្ឋភាពពេលយប់នៃទីក្រុងភ្នំពេញ",
             "hero.description": "ផលិត នាំ និងចែក ខ្សែភ្លើងគុណភាពខ្ពស់សម្រាប់គម្រោងផ្ទះ ឡាន និងរោងចក្រ ក្នុងព្រះរាជាណាចក្រកម្ពុជា។",
             "hero.subtitle": "ខ្សែភ្លើង និងសម្ភារៈអគ្គិសនីផ្ទាល់ដៃសម្រាប់ឧស្សាហកម្ម និងសំណង់",
             "hero.title": "ខ្សែភ្លើង និងសម្ភារៈអគ្គិសនីពាណិជ្ជកម្ម",
@@ -958,6 +961,7 @@
             "nav.contact_us": "ទំនាក់ទំនង",
             "nav.fab.label": "ទំនាក់ទំនង",
             "nav.fab.phone": "ទូរស័ព្ទ",
+            "nav.fab.panel_label": "ទំនាក់ទំនង",
             "nav.location": "ភ្នំពេញ",
             "nav.language_label": "ភាសា / Language：",
             "nav.menu": "ម៉ឺនុយ",
@@ -1334,6 +1338,7 @@
             "hero.brand": "B·W CABLE",
             "hero.btn_calc": "Enter Calculators",
             "hero.credit.link": "Phnom Penh photos provided by Vecteezy",
+            "hero.image_alt": "Phnom Penh evening skyline",
             "hero.description": "Manufacturing, wholesale and distribution of high-quality wires and cables for residential, vehicle and industrial projects in the Kingdom of Cambodia.",
             "hero.subtitle": "Electrical Wires & Cables · Professional Manufacturing for Industrial & Construction",
             "hero.title": "Wires, Cables & Commercial Electrical Materials",
@@ -1428,6 +1433,7 @@
             "nav.contact_us": "Contact Us",
             "nav.fab.label": "Contact",
             "nav.fab.phone": "Phone",
+            "nav.fab.panel_label": "Contact us",
             "nav.location": "Phnom Penh",
             "nav.language_label": "Language：",
             "nav.menu": "Menu",
@@ -1514,6 +1520,20 @@
             var k = nodes[i].getAttribute('data-i18n-title');
             var v = t(k, null);
             if (v !== null && v !== k) nodes[i].setAttribute('title', v);
+        }
+        // data-i18n-aria → aria-label attribute (本地化无障碍标签)
+        nodes = document.querySelectorAll('[data-i18n-aria]');
+        for (var i = 0; i < nodes.length; i++) {
+            var k = nodes[i].getAttribute('data-i18n-aria');
+            var v = t(k, null);
+            if (v !== null && v !== k) nodes[i].setAttribute('aria-label', v);
+        }
+        // data-i18n-alt → alt attribute (本地化图片/区域替代文本)
+        nodes = document.querySelectorAll('[data-i18n-alt]');
+        for (var i = 0; i < nodes.length; i++) {
+            var k = nodes[i].getAttribute('data-i18n-alt');
+            var v = t(k, null);
+            if (v !== null && v !== k) nodes[i].setAttribute('alt', v);
         }
         // 同步 document.title
         syncTitle();

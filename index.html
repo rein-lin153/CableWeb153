@@ -330,7 +330,8 @@
     <section class="relative overflow-hidden hero-bg text-white">
         <!-- 背景照片:金边夜景 (Vecteezy,见页脚署名) — 压缩为 WebP (240KB) 以保证首屏加载 -->
         <img src="assets/images/hero-phnom-penh-evening.webp"
-             alt="金边夜景 / Phnom Penh evening skyline"
+             data-i18n-alt="hero.image_alt"
+             alt="ទិដ្ឋភាពពេលយប់នៃទីក្រុងភ្នំពេញ"
              class="hero-img" loading="eager" decoding="async" />
         <div class="hero-mask"></div>
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center fade-up">
@@ -425,10 +426,10 @@
             const t = (key, fb) => window.__I18N__ ? window.__I18N__.t(key, fb) : (fb || key);
             // 内联精简分类数据 —— 仅在 /api 与 localStorage 都不可用的最终 fallback
             const INLINE_CATEGORIES = [
-                {id: 'household', num: '01', kh: 'ខ្សែសាងសង់គ្រួសារ', zh: '家装布电线', en: 'Household Wiring', color: 'amber', icon: 'fa-house-chimney', img: 'assets/images/products/household-wiring.jpg', models: ['BVR','BVVB','RVV','RVS'], desc: '住宅明装/穿管布线', order: 1},
-                {id: 'power', num: '02', kh: 'ខ្សែភ្លើងស្នូង', zh: '电力主干电缆', en: 'Power Feeder Cable', color: 'rose', icon: 'fa-tower-broadcast', img: 'assets/images/products/power-cable.jpg', models: ['YJV','YJLV'], desc: '工业/建筑电力主干', order: 2},
-                {id: 'welding', num: '03', kh: 'ខ្សែម៉ាស៊ីនប្រសិនស្នា', zh: '电焊机专用电缆', en: 'Welding Cable', color: 'slate', icon: 'fa-fire-flame-curved', img: 'assets/images/products/welding-cable.jpg', models: ['YH'], desc: '电焊机二次回路', order: 3},
-                {id: 'flexible', num: '04', kh: 'ខ្សែទន់ និងខ្សែឆ្កាង', zh: '设备软线与花线', en: 'Flexible & Cord', color: 'emerald', icon: 'fa-plug', img: 'assets/images/products/flexible.jpg', models: ['RVV','RVS','VAF'], desc: '家电/灯具/弱电连接', order: 4}
+                {id: 'household', num: '01', kh: 'ខ្សែសាងសង់គ្រួសារ', zh: '家装布电线', en: 'Household Wiring', color: 'amber', icon: 'fa-house-chimney', img: 'assets/images/products/household-wiring.jpg', models: ['BVR','BVVB','RVV','RVS'], desc: '住宅明装/穿管布线', desc_km: 'ខ្សែសំណង់ផ្ទះ / ឆ្លងកាត់បំពង់', desc_en: 'Residential wiring / conduit', order: 1},
+                {id: 'power', num: '02', kh: 'ខ្សែភ្លើងស្នូង', zh: '电力主干电缆', en: 'Power Feeder Cable', color: 'rose', icon: 'fa-tower-broadcast', img: 'assets/images/products/power-cable.jpg', models: ['YJV','YJLV'], desc: '工业/建筑电力主干', desc_km: 'ខ្សែភ្លើងស្នូងឧស្សាហកម្ម / សំណង់', desc_en: 'Industrial / building power feeder', order: 2},
+                {id: 'welding', num: '03', kh: 'ខ្សែម៉ាស៊ីនប្រសិនស្នា', zh: '电焊机专用电缆', en: 'Welding Cable', color: 'slate', icon: 'fa-fire-flame-curved', img: 'assets/images/products/welding-cable.jpg', models: ['YH'], desc: '电焊机二次回路', desc_km: 'ខ្សែបរិវត្តន៍ទីពីរម៉ាស៊ីនប្រសិន', desc_en: 'Welding machine secondary loop', order: 3},
+                {id: 'flexible', num: '04', kh: 'ខ្សែទន់ និងខ្សែឆ្កាង', zh: '设备软线与花线', en: 'Flexible & Cord', color: 'emerald', icon: 'fa-plug', img: 'assets/images/products/flexible.jpg', models: ['RVV','RVS','VAF'], desc: '家电/灯具/弱电连接', desc_km: 'ខ្សែឧបករណ៍ / ពន្លឺ / សញ្ញាខ្សោយ', desc_en: 'Appliance / lighting / low-voltage signal', order: 4}
             ];
 
             // 根据当前语言返回分类显示名（cat 来源可能是 INLINE_CATEGORIES 的 kh/zh/en 字段，
@@ -438,6 +439,15 @@
                 if (l === 'km') return cat.kh || cat.title || cat.label || '';
                 if (l === 'en') return cat.en || cat.label || cat.title || cat.kh || '';
                 return cat.zh || cat.label || cat.title || cat.kh || '';
+            }
+
+            // 分类描述本地化：km→desc_km(title 回退), en→desc_en, 其它→desc
+            // 同时支持 INLINE_CATEGORIES 的 zh 描述字段。
+            function catDesc(cat) {
+                const l = window.__I18N__ ? window.__I18N__.lang : 'km';
+                if (l === 'km') return cat.desc_km || cat.kh_desc || cat.desc || '';
+                if (l === 'en') return cat.desc_en || cat.en_desc || cat.desc || '';
+                return cat.desc || '';
             }
 
             // 与 products.html 一致的 localStorage 键名；products.html 的 applyData() 会把权威数据写入这两个键
@@ -465,6 +475,9 @@
                         color: c.color, icon: c.icon, img: c.img,
                         models: models && models.length ? models.slice(0, 8) : (c.models || []),
                         desc: c.desc || '',
+                        // 多语言描述透传（categories.json 新增字段）
+                        desc_km: c.desc_km || '',
+                        desc_en: c.desc_en || '',
                         order: c.order || (merged.length)
                     });
                 });
@@ -498,7 +511,7 @@
                         const imgLayer = (showImages && cat.img)
                             ? `<img src="${cat.img}" alt="${cat.zh}" class="h-24 w-full object-cover opacity-90 relative" loading="lazy" onerror="this.remove(); this.parentElement.querySelector('.cat-icon-fallback')?.classList.remove('hidden')">`
                             : '';
-                        html += `<div class="cat-slide"><a href="products.html#${cat.id}" class="group block bg-white border-2 ${c.pill} rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 min-h-[140px] flex flex-col"><div class="h-24 bg-gradient-to-br ${c.bg} relative flex items-center justify-center">${iconFallback}${imgLayer}<span class="absolute top-2 left-2 px-2 py-1 bg-white/85 backdrop-blur ${c.badge} text-xs font-black rounded-full border">${cat.num} · ${catName(cat)}</span></div><div class="p-3 flex-1 flex flex-col"><h3 class="font-black text-slate-900 text-sm mb-1">${catName(cat)}</h3><p class="text-[11px] text-slate-500 mb-2 font-semibold">${cat.zh || cat.label || ''} · ${cat.en || cat.label || ''}</p><div class="flex flex-wrap gap-1 mb-2">${cat.models.map(m => `<span class="px-1.5 py-0.5 ${c.pill} text-[10px] font-black rounded">${m}</span>`).join('')}</div><div class="text-[10px] text-slate-500 mb-2 line-clamp-1">${cat.desc}</div><span class="mt-auto inline-flex items-center gap-1.5 text-sm font-bold ${c.accent} hover:underline self-start"><span data-i18n="marquee.view_category">${t('marquee.view_category', '查看该分类')}</span> <i class="fa-solid fa-arrow-right text-xs"></i></span></div></a></div>`;
+                        html += `<div class="cat-slide"><a href="products.html#${cat.id}" class="group block bg-white border-2 ${c.pill} rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 min-h-[140px] flex flex-col"><div class="h-24 bg-gradient-to-br ${c.bg} relative flex items-center justify-center">${iconFallback}${imgLayer}<span class="absolute top-2 left-2 px-2 py-1 bg-white/85 backdrop-blur ${c.badge} text-xs font-black rounded-full border">${cat.num} · ${catName(cat)}</span></div><div class="p-3 flex-1 flex flex-col"><h3 class="font-black text-slate-900 text-sm mb-1">${catName(cat)}</h3><p class="text-[11px] text-slate-500 mb-2 font-semibold">${cat.zh || cat.label || ''} · ${cat.en || cat.label || ''}</p><div class="flex flex-wrap gap-1 mb-2">${cat.models.map(m => `<span class="px-1.5 py-0.5 ${c.pill} text-[10px] font-black rounded">${m}</span>`).join('')}</div><div class="text-[10px] text-slate-500 mb-2 line-clamp-1">${catDesc(cat)}</div><span class="mt-auto inline-flex items-center gap-1.5 text-sm font-bold ${c.accent} hover:underline self-start"><span data-i18n="marquee.view_category">${t('marquee.view_category', '查看该分类')}</span> <i class="fa-solid fa-arrow-right text-xs"></i></span></div></a></div>`;
                     });
                 }
                 track.innerHTML = html;
@@ -1471,7 +1484,7 @@ renderArticles();
 
     <!-- ==================== 联系方式悬浮球 ==================== -->
     <div class="contact-fab" id="contact-fab">
-        <div class="contact-fab__panel" role="menu" aria-label="联系我们">
+        <div class="contact-fab__panel" role="menu" id="contact-fab-panel" data-i18n-aria="nav.fab.panel_label" aria-label="ទំនាក់ទំនង">
             <a class="contact-fab__item" href="tg://resolve?phone=855979889321" target="_blank" rel="noopener">
                 <i class="fa-brands fa-telegram contact-fab__icon--tg"></i> Telegram
             </a>
@@ -1479,11 +1492,11 @@ renderArticles();
                 <i class="fa-brands fa-whatsapp contact-fab__icon--wa"></i> WhatsApp
             </a>
             <a class="contact-fab__item" href="tel:+855979889321">
-                <i class="fa-solid fa-phone contact-fab__icon--call"></i> <span data-i18n="contact.fab.phone">ទូរស័ព្ទ / 电话</span>
+                <i class="fa-solid fa-phone contact-fab__icon--call"></i> <span data-i18n="nav.fab.phone">ទូរស័ព្ទ</span>
             </a>
         </div>
-        <button type="button" class="contact-fab__ball" id="contact-fab-btn" aria-label="联系我们" aria-expanded="false" aria-controls="contact-fab-panel">
-            <span class="contact-fab__ball-label" data-i18n="contact.fab.label">联系我们</span>
+        <button type="button" class="contact-fab__ball" id="contact-fab-btn" data-i18n-aria="nav.fab.label" aria-label="ទំនាក់ទំនង" aria-expanded="false" aria-controls="contact-fab-panel">
+            <span class="contact-fab__ball-label" data-i18n="nav.fab.label">ទំនាក់ទំនង</span>
             <i class="fa-solid fa-phone"></i>
             <span class="contact-fab__badge"></span>
         </button>

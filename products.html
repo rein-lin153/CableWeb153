@@ -369,8 +369,8 @@
         </div>
       </div>
       <h1 class="text-2xl sm:text-4xl font-black tracking-tight drop-shadow-lg" data-i18n="products.section.heading">ប្រភេទផលិតផល</h1>
-      <p class="text-sm sm:text-base text-slate-200 mt-2 font-medium" data-i18n="marquee.subheading">产品分类 / Product Categories</p>
-      <p class="text-xs text-slate-300 mt-1 font-medium" data-i18n="products.section.subheading">家装布线 / 工程电力主干 / 电焊专用 / 设备软线与花线</p>
+      <p class="text-sm sm:text-base text-slate-200 mt-2 font-medium" data-i18n="marquee.subheading">ប្រភេទផលិតផល</p>
+      <p class="text-xs text-slate-300 mt-1 font-medium" data-i18n="products.section.subheading">សៀវភៅបញ្ជាក់ផលិតផល</p>
     </div>
   </section>
 
@@ -381,7 +381,7 @@
           <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
           <input id="product-search" type="text"
             data-i18n-ph="products.section.search_placeholder"
-            placeholder="搜索型号、规格或产品名称 / Search model..."
+            placeholder="ស្វែងរកម៉ូដែល..."
             class="w-full bg-slate-50 border-2 border-slate-300 rounded-xl pl-10 pr-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-500 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none transition-all">
         </div>
         <div class="flex flex-wrap gap-2" id="category-filters">
@@ -622,7 +622,7 @@
       var html = '<button class="filter-pill active px-4 py-2 rounded-xl text-sm font-semibold bg-amber-500 text-slate-950 shadow-lg" data-cat="all">' + __I18N__.t('products.section.filter_all') + '</button>';
       for (var i = 0; i < CATEGORIES.length; i++) {
         var c = CATEGORIES[i];
-        html += '<button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-200 text-slate-700 font-bold hover:bg-slate-300" data-cat="' + esc(c.id) + '">' + esc(c.label) + '</button>';
+        html += '<button class="filter-pill px-4 py-2 rounded-xl text-sm font-semibold bg-slate-200 text-slate-700 font-bold hover:bg-slate-300" data-cat="' + esc(c.id) + '">' + esc(L(c, 'label')) + '</button>';
       }
       box.innerHTML = html;
     }
@@ -672,7 +672,7 @@
 
     function esc(s) {
       if (s == null) return '';
-      return String(s).replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
     function nl(s) { return s ? esc(s).replace(/\n/g, '<br>') : ''; }
 
@@ -722,7 +722,7 @@
         var out = [];
         for (var pi = 0; pi < cat.products.length; pi++) {
           var p = cat.products[pi];
-          var text = p.name + ' ' + p.label + ' ' + cat.label + ' ' + cat.desc;
+          var text = p.name + ' ' + p.label + ' ' + (p.label_km || '') + ' ' + (p.label_en || '') + ' ' + cat.label + ' ' + cat.title + ' ' + cat.desc + ' ' + (cat.desc_km || '') + ' ' + (cat.desc_en || '') + ' ' + (p.usage || '') + ' ' + (p.usage_km || '') + ' ' + (p.usage_en || '');
           var qOk = !q || matchesQuery(text, q);
           var catOk = activeCat === 'all' || cat.id === activeCat;
           if (qOk && catOk) out.push(p);
@@ -732,9 +732,9 @@
         var buttons = '';
         for (var bi = 0; bi < out.length; bi++) {
           var p = out[bi];
-          buttons += '<button data-cat="' + cat.id + '" data-pid="' + p.id + '" type="button" class="w-full text-left border-2 ' + c.outline + ' rounded-xl p-3 flex gap-3 items-center bg-white hover:bg-slate-50 transition group"><div class="h-20 w-24 rounded-lg bg-slate-200 overflow-hidden shrink-0 border border-slate-200 pointer-events-none"><img src="' + p.img + '" alt="" class="w-full h-full object-cover" loading="lazy" draggable="false"></div><div class="min-w-0"><div class="text-xs font-black ' + c.accent + ' truncate group-hover:underline">' + esc(p.name) + ' <span class="font-semibold text-slate-600">/ ' + esc(p.label) + '</span></div><div class="text-[11px] text-slate-600 mt-1 line-clamp-2">' + nl(p.usage) + '</div><span class="inline-block mt-2 text-[10px] font-black text-slate-900 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded">' + __I18N__.t('products.section.view_details') + '</span></div></button>';
+          buttons += '<button data-cat="' + cat.id + '" data-pid="' + p.id + '" type="button" class="w-full text-left border-2 ' + c.outline + ' rounded-xl p-3 flex gap-3 items-center bg-white hover:bg-slate-50 transition group"><div class="h-20 w-24 rounded-lg bg-slate-200 overflow-hidden shrink-0 border border-slate-200 pointer-events-none"><img src="' + p.img + '" alt="" class="w-full h-full object-cover" loading="lazy" draggable="false"></div><div class="min-w-0"><div class="text-xs font-black ' + c.accent + ' truncate group-hover:underline">' + esc(p.name) + ' <span class="font-semibold text-slate-600">/ ' + esc(L(p, 'label')) + '</span></div><div class="text-[11px] text-slate-600 mt-1 line-clamp-2">' + nl(L(p, 'usage')) + '</div><span class="inline-block mt-2 text-[10px] font-black text-slate-900 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded">' + __I18N__.t('products.section.view_details') + '</span></div></button>';
         }
-        html += '<article class="card-hover bg-white border-2 ' + c.outline + ' rounded-2xl shadow-md overflow-hidden flex flex-col ' + c.hover + '"><div class="h-36 bg-gradient-to-br ' + c.bg + ' relative"><div class="absolute inset-0 flex items-center justify-center"><i class="fa-solid ' + cat.icon + ' text-5xl opacity-60"></i></div><span class="absolute top-3 left-3 px-2.5 py-1 bg-white/85 backdrop-blur text-slate-900 text-xs font-black rounded-full border ' + c.outline + '">' + esc(cat.label) + '</span><span class="absolute top-3 right-3 px-2 py-1 bg-slate-900/70 backdrop-blur text-white text-[10px] font-black rounded-full">' + out.length + ' ' + __I18N__.t('products.section.spec_count') + '</span></div><div class="p-5 flex-1 flex flex-col"><h3 class="font-black text-slate-900 text-base mb-0.5">' + esc(cat.title) + '</h3><p class="text-xs text-slate-500 mb-3 font-semibold">' + esc(cat.label) + '</p><p class="text-sm text-slate-600 leading-relaxed mb-4">' + esc(cat.desc) + '</p><div class="mt-auto grid grid-cols-1 gap-3">' + buttons + '</div></div></article>';
+        html += '<article class="card-hover bg-white border-2 ' + c.outline + ' rounded-2xl shadow-md overflow-hidden flex flex-col ' + c.hover + '"><div class="h-36 bg-gradient-to-br ' + c.bg + ' relative"><div class="absolute inset-0 flex items-center justify-center"><i class="fa-solid ' + cat.icon + ' text-5xl opacity-60"></i></div><span class="absolute top-3 left-3 px-2.5 py-1 bg-white/85 backdrop-blur text-slate-900 text-xs font-black rounded-full border ' + c.outline + '">' + esc(L(cat, 'label')) + '</span><span class="absolute top-3 right-3 px-2 py-1 bg-slate-900/70 backdrop-blur text-white text-[10px] font-black rounded-full">' + out.length + ' ' + __I18N__.t('products.section.spec_count') + '</span></div><div class="p-5 flex-1 flex flex-col"><h3 class="font-black text-slate-900 text-base mb-0.5">' + esc(L(cat, 'title')) + '</h3><p class="text-xs text-slate-500 mb-3 font-semibold">' + esc(L(cat, 'label')) + '</p><p class="text-sm text-slate-600 leading-relaxed mb-4">' + esc(L(cat, 'desc')) + '</p><div class="mt-auto grid grid-cols-1 gap-3">' + buttons + '</div></div></article>';
       }
       grid.innerHTML = html;
       document.getElementById('search-empty').classList.toggle('hidden', anyVisible);
@@ -780,21 +780,21 @@
         if (missing.length) { console.error('missing modal fields', missing); }
         document.getElementById('product-modal-img').src = p.img;
         document.getElementById('product-modal-img').onerror = function () { this.style.opacity = '0.3'; };
-        document.getElementById('product-modal-badge').textContent = p.name + ' · ' + (cat ? cat.label : '');
-        document.getElementById('product-modal-category').textContent = cat ? cat.title : '';
+        document.getElementById('product-modal-badge').textContent = p.name + ' · ' + (cat ? L(cat, 'label') : '');
+        document.getElementById('product-modal-category').textContent = cat ? L(cat, 'title') : '';
         document.getElementById('product-modal-title').textContent = p.name;
-        document.getElementById('product-modal-sub').textContent = p.label;
-        document.getElementById('product-modal-tag').textContent = cat && cat.icon ? cat.icon + ' ' + cat.label : '';
+        document.getElementById('product-modal-sub').textContent = L(p, 'label');
+        document.getElementById('product-modal-tag').textContent = cat && cat.icon ? cat.icon + ' ' + L(cat, 'label') : '';
         vel.textContent = nl(p.voltage);
         document.getElementById('product-modal-conductor').textContent = nl(p.conductor);
         document.getElementById('product-modal-insulation').textContent = nl(p.insulation);
         document.getElementById('product-modal-sheath').textContent = nl(p.sheath);
         document.getElementById('product-modal-temp').textContent = nl(p.temp);
         document.getElementById('product-modal-install').textContent = nl(p.install);
-        document.getElementById('product-modal-usage').textContent = nl(p.usage);
-        document.getElementById('product-modal-features').textContent = nl(p.features);
+        document.getElementById('product-modal-usage').textContent = nl(L(p, 'usage'));
+        document.getElementById('product-modal-features').textContent = nl(L(p, 'features'));
         document.getElementById('product-modal-standard').textContent = nl(p.standard);
-        document.getElementById('product-modal-packaging').textContent = nl(p.packaging);
+        document.getElementById('product-modal-packaging').textContent = nl(L(p, 'packaging'));
         document.getElementById('product-modal-radius').textContent = nl(p.radius);
         // 新增区块：规格截面表 / 敷设 / 选型 / 派生型号 / 数据说明
         var tbl = document.getElementById('product-modal-specs-table');
@@ -839,23 +839,30 @@
           var w = document.getElementById(wrapId), el = document.getElementById(textId);
           if (val) { w.classList.remove('hidden'); el.innerHTML = nl(val); } else { w.classList.add('hidden'); }
         }
-        toggleTextBlock('product-modal-installation-wrap', 'product-modal-installation', p.installation);
-        toggleTextBlock('product-modal-selection-wrap', 'product-modal-selection', p.selection);
+        toggleTextBlock('product-modal-installation-wrap', 'product-modal-installation', L(p, 'installation'));
+        toggleTextBlock('product-modal-selection-wrap', 'product-modal-selection', L(p, 'selection'));
 
         var vWrap = document.getElementById('product-modal-variants-wrap');
         var vBox = document.getElementById('product-modal-variants');
         vBox.innerHTML = '';
-        if (p.variants && p.variants.length) {
+        // variants 为字符串数组；km/en 翻译写入 variants_km/variants_en（数组），按当前语言取本地化数组，回退到原 variants
+        var localizedVariants = (function () {
+          var lang = (window.__I18N__ && window.__I18N__.lang) || 'km';
+          if (lang === 'km' && p.variants_km) return p.variants_km;
+          if (lang === 'en' && p.variants_en) return p.variants_en;
+          return p.variants || [];
+        })();
+        if (localizedVariants && localizedVariants.length) {
           vWrap.classList.remove('hidden');
-          for (var vi = 0; vi < p.variants.length; vi++) {
+          for (var vi = 0; vi < localizedVariants.length; vi++) {
             var chip = document.createElement('span');
             chip.className = 'px-2 py-1 bg-slate-100 border border-slate-200 text-slate-700 text-[10px] font-bold rounded-md';
-            chip.textContent = p.variants[vi];
+            chip.textContent = localizedVariants[vi];
             vBox.appendChild(chip);
           }
         } else { vWrap.classList.add('hidden'); }
 
-        document.getElementById('product-modal-note').textContent = p.note || '';
+        document.getElementById('product-modal-note').textContent = L(p, 'note') || '';
         modal.classList.remove('hidden'); modal.classList.add('flex');
         requestAnimationFrame(function () { modal.classList.add('open'); });
         document.body.style.overflow = 'hidden';
@@ -870,17 +877,25 @@
     window.copySpec = function () {
       if (!currentProduct) return;
       var p = currentProduct;
-      var lines = [p.name + ' | ' + p.label, __I18N__.t('modal.product.voltage') + ': ' + p.voltage, __I18N__.t('modal.product.conductor') + ': ' + p.conductor, __I18N__.t('modal.product.insulation') + ': ' + p.insulation, __I18N__.t('modal.product.sheath') + ': ' + p.sheath, __I18N__.t('modal.product.temp') + ': ' + p.temp, __I18N__.t('modal.product.install') + ': ' + p.install, __I18N__.t('modal.product.radius') + ': ' + p.radius, __I18N__.t('modal.product.usage') + ': ' + p.usage, __I18N__.t('modal.product.features') + ': ' + p.features, __I18N__.t('modal.product.standard') + ': ' + p.standard, __I18N__.t('modal.product.packaging') + ': ' + p.packaging];
+      var lines = [p.name + ' | ' + L(p, 'label'), __I18N__.t('modal.product.voltage') + ': ' + p.voltage, __I18N__.t('modal.product.conductor') + ': ' + p.conductor, __I18N__.t('modal.product.insulation') + ': ' + p.insulation, __I18N__.t('modal.product.sheath') + ': ' + p.sheath, __I18N__.t('modal.product.temp') + ': ' + p.temp, __I18N__.t('modal.product.install') + ': ' + p.install, __I18N__.t('modal.product.radius') + ': ' + p.radius, __I18N__.t('modal.product.usage') + ': ' + L(p, 'usage'), __I18N__.t('modal.product.features') + ': ' + L(p, 'features'), __I18N__.t('modal.product.standard') + ': ' + p.standard, __I18N__.t('modal.product.packaging') + ': ' + L(p, 'packaging')];
       if (p.specs && p.specs.length) {
         lines.push('');
         lines.push(__I18N__.t('modal.product.spec_table') + ':');
         lines.push(__I18N__.t('modal.product.spec_header.spec') + ' | ' + __I18N__.t('modal.product.spec_header.conductor_structure') + ' | ' + __I18N__.t('modal.product.spec_header.outer_diameter') + ' | ' + __I18N__.t('modal.product.spec_header.reference_weight') + ' | ' + __I18N__.t('modal.product.spec_header.reference_ampacity'));
         for (var i = 0; i < p.specs.length; i++) { lines.push(p.specs[i].join(' | ')); }
       }
-      if (p.installation) lines.push('', __I18N__.t('modal.product.installation') + ': ' + p.installation);
-      if (p.selection) lines.push('', __I18N__.t('modal.product.selection') + ': ' + p.selection);
-      if (p.variants && p.variants.length) lines.push('', __I18N__.t('modal.product.variants') + ': ' + p.variants.join('、'));
-      if (p.note) lines.push('', p.note);
+      var instLoc = L(p, 'installation');
+      var selLoc = L(p, 'selection');
+      var varLoc = (function () {
+        var lang = (window.__I18N__ && window.__I18N__.lang) || 'km';
+        if (lang === 'km' && p.variants_km) return p.variants_km;
+        if (lang === 'en' && p.variants_en) return p.variants_en;
+        return p.variants || [];
+      })();
+      if (instLoc) lines.push('', __I18N__.t('modal.product.installation') + ': ' + instLoc);
+      if (selLoc) lines.push('', __I18N__.t('modal.product.selection') + ': ' + selLoc);
+      if (varLoc && varLoc.length) lines.push('', __I18N__.t('modal.product.variants') + ': ' + varLoc.join('、'));
+      if (L(p, 'note')) lines.push('', L(p, 'note'));
       var text = lines.join('\\n');
       if (navigator.clipboard) { navigator.clipboard.writeText(text).then(function () { alert(__I18N__.t('modal.product.copied')); }); }
     };
@@ -945,7 +960,7 @@
 
   <!-- ==================== 联系方式悬浮球 ==================== -->
   <div class="contact-fab" id="contact-fab">
-    <div class="contact-fab__panel" role="menu" aria-label="联系我们">
+    <div class="contact-fab__panel" role="menu" id="contact-fab-panel" data-i18n-aria="nav.fab.panel_label" aria-label="ទំនាក់ទំនង">
       <a class="contact-fab__item" href="tg://resolve?phone=855979889321" target="_blank" rel="noopener">
         <i class="fa-brands fa-telegram contact-fab__icon--tg"></i> Telegram
       </a>
@@ -956,7 +971,7 @@
         <i class="fa-solid fa-phone contact-fab__icon--call"></i> <span data-i18n="nav.fab.phone"></span>
       </a>
     </div>
-    <button type="button" class="contact-fab__ball" id="contact-fab-btn" aria-label="联系我们 / Contact" aria-expanded="false" aria-controls="contact-fab-panel">
+    <button type="button" class="contact-fab__ball" id="contact-fab-btn" data-i18n-aria="nav.fab.label" aria-label="ទំនាក់ទំនង" aria-expanded="false" aria-controls="contact-fab-panel">
       <span class="contact-fab__ball-label" data-i18n="nav.fab.label"></span>
       <i class="fa-solid fa-phone"></i>
       <span class="contact-fab__badge"></span>

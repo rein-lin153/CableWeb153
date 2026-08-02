@@ -305,7 +305,10 @@
     const CATEGORY_FIELD_DEFS = [
         { key: 'title', label: 'Khmer 标题 (title)', type: 'text',  placeholder: 'ខ្សែសាងសង់គ្រួសារ' },
         { key: 'label', label: '中文标签 (label)',   type: 'text',  placeholder: '家装布电线' },
-        { key: 'desc',  label: '描述 (desc)',        type: 'text',  placeholder: '住宅明装/穿管布线…' },
+        { key: 'label_en', label: '英文标签 (label_en)',   type: 'text',  placeholder: 'Household Wiring' },
+        { key: 'desc',  label: '中文描述 (desc)',   type: 'text',  placeholder: '住宅明装/穿管布线…' },
+        { key: 'desc_km', label: 'Khmer 描述 (desc_km)', type: 'text', placeholder: 'សំណង់ផ្ទះ/ឆ្លងកាត់បំពង់…' },
+        { key: 'desc_en', label: '英文描述 (desc_en)', type: 'text', placeholder: 'Residential surface / conduit wiring…' },
         { key: 'color', label: '颜色主题 (color)',  type: 'select', options: [
             { value: 'amber',   label: 'amber (家装)' },
             { value: 'rose',    label: 'rose (电力)' },
@@ -324,6 +327,8 @@
         { key: 'categoryId', label: '所属分类 (categoryId)', type: 'select-dynamic', source: 'categories', displayKey: 'label', valueKey: 'id' },
         { key: 'name',  label: '型号 (name)',  type: 'text', placeholder: 'BVR' },
         { key: 'label', label: '中文描述 (label)', type: 'text', placeholder: '铜芯PVC绝缘软布电线' },
+        { key: 'label_km', label: 'Khmer 描述 (label_km)', type: 'text', placeholder: 'ខ្សែកុងតាក់ទន់ PVC សម្រាប់សំណង់' },
+        { key: 'label_en', label: '英文描述 (label_en)', type: 'text', placeholder: 'Copper PVC insulated flexible wiring' },
         { key: 'voltage',    label: '电压 (voltage)',    type: 'text', placeholder: '450/750V' },
         { key: 'conductor',  label: '导体 (conductor)',  type: 'text', placeholder: '多股退火铜 / 0.75–70 mm²' },
         { key: 'insulation', label: '绝缘 (insulation)', type: 'text', placeholder: 'PVC' },
@@ -331,17 +336,29 @@
         { key: 'temp',       label: '工作温度 (temp)',   type: 'text', placeholder: '≤70℃' },
         { key: 'install',    label: '安装温度 (install)', type: 'text', placeholder: '≥0℃' },
         { key: 'radius',     label: '弯曲半径 (radius)', type: 'text', placeholder: 'D≤16mm ≥4D；D>16mm ≥6D' },
-        { key: 'usage',      label: '用途 (usage)',      type: 'textarea', placeholder: '固定布线…' },
-        { key: 'features',   label: '特性 (features)',   type: 'textarea', placeholder: '柔软易弯折…' },
+        { key: 'usage',      label: '中文用途 (usage)',      type: 'textarea', placeholder: '固定布线…' },
+        { key: 'usage_km',   label: 'Khmer 用途 (usage_km)',  type: 'textarea', placeholder: 'សំណង់ថេរដែលត្រូវការទន់…' },
+        { key: 'usage_en',   label: '英文用途 (usage_en)',    type: 'textarea', placeholder: 'Fixed wiring requiring flexibility…' },
+        { key: 'features',   label: '中文特性 (features)',   type: 'textarea', placeholder: '柔软易弯折…' },
+        { key: 'features_km', label: 'Khmer 特性 (features_km)', type: 'textarea', placeholder: 'ទន់ៗ ងាយ​ពត់…' },
+        { key: 'features_en', label: '英文特性 (features_en)',   type: 'textarea', placeholder: 'Flexible and easy to bend…' },
         { key: 'standard',   label: '标准 (standard)',   type: 'text', placeholder: 'GB/T 5023 / IEC 60502-1' },
-        { key: 'packaging',  label: '包装 (packaging)',  type: 'text', placeholder: '100m/200m 成卷' },
+        { key: 'packaging',  label: '中文包装 (packaging)',  type: 'text', placeholder: '100m/200m 成卷' },
+        { key: 'packaging_km', label: 'Khmer 包装 (packaging_km)', type: 'text', placeholder: '100m/200m ក្រឡ' },
+        { key: 'packaging_en', label: '英文包装 (packaging_en)', type: 'text', placeholder: '100m/200m per roll' },
         { key: 'img',        label: '主图 URL (img)',    type: 'url', placeholder: 'assets/images/products/bvr.jpg' },
         { key: 'img2',       label: '备用图 URL (img2)',  type: 'url', placeholder: '（可空）' },
-        { key: 'installation', label: '敷设与环境 (installation)', type: 'textarea', placeholder: '环境温度 30℃…' },
-        { key: 'selection',  label: '选型与施工 (selection)', type: 'textarea', placeholder: '家装照明回路可选 1.5 mm²…' },
-        { key: 'note',       label: '数据说明 (note)',    type: 'textarea', placeholder: '载流量参考值…' },
+        { key: 'installation', label: '中文敷设与环境 (installation)', type: 'textarea', placeholder: '环境温度 30℃…' },
+        { key: 'installation_km', label: 'Khmer 敷设与环境 (installation_km)', type: 'textarea', placeholder: 'សីតុណ្ឌភាពបរិស្ថាន 30℃…' },
+        { key: 'installation_en', label: '英文敷设与环境 (installation_en)', type: 'textarea', placeholder: 'Ambient 30°C reference…' },
+        { key: 'selection',  label: '中文选型与施工 (selection)', type: 'textarea', placeholder: '家装照明回路可选 1.5 mm²…' },
+        { key: 'selection_km', label: 'Khmer 选型 (selection_km)', type: 'textarea', placeholder: 'បន្ទប់ភ្លើង 1.5 mm²…' },
+        { key: 'selection_en', label: '英文选型 (selection_en)', type: 'textarea', placeholder: 'Lighting 1.5 mm²…' },
+        { key: 'note',       label: '中文数据说明 (note)',    type: 'textarea', placeholder: '载流量参考值…' },
+        { key: 'note_km', label: 'Khmer 数据说明 (note_km)', type: 'textarea', placeholder: 'តម្លៃឈ្មោះសមត្ថភាព…' },
+        { key: 'note_en', label: '英文数据说明 (note_en)', type: 'textarea', placeholder: 'Ampacity reference value…' },
         { key: 'order',      label: '排序 (order)',       type: 'number', placeholder: '1' }
-        // specs / variants / specsHeaders 在表单下方单独渲染
+        // specs / variants / specsHeaders 在表单下方单独渲染（暂不易同步多语言数组）
     ];
 
     // ---- Runtime state ----
