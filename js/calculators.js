@@ -311,16 +311,16 @@
         const s = num('xfmr-kva'); // kVA
         if (s === null) return setResult('transformer-result', needAll(['容量 kVA']));
         const root3 = Math.sqrt(3);
-        const v1 = 22;  // kV
-        const v2 = 0.4; // kV
+        const v1 = num('xfmr-v1') !== null ? num('xfmr-v1') : 22;  // kV
+        const v2 = num('xfmr-v2') !== null ? num('xfmr-v2') : 0.4; // kV
         const i1 = (s * 1000) / (root3 * v1 * 1000); // 一次侧 A
         const i2 = (s * 1000) / (root3 * v2 * 1000); // 二次侧 A
         setResult('transformer-result', `
             <div class="space-y-1.5">
                 <div>${t('calc.result.capacity','容量：')}${hl(s, ' kVA')}</div>
-                <div>${t('calc.result.primary_side','一次侧（22kV）：')}${hl(i1.toFixed(2), ' A')}</div>
-                <div>${t('calc.result.secondary_side','二次侧（0.4kV）：')}${hl(i2.toFixed(2), ' A')}</div>
-                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${t('calc.result.transformer_note','I = S / (√3 · V)；按柬埔寨电网 22kV/0.4kV 标称')}</div>
+                <div>${t('calc.result.primary_side','一次侧')}${hl(v1, ' kV')}：${hl(i1.toFixed(2), ' A')}</div>
+                <div>${t('calc.result.secondary_side','二次侧')}${hl(v2, ' kV')}：${hl(i2.toFixed(2), ' A')}</div>
+                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${t('calc.result.transformer_note','I = S / (√3 · V)；默认 22kV/0.4kV 为柬埔寨电网标称，可在上方修改电压等级')}</div>
             </div>
         `);
     }
