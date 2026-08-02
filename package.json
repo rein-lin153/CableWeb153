@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:seo": "node scripts/build-seo.mjs"
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,5 @@
     "url": "https://github.com/rein-lin153/CableWeb153/issues"
   },
   "homepage": "https://github.com/rein-lin153/CableWeb153#readme",
-  "dependencies": {
-    "marked": "^18.0.7"
-  }
+  "dependencies": {}
 }

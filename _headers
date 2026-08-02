@@ -1,0 +1,29 @@
+# B·W CABLE — Cloudflare Pages _headers
+# 缓存与安全头配置。Gzip/Brotli 压缩由 Cloudflare 自动处理，此处不配置。
+# 语法：路径占一行，下面对应 header（2 空格缩进）；后写者优先级更高。
+
+# 全局安全头
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+# HTML 短缓存（5 分钟）：便于文章/meta 更新快速生效，CF 边缘再缓存
+/*.html
+  Cache-Control: public, max-age=300
+
+# 图标/Logo 长缓存（一年 + immutable）
+/logo.png
+  Cache-Control: public, max-age=31536000, immutable
+
+# 静态资源（图片/CSS/JS 等）长缓存 + immutable；文件内容不变即安全
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# 数据 JSON 短缓存（与 HTML 一致，admin 编辑后下次部署生效）
+/data/*.json
+  Cache-Control: public, max-age=300
+
+# API 短缓存（KV 数据 60s）
+/api/*
+  Cache-Control: public, max-age=60
