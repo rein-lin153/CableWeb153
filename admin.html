@@ -84,6 +84,10 @@
                 <i class="fa-solid fa-box-open w-5 text-center"></i>
                 Products
             </a>
+            <a href="#" data-view="calc-config" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-slate-400 hover:text-amber-400 transition-all duration-200">
+                <i class="fa-solid fa-sliders w-5 text-center"></i>
+                Calc Config
+            </a>
         </nav>
 
         <!-- Footer Link -->
@@ -118,6 +122,10 @@
                     <input type="file" id="json-import-input" accept=".json" class="hidden">
                     <button id="btn-reset-data" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold transition-all border border-rose-500 ml-2">
                         <i class="fa-solid fa-rotate-left mr-1.5"></i>Reset
+                    </button>
+                    <!-- Calc-config 视图专用：保存本地按钮（仅 calc-config 视图显示） -->
+                    <button id="btn-save-calccfg" class="hidden px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-lg text-xs font-bold transition-all border border-amber-400">
+                        <i class="fa-solid fa-floppy-disk mr-1.5"></i>保存配置
                     </button>
                     <button id="btn-sync-kv" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition-all border border-emerald-500">
                         <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i>Sync KV
@@ -275,6 +283,7 @@
     const STORAGE_KEY = 'bw_cable_articles';
     const STORAGE_KEY_CATEGORIES = 'bw_cable_categories';
     const STORAGE_KEY_PRODUCTS = 'bw_cable_products';
+    const STORAGE_KEY_CALC_CONFIG = 'bw_cable_calc_config';
 
     // ---- Article category badges (Articles 视图专用) ----
     const CATEGORY_BADGES = {
@@ -339,6 +348,17 @@
     let articles = [];
     let categories = [];
     let products = [];
+    // 计算器配置（单对象，非遗增删数组；单独的加载/保存逻辑）
+    let calcConfig = {
+        copperPriceUsdPerKg: 9,
+        edcCommercialRate: 920,
+        edcUsdRielRate: 4100,
+        edcNotes: '',
+        edcTiers: [
+            { upTo: 50, rate: 610 }, { upTo: 100, rate: 770 }, { upTo: 200, rate: 920 },
+            { upTo: 300, rate: 1090 }, { upTo: 400, rate: 1280 }, { upTo: 99999, rate: 1480 }
+        ]
+    };
     let currentView = 'articles';
     let editingCategoryId = null;
     let editingProductId = null;
@@ -416,8 +436,49 @@
         await Promise.all([
             loadDataset('articles',   STORAGE_KEY,         'data/articles.json',   arr => { articles = arr || []; }),
             loadDataset('categories', STORAGE_KEY_CATEGORIES, 'data/categories.json', arr => { categories = arr || []; }),
-            loadDataset('products',   STORAGE_KEY_PRODUCTS,  'data/products.json',   arr => { products = arr || []; })
+            loadDataset('products',   STORAGE_KEY_PRODUCTS,  'data/products.json',   arr => { products = arr || []; }),
+            loadCalcConfig()
         ]);
+    }
+
+    async function loadCalcConfig() {
+        let applied = false;
+        // 1. localStorage 快缓存
+        const stored = localStorage.getItem(STORAGE_KEY_CALC_CONFIG);
+        if (stored) { try { Object.assign(calcConfig, JSON.parse(stored)); applied = true; } catch (_) {} }
+        // 2. KV API（权威远程）
+        try {
+            const res = await fetch(API_BASE + '/calc-config');
+            if (res.ok) {
+                const remote = await res.json();
+                if (remote && typeof remote === 'object' && !Array.isArray(remote)) {
+                    Object.assign(calcConfig, remote);
+                    localStorage.setItem(STORAGE_KEY_CALC_CONFIG, JSON.stringify(calcConfig));
+                    renderCurrentView();
+                    return;
+                }
+            }
+        } catch (err) { console.warn('calc-config KV fetch failed:', err.message); }
+        // 3. 静态兜底（无缓存且 KV 不可用时）
+        if (!applied) {
+            try {
+                const res = await fetch('data/calc-config.json');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && typeof data === 'object') {
+                        Object.assign(calcConfig, data);
+                        localStorage.setItem(STORAGE_KEY_CALC_CONFIG, JSON.stringify(calcConfig));
+                    }
+                }
+            } catch (_) { /* silent */ }
+        }
+        renderCurrentView();
+    }
+
+    function saveCalcConfig() {
+        // 从表单读取最新值写回 calcConfig（由 renderCalcConfigView 的输入回调维护）
+        localStorage.setItem(STORAGE_KEY_CALC_CONFIG, JSON.stringify(calcConfig));
+        showToast('✅ 配置已保存到本地（需点 Sync KV 同步到云端）');
     }
 
     function persist(kind) {
@@ -463,10 +524,15 @@
        View switching
        ============================================================ */
     const VIEW_TITLES = {
-        articles:   { title: 'Articles Management',   subtitle: 'Manage your Khmer construction & electrical knowledge base', newLabel: '+ 新建文章' },
-        categories: { title: 'Categories Management', subtitle: '管理产品分类（首页轮播与产品页数据源）', newLabel: '+ 新建分类' },
-        products:    { title: 'Products Management',  subtitle: '管理产品规格数据，规格表支持动态增删行', newLabel: '+ 新建产品' }
+        articles:    { title: 'Articles Management',   subtitle: 'Manage your Khmer construction & electrical knowledge base', newLabel: '+ 新建文章' },
+        categories:  { title: 'Categories Management', subtitle: '管理产品分类（首页轮播与产品页数据源）', newLabel: '+ 新建分类' },
+        products:    { title: 'Products Management',  subtitle: '管理产品规格数据，规格表支持动态增删行', newLabel: '+ 新建产品' },
+        'calc-config': { title: 'Calculator Config',  subtitle: '配置计算器默认参数（铜价 / EDC 阶梯电价 / 汇率等）', newLabel: '' }
     };
+
+    // calc-config 视图专用：隐藏其它视图的数组-CRUD 按钮，避免破坏 currentDataset 数组假设
+    const CALC_CONFIG_ONLY_BTNS = ['btn-save-calccfg'];
+    const CALC_CONFIG_HIDDEN_BTNS = ['btn-export', 'btn-import-trigger', 'btn-reset-data', 'btn-new-item'];
 
     function switchView(view) {
         currentView = view;
@@ -480,7 +546,14 @@
         const meta = VIEW_TITLES[view] || VIEW_TITLES.articles;
         document.getElementById('view-title').textContent = meta.title;
         document.getElementById('view-subtitle').textContent = meta.subtitle;
-        document.getElementById('btn-new-item-label').textContent = meta.newLabel;
+        const newLabelEl = document.getElementById('btn-new-item-label');
+        if (newLabelEl) newLabelEl.textContent = meta.newLabel;
+
+        // 顶部工具栏按视图切换可见性
+        const isCfg = view === 'calc-config';
+        CALC_CONFIG_ONLY_BTNS.forEach(id => document.getElementById(id)?.classList.toggle('hidden', !isCfg));
+        CALC_CONFIG_HIDDEN_BTNS.forEach(id => document.getElementById(id)?.classList.toggle('hidden', isCfg));
+
         renderCurrentView();
     }
 
@@ -490,6 +563,7 @@
         if (currentView === 'articles')   renderArticlesView(box);
         else if (currentView === 'categories') renderCategoriesView(box);
         else if (currentView === 'products')   renderProductsView(box);
+        else if (currentView === 'calc-config') renderCalcConfigView(box);
     }
 
     /* ============================================================
@@ -1004,6 +1078,123 @@
     }
 
     /* ============================================================
+       CALC-CONFIG VIEW (单对象表单，非 CRUD 数组)
+       字段：铜价 / 汇率 / 商业电价 / 说明 + EDC 阶梯表动态行编辑器
+       输入改动直接回写 calcConfig 对象；保存按钮持久化 localStorage；Sync KV 同步云端
+       ============================================================ */
+    function renderCalcConfigView(box) {
+        box.innerHTML = `
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- 左栏：基础参数 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fa-solid fa-coins text-amber-400"></i>
+                        <h3 class="text-sm font-bold text-white">基础参数</h3>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1.5">铜价 ($/kg) <span class="text-slate-500">copperPriceUsdPerKg</span></label>
+                        <input type="number" step="0.1" min="0" id="cfg-copper" value="${calcConfig.copperPriceUsdPerKg ?? ''}"
+                            class="w-full bg-slate-800 border-2 border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-bold focus:border-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1.5">EDC 商业电价 (៛/kWh) <span class="text-slate-500">edcCommercialRate</span></label>
+                        <input type="number" step="1" min="0" id="cfg-comm" value="${calcConfig.edcCommercialRate ?? ''}"
+                            class="w-full bg-slate-800 border-2 border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-bold focus:border-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1.5">汇率 (៛ = 1 USD) <span class="text-slate-500">edcUsdRielRate</span></label>
+                        <input type="number" step="1" min="0" id="cfg-rate" value="${calcConfig.edcUsdRielRate ?? ''}"
+                            class="w-full bg-slate-800 border-2 border-slate-700 rounded-lg px-3 py-2 text-sm text-white font-bold focus:border-amber-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1.5">说明 <span class="text-slate-500">edcNotes</span></label>
+                        <textarea id="cfg-notes" rows="2" placeholder="例如：2025-2026 EDC 阶梯近似值..."
+                            class="w-full bg-slate-800 border-2 border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:border-amber-500 outline-none">${calcConfig.edcNotes || ''}</textarea>
+                    </div>
+                </div>
+
+                <!-- 右栏：EDC 住宅阶梯电价表 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-bolt text-amber-400"></i>
+                            <h3 class="text-sm font-bold text-white">EDC 住宅阶梯电价</h3>
+                        </div>
+                        <button type="button" id="cfg-tier-add" class="px-3 py-1.5 bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 rounded-lg text-xs font-bold border border-amber-500/30 transition">
+                            <i class="fa-solid fa-plus mr-1"></i>添加档位
+                        </button>
+                    </div>
+                    <div class="text-xs text-slate-500">每档：<span class="text-slate-300">upTo</span> = 该档上限 kWh（最大一档填 99999 表示无上限），<span class="text-slate-300">rate</span> = ៛/kWh</div>
+                    <div id="cfg-tiers" class="space-y-2"></div>
+                </div>
+
+                <!-- 提示条 -->
+                <div class="lg:col-span-2 bg-slate-900/50 border border-slate-800 rounded-xl p-4 text-xs text-slate-400 flex items-start gap-2">
+                    <i class="fa-solid fa-circle-info text-amber-400 mt-0.5"></i>
+                    <span>修改后请点右上角 <b class="text-slate-200">保存配置</b> 持久化到本地，再点 <b class="text-emerald-400">Sync KV</b> 同步到云端。公开页面会读取此配置作为计算器默认值（铜重可由用户临时覆盖）。</span>
+                </div>
+            </div>
+        `;
+
+        // 绑定基础字段
+        const bindField = (id, key, parse) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', () => {
+                if (parse === 'string') calcConfig[key] = el.value;
+                else calcConfig[key] = el.value === '' ? null : parseFloat(el.value);
+            });
+        };
+        bindField('cfg-copper', 'copperPriceUsdPerKg', 'num');
+        bindField('cfg-comm',   'edcCommercialRate',   'num');
+        bindField('cfg-rate',   'edcUsdRielRate',       'num');
+        bindField('cfg-notes',  'edcNotes',             'string');
+
+        // 阶梯表渲染
+        const tiersBox = document.getElementById('cfg-tiers');
+        const renderTiers = () => {
+            tiersBox.innerHTML = calcConfig.edcTiers.map((t, i) => `
+                <div class="flex items-center gap-2 bg-slate-800 p-2.5 rounded-lg border border-slate-700">
+                    <span class="text-xs font-bold text-slate-500 w-6">#${i + 1}</span>
+                    <div class="flex-1">
+                        <input type="number" min="0" step="1" value="${t.upTo}" data-tier="upTo" data-i="${i}" placeholder="upTo"
+                            class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1.5 text-sm text-white focus:border-amber-500 outline-none">
+                    </div>
+                    <div class="flex-1">
+                        <input type="number" min="0" step="1" value="${t.rate}" data-tier="rate" data-i="${i}" placeholder="rate ៛"
+                            class="w-full bg-slate-900 border border-slate-600 rounded px-2 py-1.5 text-sm text-white focus:border-amber-500 outline-none">
+                    </div>
+                    <button type="button" data-tier-del="${i}" class="px-2.5 py-1.5 bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 rounded text-xs transition" title="删除该档">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+            tiersBox.querySelectorAll('input[data-tier]').forEach(inp => {
+                inp.addEventListener('input', () => {
+                    const idx = parseInt(inp.dataset.i, 10);
+                    const key = inp.dataset.tier;
+                    const v = inp.value === '' ? null : parseFloat(inp.value);
+                    if (calcConfig.edcTiers[idx]) calcConfig.edcTiers[idx][key] = v;
+                });
+            });
+            tiersBox.querySelectorAll('button[data-tier-del]').forEach(b => {
+                b.addEventListener('click', () => {
+                    const idx = parseInt(b.dataset.tierDel, 10);
+                    calcConfig.edcTiers.splice(idx, 1);
+                    renderTiers();
+                });
+            });
+        };
+        renderTiers();
+
+        document.getElementById('cfg-tier-add')?.addEventListener('click', () => {
+            const last = calcConfig.edcTiers[calcConfig.edcTiers.length - 1];
+            calcConfig.edcTiers.push({ upTo: 99999, rate: last ? last.rate : 1500 });
+            renderTiers();
+        });
+    }
+
+    /* ============================================================
        Toolbar actions: Sync KV / Export / Import / Reset (per current view)
        ============================================================ */
     function currentDataset() {
@@ -1014,6 +1205,11 @@
     function handleSync() {
         const ds = currentDataset();
         if (!sessionStorage.getItem(AUTH_KEY)) { showToast('⚠️ 未登录，无法同步至云端', 'error'); return; }
+        if (currentView === 'calc-config') {
+            // calc-config 是单对象，单独同步
+            syncToKV('calc-config', calcConfig, '✅ 计算器配置已同步至云端！');
+            return;
+        }
         syncToKV(ds.kind, ds.arr());
     }
     function handleExport() {
@@ -1120,6 +1316,7 @@
         document.getElementById('btn-import-trigger').addEventListener('click', () => document.getElementById('json-import-input').click());
         document.getElementById('json-import-input').addEventListener('change', function () { if (this.files[0]) { handleImport(this.files[0]); this.value = ''; } });
         document.getElementById('btn-reset-data').addEventListener('click', handleReset);
+        document.getElementById('btn-save-calccfg').addEventListener('click', saveCalcConfig);
 
         // modal save / cancel / close
         document.getElementById('btn-save-article').addEventListener('click', saveArticle);
