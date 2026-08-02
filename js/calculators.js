@@ -83,21 +83,48 @@
     }
 
     // ===================== 1. 缆线载流量与电压降 =====================
-    // 近似载流量表 (A) — 铜芯 PVC 绝缘 单相/三相近似 (IEC 60364-5-52 简化)
-    // 面积 mm² -> 安培 (估算，铜)
-    const CU_AMP = { 1.5: 19, 2.5: 27, 4: 36, 6: 46, 10: 63, 16: 85, 25: 112, 35: 138, 50: 168, 70: 213, 95: 258, 120: 299, 150: 344, 185: 395, 240: 460 };
-    const AL_AMP = { 2.5: 21, 4: 28, 6: 36, 10: 49, 16: 67, 25: 88, 35: 110, 50: 134, 70: 171, 95: 207, 120: 239, 150: 276, 185: 316, 240: 370 };
+    // 基准载流量表 (A) — 环境温度 30℃ / 空气中敷设 / 各绝缘类型
+    // (IEC 60502-5 / IEC 60364-5-52 近似估算)
+    // pvc  = 现有基准；xlpe ≈ PVC ×1.30；rubber ≈ PVC ×1.15
     const STANDARD_SIZES = [1.5, 2.5, 4, 6, 10, 16, 25, 35, 50, 70, 95, 120, 150, 185, 240];
+    const _CU_PVC = { 1.5: 19, 2.5: 27, 4: 36, 6: 46, 10: 63, 16: 85, 25: 112, 35: 138, 50: 168, 70: 213, 95: 258, 120: 299, 150: 344, 185: 395, 240: 460 };
+    const _AL_PVC = { 2.5: 21, 4: 28, 6: 36, 10: 49, 16: 67, 25: 88, 35: 110, 50: 134, 70: 171, 95: 207, 120: 239, 150: 276, 185: 316, 240: 370 };
+    // XLPE / Rubber 按 ×1.30 / ×1.15 近似生成（保留两位）
+    const _scale = (tbl, f) => Object.fromEntries(STANDARD_SIZES.map(s => [s, Math.round((tbl[s] || 0) * f)]));
+    const AMPACITY_BASE = {
+        pvc:    { copper: _CU_PVC,                       aluminum: _AL_PVC },
+        xlpe:   { copper: _scale(_CU_PVC, 1.30),         aluminum: _scale(_AL_PVC, 1.30) },
+        rubber: { copper: _scale(_CU_PVC, 1.15),         aluminum: _scale(_AL_PVC, 1.15) }
+    };
+    // 保留旧名（仅向下兼容外部可能引用；计算逻辑已迁移到 AMPACITY_BASE）
+    const CU_AMP = AMPACITY_BASE.pvc.copper;
+    const AL_AMP = AMPACITY_BASE.pvc.aluminum;
+    // 敷设方式修正系数（相对 30℃ 空气中基准）
+    const DERATING_INSTALL = { air: 1.0, buried: 1.1, tray: 0.95 };
+    // 环境温度修正系数（基准 30℃）
+    const DERATING_TEMP = { 30: 1.0, 40: 0.91, 50: 0.82, 60: 0.71 };
 
-    function ampacityTable(material) {
-        return material === 'aluminum' ? AL_AMP : CU_AMP;
+    function ampacityBase(material, insulation) {
+        const ins = AMPACITY_BASE[insulation] ? insulation : 'pvc';
+        return AMPACITY_BASE[ins][material === 'aluminum' ? 'aluminum' : 'copper'];
+    }
+    // 旧 API 保留：ampacityTable(material) 返回 pvc 基准表
+    function ampacityTable(material) { return ampacityBase(material, 'pvc'); }
+
+    /** 综合修正系数：敷设 × 温度 */
+    function deratingFactor(opts) {
+        opts = opts || {};
+        const install = DERATING_INSTALL[opts.install] != null ? opts.install : 'air';
+        const ambient = DERATING_TEMP[opts.ambient] != null ? opts.ambient : 30;
+        return DERATING_INSTALL[install] * DERATING_TEMP[ambient];
     }
 
-    /** 按需电流查推荐截面积 */
-    function recommendSize(current, material) {
-        const tbl = ampacityTable(material);
+    /** 按需电流查推荐截面积；opts 可选 {insulation, install, ambient}，默认 pvc/air/30 与旧版一致 */
+    function recommendSize(current, material, opts) {
+        const tbl = ampacityBase(material, (opts && opts.insulation) || 'pvc');
+        const factor = deratingFactor(opts);
         for (const s of STANDARD_SIZES) {
-            if (tbl[s] >= current) return s;
+            if (tbl[s] * factor >= current) return s;
         }
         return 240;
     }
@@ -105,6 +132,9 @@
     function calcCableSize() {
         const phase = val('cable-phase');
         const material = val('cable-material');
+        const insulation = val('cable-insulation') || 'pvc';
+        const install = val('cable-install') || 'air';
+        const ambient = parseInt(val('cable-ambient'), 10) || 30;
         const power = num('cable-power');   // kW
         const length = num('cable-length'); // m
 
@@ -118,23 +148,27 @@
         const root3 = Math.sqrt(3);
         // 计算电流 I = P / (√3·V·pf) 三相 ; P/(V·pf) 单相
         const current = phase === 'three' ? (power * 1000) / (root3 * voltage * pf) : (power * 1000) / (voltage * pf);
-        const area = recommendSize(current, material);
-        const tbl = ampacityTable(material);
-        const allowA = tbl[area];
+        const cableOpts = { insulation, install, ambient };
+        const area = recommendSize(current, material, cableOpts);
+        const tbl = ampacityBase(material, insulation);
+        const factor = deratingFactor(cableOpts);
+        const baseA = tbl[area];           // 基准载流量（30℃ 空气中）
+        const allowA = Math.round(baseA * factor); // 修正后载流量
         const rho = material === 'aluminum' ? 0.0282 : 0.0175; // Ω·mm²/m
         // 电压降 ΔU = 2·ρ·L·I / A 单相 ; √3·ρ·L·I / A 三相
         const dV = phase === 'three' ? (root3 * rho * length * current) / area : (2 * rho * length * current) / area;
         const dVPct = (dV / voltage) * 100;
 
         const matName = material === 'aluminum' ? t('calc.card1.option.aluminum','铝 Aluminum') : t('calc.card1.option.copper','铜 Copper');
+        const insName = { pvc: 'PVC', xlpe: 'XLPE', rubber: t('calc.card1.option.insulation.rubber','橡胶') }[insulation] || 'PVC';
         const pass = dVPct <= 5;
         const phaseName = phase === 'three' ? t('calc.card1.option.three','三相 400V') : t('calc.card1.option.single','单相 230V');
 
         setResult('cable-result', `
             <div class="space-y-1.5">
-                <div>${t('calc.result.system','系统：')}${hl(phaseName)} ｜ ${t('calc.result.material','材质：')}${matName}</div>
+                <div>${t('calc.result.system','系统：')}${hl(phaseName)} ｜ ${t('calc.result.material','材质：')}${matName} ｜ ${t('calc.card1.label.insulation','绝缘')}${hl(insName)}</div>
                 <div>${t('calc.result.calc_current','计算电流：')}${hl(current.toFixed(1), ' A')}（PF=0.85）</div>
-                <div>${t('calc.result.recommend_wire','推荐线径：')}${hl(area, ' mm²')} ｜ ${t('calc.result.ampacity','该规格载流量')} ${hl(allowA, ' A')}</div>
+                <div>${t('calc.result.recommend_wire','推荐线径：')}${hl(area, ' mm²')} ｜ ${t('calc.result.ampacity','该规格载流量')} ${hl(baseA, ' A')} → ${t('calc.result.adjusted_ampacity','修正后')}${hl(allowA, ' A')}</div>
                 <div>${t('calc.result.voltage_drop','电压降：')}${hl(dV.toFixed(2), ' V')} (${hl(dVPct.toFixed(2), '%')})</div>
                 <div class="text-xs ${pass ? 'text-emerald-600' : 'text-red-500'} font-bold mt-1">
                     <i class="fa-solid ${pass ? 'fa-circle-check' : 'fa-triangle-exclamation'} mr-1"></i>
