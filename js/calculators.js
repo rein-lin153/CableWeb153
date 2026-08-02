@@ -651,26 +651,37 @@
         `);
     }
 
-    // ===================== 16. UPS 后备时间 =====================
+    // ===================== 16. UPS 后备时间（方案A：按单节标称参数）=====================
+    // 公式：
+    //   电池组总能量 (Wh) = 单节电压 (V) × 单节容量 (Ah) × 电池数量 (N)
+    //   可用能量 (Wh)    = 电池组总能量 × 放电深度 (DOD) × UPS 效率 (η)
+    //   后备时间 (h)     = 可用能量 / 负载功率 (W)
+    // 注意：ups-vdc 是「单节电池电压」（默认 12V），不是电池组总电压。
+    //   例：24 节 12V 电池组成的 48V 系统，单节电压=12、N=24，
+    //   总能量 = 12 × Ah × 24，不可再用「48V × 24」把电压重复放大。
     function calcUps() {
         const loadW = num('ups-load');   // 负载功率 W
-        const vdc = num('ups-vdc') !== null ? num('ups-vdc') : 48;
-        const ah = num('ups-ah') !== null ? num('ups-ah') : 100;
-        const count = num('ups-count') !== null ? num('ups-count') : 24;
-        const eff = num('ups-eff') !== null ? num('ups-eff') : 0.9;
-        const dod = num('ups-dod') !== null ? num('ups-dod') : 0.8;
+        const cellV = num('ups-vdc')   !== null ? num('ups-vdc')   : 12;   // 单节电池电压 V（默认 12）
+        const ah    = num('ups-ah')    !== null ? num('ups-ah')    : 100;  // 单节容量 Ah
+        const count = num('ups-count') !== null ? num('ups-count') : 24;   // 电池数量 N
+        const eff   = num('ups-eff')   !== null ? num('ups-eff')   : 0.9;  // UPS 效率 η
+        const dod   = num('ups-dod')   !== null ? num('ups-dod')   : 0.8;  // 放电深度 DOD
         if (loadW === null) return setResult('ups-result', needAll([t('calc.card16.label.load','负载功率 (W)')]));
         if (loadW === 0) return setResult('ups-result', `<div class="text-red-500">${t('calc.result.calc_error','计算错误')}：Load=0</div>`);
-        // 可用电池能量 (Wh) = Vdc × Ah × 数量 × DOD × 效率
-        const usableWh = vdc * ah * count * dod * eff;
+
+        // 电池组总能量 = 单节电压 × 单节容量 × 电池数量
+        const totalWh  = cellV * ah * count;
+        // 可用能量 = 总能量 × DOD × η
+        const usableWh = totalWh * dod * eff;
+        // 后备时间 = 可用能量 / 负载
         const hours = usableWh / loadW;
-        const totalWh = vdc * ah * count;
+
         setResult('ups-result', `
             <div class="space-y-1.5">
-                <div>${t('calc.result.ups_bank','电池组：')}${hl(vdc, ' V')} × ${hl(ah, ' Ah')} × ${count} = ${hl(totalWh.toLocaleString(), ' Wh')}</div>
-                <div>${t('calc.result.ups_usable','可用能量：')}${hl(usableWh.toLocaleString(undefined, { maximumFractionDigits: 0 }), ' Wh')}×DOD ${dod}×η ${eff}</div>
+                <div>${t('calc.result.ups_bank','电池组：')}${hl(cellV, ' V')} × ${hl(ah, ' Ah')} × ${count} ${t('calc.result.ups_cells','节')} = ${hl(totalWh.toLocaleString(undefined, { maximumFractionDigits: 0 }), ' Wh')}</div>
+                <div>${t('calc.result.ups_usable','可用能量：')}${hl(usableWh.toLocaleString(undefined, { maximumFractionDigits: 0 }), ' Wh')}（×DOD ${dod}×η ${eff}）</div>
                 <div class="border-t border-slate-200 mt-1 pt-1">${t('calc.result.ups_backup','后备时间：')}${hl(hours.toFixed(1), ' h')}（${t('calc.result.ups_load','负载')}${loadW}W）</div>
-                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${t('calc.result.ups_note','t = (V·Ah·N·DOD·η) / 负载；实际受电池老化与温度影响')}</div>
+                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${t('calc.result.ups_note','电池组总能量 = 单节电压 × 单节容量 × 电池数量；可用能量 × DOD × η；t = 可用能量 / 负载。实际受电池老化与温度影响。单节电压默认 12V，不是电池组总电压。')}</div>
             </div>
         `);
     }
