@@ -570,6 +570,82 @@
         `);
     }
 
+    // ===================== 15. 发电机容量选型 =====================
+    // 标准机组容量档（kVA），按 I×1.25 余量向上取
+    const GEN_SIZES = [10, 20, 50, 100, 200, 315, 500, 800, 1250];
+    function calcGenerator() {
+        const load = num('gen-load');   // 总负荷 kW
+        const pf = num('gen-pf') !== null ? num('gen-pf') : 0.8;
+        const margin = num('gen-margin') !== null ? num('gen-margin') : 1.25;
+        if (load === null) return setResult('gen-result', needAll([t('calc.card15.label.load','总负荷 (kW)')]));
+        if (pf === 0) return setResult('gen-result', `<div class="text-red-500">${t('calc.result.calc_error','计算错误')}：PF=0</div>`);
+        // 视在功率 S = P / PF，再乘备份余量
+        const requireKva = (load / pf) * margin;
+        let size = GEN_SIZES[GEN_SIZES.length - 1];
+        for (const s of GEN_SIZES) { if (s >= requireKva) { size = s; break; } }
+        const rated = size;
+        const utilPct = (requireKva / size) * 100;
+        setResult('gen-result', `
+            <div class="space-y-1.5">
+                <div>${t('calc.result.gen_require','所需视在功率：')}${hl(requireKva.toFixed(1), ' kVA')}（${load}kW ÷ PF ${pf} × ${margin}）</div>
+                <div class="border-t border-slate-200 mt-1 pt-1">${t('calc.result.gen_recommend','推荐机组：')}${hl(rated, ' kVA')}</div>
+                <div>${t('calc.result.gen_util','机组利用率：')}${hl(utilPct.toFixed(1), '%')}</div>
+                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${t('calc.result.gen_note','按 I×1.25 余量向上取标准档；发电机宜运行在 70~90% 负载率，过低易积碳')}</div>
+            </div>
+        `);
+    }
+
+    // ===================== 16. UPS 后备时间 =====================
+    function calcUps() {
+        const loadW = num('ups-load');   // 负载功率 W
+        const vdc = num('ups-vdc') !== null ? num('ups-vdc') : 48;
+        const ah = num('ups-ah') !== null ? num('ups-ah') : 100;
+        const count = num('ups-count') !== null ? num('ups-count') : 24;
+        const eff = num('ups-eff') !== null ? num('ups-eff') : 0.9;
+        const dod = num('ups-dod') !== null ? num('ups-dod') : 0.8;
+        if (loadW === null) return setResult('ups-result', needAll([t('calc.card16.label.load','负载功率 (W)')]));
+        if (loadW === 0) return setResult('ups-result', `<div class="text-red-500">${t('calc.result.calc_error','计算错误')}：Load=0</div>`);
+        // 可用电池能量 (Wh) = Vdc × Ah × 数量 × DOD × 效率
+        const usableWh = vdc * ah * count * dod * eff;
+        const hours = usableWh / loadW;
+        const totalWh = vdc * ah * count;
+        setResult('ups-result', `
+            <div class="space-y-1.5">
+                <div>${t('calc.result.ups_bank','电池组：')}${hl(vdc, ' V')} × ${hl(ah, ' Ah')} × ${count} = ${hl(totalWh.toLocaleString(), ' Wh')}</div>
+                <div>${t('calc.result.ups_usable','可用能量：')}${hl(usableWh.toLocaleString(undefined, { maximumFractionDigits: 0 }), ' Wh')}×DOD ${dod}×η ${eff}</div>
+                <div class="border-t border-slate-200 mt-1 pt-1">${t('calc.result.ups_backup','后备时间：')}${hl(hours.toFixed(1), ' h')}（${t('calc.result.ups_load','负载')}${loadW}W）</div>
+                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${t('calc.result.ups_note','t = (V·Ah·N·DOD·η) / 负载；实际受电池老化与温度影响')}</div>
+            </div>
+        `);
+    }
+
+    // ===================== 17. 太阳能系统设计 =====================
+    function calcSolar() {
+        const dailyKwh = num('solar-usage'); // 日均用电 kWh/天
+        const sun = num('solar-sun') !== null ? num('solar-sun') : 4.5; // 峰值日照 h
+        const eff = num('solar-eff') !== null ? num('solar-eff') : 0.75;
+        const vdc = num('solar-vdc') !== null ? num('solar-vdc') : 48;
+        const days = num('solar-days') !== null ? num('solar-days') : 1.5;
+        const dod = num('solar-dod') !== null ? num('solar-dod') : 0.8;
+        if (dailyKwh === null) return setResult('solar-result', needAll([t('calc.card17.label.usage','日均用电 (kWh/天)')]));
+        // 光伏功率 = 日用电 / (峰值日照 × 系统效率)
+        const pvW = (dailyKwh * 1000) / (sun * eff);
+        // 电池容量 = 日用电 × 自备天数 / (Vdc × DOD) → Ah
+        const batteryAh = (dailyKwh * 1000 * days) / (vdc * dod);
+        // 逆变器功率 ≈ 光伏功率 × 1.25 余量
+        const invW = pvW * 1.25;
+        let pvWp = Math.ceil(pvW / 100) * 100;     // 向上取整到 100W
+        let invWr = Math.ceil(invW / 100) * 100;
+        setResult('solar-result', `
+            <div class="space-y-1.5">
+                <div>${t('calc.result.solar_pv','光伏总功率：')}${hl(pvWp.toLocaleString(), ' Wp')}（${dailyKwh}kWh ÷ (${sun}h × η${eff})）</div>
+                <div>${t('calc.result.solar_battery','电池容量：')}${hl(Math.ceil(batteryAh).toLocaleString(), ' Ah')} @ ${vdc}V（自备 ${days} 天 × DOD ${dod}）</div>
+                <div>${t('calc.result.solar_inverter','逆变器功率：')}${hl(invWr.toLocaleString(), ' W')}（PV × 1.25 余量）</div>
+                <div class="text-xs text-slate-500 mt-1"><i class="fa-solid fa-circle-info mr-1"></i>${t('calc.result.solar_note','柬埔寨日均峰值日照约 4.5h；离网系统按自备天数设计电池，逆变器需覆盖峰值负载')}</div>
+            </div>
+        `);
+    }
+
     // ===================== 绑定 =====================
     function bind(id, fn) {
         const el = $(id);
@@ -588,6 +664,10 @@
         bind('btn-edc', calcEdc);
         bind('btn-lighting', calcLighting);
         bind('btn-conduit', calcConduit);
+        // 发电机 / UPS / 太阳能
+        bind('btn-gen', calcGenerator);
+        bind('btn-ups', calcUps);
+        bind('btn-solar', calcSolar);
         // 土木
         bind('btn-brick', calcBrick);
         bind('btn-rebar', calcRebar);

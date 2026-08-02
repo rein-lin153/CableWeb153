@@ -557,16 +557,16 @@
             <!-- Category Tab Navigation -->
             <div id="calc-tabs" class="flex flex-wrap gap-3 mb-8 border-b-2 border-slate-200 pb-4">
                 <button class="calc-category-tab active-tab px-5 py-3 bg-amber-500 text-white font-black rounded-xl text-sm transition-all duration-300 whitespace-nowrap btn-ripple shadow-md border-2 border-amber-600" data-category="cat-electric">
-                    <span data-i18n="calc.tab.electrical">⚡ 电力</span> <span class="text-xs opacity-70 ml-1">(9)</span>
+                    <span data-i18n="calc.tab.electrical">⚡ 电力</span> <span class="tab-count text-xs opacity-70 ml-1" data-count-for="cat-electric"></span>
                 </button>
                 <button class="calc-category-tab px-3 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-sm transition-all duration-300 whitespace-nowrap btn-ripple" data-category="cat-civil">
-                    <span data-i18n="calc.tab.civil">🧱 土木工程</span>
+                    <span data-i18n="calc.tab.civil">🧱 土木工程</span> <span class="tab-count text-xs opacity-70 ml-1" data-count-for="cat-civil"></span>
                 </button>
                 <button class="calc-category-tab px-3 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-sm transition-all duration-300 whitespace-nowrap btn-ripple" data-category="cat-decor">
-                    <span data-i18n="calc.tab.decoration">🎨 装饰</span>
+                    <span data-i18n="calc.tab.decoration">🎨 装饰</span> <span class="tab-count text-xs opacity-70 ml-1" data-count-for="cat-decor"></span>
                 </button>
                 <button class="calc-category-tab px-3 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-sm transition-all duration-300 whitespace-nowrap btn-ripple" data-category="cat-cost">
-                    <span data-i18n="calc.tab.cost">🏠 价格范围</span>
+                    <span data-i18n="calc.tab.cost">🏠 价格范围</span> <span class="tab-count text-xs opacity-70 ml-1" data-count-for="cat-cost"></span>
                 </button>
             </div>
 
@@ -730,6 +730,54 @@
                         <button id="btn-conduit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple shadow-md border-2 border-amber-600"><i class="fa-solid fa-calculator mr-2"></i><span data-i18n="calc.card9.btn">计算</span></button>
                         <div id="conduit-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
                     </div>
+                    <!-- 10. Generator Sizing -->
+                    <div class="calc-card hidden bg-white border-2 border-slate-200 shadow-md rounded-xl p-6 space-y-5 calc-card-10">
+                        <h3 class="text-amber-600 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-oil-can"></i> <span data-i18n="calc.card15.title">🛢️ 发电机容量选型</span></h3>
+                        <div class="mb-5 p-4 rounded-xl bg-amber-50 border-2 border-amber-300">
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 data-i18n="calc.intro.label" class="font-bold text-amber-800 mb-1">使用说明</h4><p data-i18n="calc.card15.intro" class="text-slate-700">应急或备用电力需要多大发电机？输入总负荷与功率因数，按 I×1.25 余量推荐标准机组容量（kVA）。适合医院、基站、工厂备用电源设计。</p></div></div></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div><label data-i18n="calc.card15.label.load" class="text-xs text-slate-600 mb-1.5 block">总负荷 (kW)</label><input type="number" id="gen-load" data-i18n-ph="calc.card15.placeholder.load" placeholder="例 80" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none input-glow transition-all"></div>
+                            <div><label data-i18n="calc.card15.label.pf" class="text-xs text-slate-600 mb-1.5 block">功率因数 PF</label><input type="number" id="gen-pf" step="0.01" value="0.8" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none input-glow transition-all"></div>
+                            <div><label data-i18n="calc.card15.label.margin" class="text-xs text-slate-600 mb-1.5 block">备用余量</label><input type="number" id="gen-margin" step="0.05" value="1.25" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none input-glow transition-all"></div>
+                        </div>
+                        <button id="btn-gen" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple shadow-md border-2 border-amber-600"><i class="fa-solid fa-calculator mr-2"></i><span data-i18n="calc.card15.btn">选型</span></button>
+                        <div id="gen-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
+                    </div>
+                    <!-- 11. UPS Backup Time -->
+                    <div class="calc-card hidden bg-white border-2 border-slate-200 shadow-md rounded-xl p-6 space-y-5 calc-card-11">
+                        <h3 class="text-amber-600 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-battery-three-quarters"></i> <span data-i18n="calc.card16.title">🔋 UPS 后备时间计算</span></h3>
+                        <div class="mb-5 p-4 rounded-xl bg-amber-50 border-2 border-amber-300">
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 data-i18n="calc.intro.label" class="font-bold text-amber-800 mb-1">使用说明</h4><p data-i18n="calc.card16.intro" class="text-slate-700">输入负载与电池组参数，估算 UPS 停电后能持续供电的时间。考虑 UPS 效率与电池放电深度（DOD）。</p></div></div></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div><label data-i18n="calc.card16.label.load" class="text-xs text-slate-600 mb-1.5 block">负载功率 (W)</label><input type="number" id="ups-load" data-i18n-ph="calc.card16.placeholder.load" placeholder="例 500" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none input-glow transition-all"></div>
+                            <div><label data-i18n="calc.card16.label.vdc" class="text-xs text-slate-600 mb-1.5 block">电池电压 Vdc</label><input type="number" id="ups-vdc" step="0.1" value="48" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none input-glow transition-all"></div>
+                            <div><label data-i18n="calc.card16.label.ah" class="text-xs text-slate-600 mb-1.5 block">单节容量 (Ah)</label><input type="number" id="ups-ah" step="0.5" value="100" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none input-glow transition-all"></div>
+                            <div><label data-i18n="calc.card16.label.count" class="text-xs text-slate-600 mb-1.5 block">电池数量</label><input type="number" id="ups-count" value="24" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none input-glow transition-all"></div>
+                            <div><label data-i18n="calc.card16.label.eff" class="text-xs text-slate-600 mb-1.5 block">UPS 效率</label><input type="number" id="ups-eff" step="0.01" value="0.9" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none input-glow transition-all"></div>
+                            <div><label data-i18n="calc.card16.label.dod" class="text-xs text-slate-600 mb-1.5 block">放电深度 DOD</label><input type="number" id="ups-dod" step="0.01" value="0.8" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none input-glow transition-all"></div>
+                        </div>
+                        <button id="btn-ups" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i><span data-i18n="calc.card16.btn">计算后备时间</span></button>
+                        <div id="ups-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
+                    </div>
+                    <!-- 12. Solar System Design -->
+                    <div class="calc-card hidden bg-white border-2 border-slate-200 shadow-md rounded-xl p-6 space-y-5 calc-card-12">
+                        <h3 class="text-amber-600 font-bold text-base flex items-center gap-2"><i class="fa-solid fa-sun"></i> <span data-i18n="calc.card17.title">☀️ 太阳能系统设计</span></h3>
+                        <div class="mb-5 p-4 rounded-xl bg-amber-50 border-2 border-amber-300">
+                            <div class="flex items-start gap-3"><span class="text-xl shrink-0 mt-0.5">💡</span>
+                                <div class="text-sm leading-relaxed"><h4 data-i18n="calc.intro.label" class="font-bold text-amber-800 mb-1">使用说明</h4><p data-i18n="calc.card17.intro" class="text-slate-700">输入日均用电量与日照（柬埔寨约 4.5 峰值小时），估算光伏总功率、电池容量与逆变器功率。适合离网/分布式光伏设计。</p></div></div></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div><label data-i18n="calc.card17.label.usage" class="text-xs text-slate-600 mb-1.5 block">日均用电 (kWh/天)</label><input type="number" id="solar-usage" data-i18n-ph="calc.card17.placeholder.usage" placeholder="例 10" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none input-glow transition-all"></div>
+                            <div><label data-i18n="calc.card17.label.sun" class="text-xs text-slate-600 mb-1.5 block">日照峰值 (h)</label><input type="number" id="solar-sun" step="0.1" value="4.5" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none input-glow transition-all"></div>
+                            <div><label data-i18n="calc.card17.label.eff" class="text-xs text-slate-600 mb-1.5 block">系统效率</label><input type="number" id="solar-eff" step="0.01" value="0.75" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none input-glow transition-all"></div>
+                            <div><label data-i18n="calc.card17.label.vdc" class="text-xs text-slate-600 mb-1.5 block">电池电压 Vdc</label><input type="number" id="solar-vdc" step="0.1" value="48" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none input-glow transition-all"></div>
+                            <div><label data-i18n="calc.card17.label.days" class="text-xs text-slate-600 mb-1.5 block">自备天数</label><input type="number" id="solar-days" step="0.1" value="1.5" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none input-glow transition-all"></div>
+                            <div><label data-i18n="calc.card17.label.dod" class="text-xs text-slate-600 mb-1.5 block">放电深度 DOD</label><input type="number" id="solar-dod" step="0.01" value="0.8" class="w-full bg-white border-2 border-slate-300 rounded-lg px-4 py-3 text-sm text-slate-900 font-bold placeholder-slate-400 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none input-glow transition-all"></div>
+                        </div>
+                        <button id="btn-solar" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-black py-3.5 rounded-xl text-sm transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] btn-ripple"><i class="fa-solid fa-calculator mr-2"></i><span data-i18n="calc.card17.btn">设计系统</span></button>
+                        <div id="solar-result" class="mt-3 p-4 rounded-xl border bg-white border-2 border-slate-300 text-sm font-bold text-slate-800 min-h-[80px]"></div>
+                    </div>
                 </div><!-- /electric-cards-container -->
             </div><!-- /cat-electric -->
 
@@ -836,6 +884,9 @@
                 { id: 'elec-5', i18nKey: 'calc.subpill.elec5', label: t('calc.subpill.elec5', '⑤ 变压器电流感应') }, { id: 'elec-6', i18nKey: 'calc.subpill.elec6', label: t('calc.subpill.elec6', '⑥ AC vs DC') },
                 { id: 'elec-7', i18nKey: 'calc.subpill.elec7', label: t('calc.subpill.elec7', '⑦ EDC电费估算') }, { id: 'elec-8', i18nKey: 'calc.subpill.elec8', label: t('calc.subpill.elec8', '⑧ 照度计算') },
                 { id: 'elec-9', i18nKey: 'calc.subpill.elec9', label: t('calc.subpill.elec9', '⑨ 弯曲半径与穿线管') },
+                { id: 'elec-10', i18nKey: 'calc.subpill.elec10', label: t('calc.subpill.elec10', '⑩ 发电机容量') },
+                { id: 'elec-11', i18nKey: 'calc.subpill.elec11', label: t('calc.subpill.elec11', '⑪ UPS后备时间') },
+                { id: 'elec-12', i18nKey: 'calc.subpill.elec12', label: t('calc.subpill.elec12', '⑫ 太阳能设计') },
             ],
             'cat-civil': [{ id: 'civil-1', i18nKey: 'calc.subpill.civil1', label: t('calc.subpill.civil1', '① 砖块与水泥') }, { id: 'civil-2', i18nKey: 'calc.subpill.civil2', label: t('calc.subpill.civil2', '② 钢筋重量') }],
             'cat-decor': [{ id: 'decor-1', i18nKey: 'calc.subpill.decor1', label: t('calc.subpill.decor1', '① 瓷砖与胶泥') }, { id: 'decor-2', i18nKey: 'calc.subpill.decor2', label: t('calc.subpill.decor2', '② 油漆计算') }],
@@ -882,6 +933,19 @@
             attachSubPills('civil-sub-pills', 'cat-civil');
             attachSubPills('decor-sub-pills', 'cat-decor');
             attachSubPills('cost-sub-pills', 'cat-cost');
+            updateTabCounts();
+        }
+
+        // 按 .calc-card 数量回写各分类 tab 计数，根治未来漏改硬编码
+        function updateTabCounts() {
+            const map = {'cat-electric':'electric-cards-container','cat-civil':'civil-cards-container','cat-decor':'decor-cards-container','cat-cost':'cost-cards-container'};
+            Object.entries(map).forEach(([cat, cId]) => {
+                const c = document.getElementById(cId);
+                const count = c ? c.querySelectorAll('.calc-card').length : 0;
+                document.querySelectorAll(`.tab-count[data-count-for="${cat}"]`).forEach(span => {
+                    span.textContent = count ? `(${count})` : '';
+                });
+            });
         }
 
         // Category tabs
