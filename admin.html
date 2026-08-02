@@ -220,7 +220,7 @@
 
     <!-- ==================== CATEGORY EDITOR MODAL ==================== -->
     <div id="category-modal" class="fixed inset-0 z-50 modal-backdrop hidden items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-700/80 rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+        <div class="bg-slate-900 border border-slate-700/80 rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
             <div class="p-6 border-b border-slate-800 flex justify-between items-start bg-slate-950/50">
                 <div>
                     <h2 id="category-modal-title" class="text-lg font-bold text-white">New Category</h2>
@@ -302,14 +302,10 @@
     ];
 
     // ---- Category field definitions (字段定义驱动渲染) ----
+    // 多语言文本字段(title/label/label_en, desc/desc_km/desc_en) 改由 CATEGORY_I18N_GROUPS
+    // 三栏分组渲染，此处只保留单值字段（color/icon/img/order）。
     const CATEGORY_FIELD_DEFS = [
-        { key: 'title', label: 'Khmer 标题 (title)', type: 'text',  placeholder: 'ខ្សែសាងសង់គ្រួសារ' },
-        { key: 'label', label: '中文标签 (label)',   type: 'text',  placeholder: '家装布电线' },
-        { key: 'label_en', label: '英文标签 (label_en)',   type: 'text',  placeholder: 'Household Wiring' },
-        { key: 'desc',  label: '中文描述 (desc)',   type: 'text',  placeholder: '住宅明装/穿管布线…' },
-        { key: 'desc_km', label: 'Khmer 描述 (desc_km)', type: 'text', placeholder: 'សំណង់ផ្ទះ/ឆ្លងកាត់បំពង់…' },
-        { key: 'desc_en', label: '英文描述 (desc_en)', type: 'text', placeholder: 'Residential surface / conduit wiring…' },
-        { key: 'color', label: '颜色主题 (color)',  type: 'select', options: [
+        { key: 'color',  label: '颜色主题 (color)',  type: 'select', options: [
             { value: 'amber',   label: 'amber (家装)' },
             { value: 'rose',    label: 'rose (电力)' },
             { value: 'slate',   label: 'slate (电焊)' },
@@ -321,14 +317,26 @@
         { key: 'order', label: '排序 (order, 数值小在前)', type: 'number', placeholder: '1' }
     ];
 
+    // ---- Category 多语言分组（三栏：柬/中/英）----
+    // title  = 高棉语主标题, label = 中文, label_en = 英文（沿用 categories.json 原 schema）
+    // desc_km / desc / desc_en 也已存在于 categories.json
+    const CATEGORY_I18N_GROUPS = [
+        { type: 'text', label: '标题 / 标签',
+          fields: [ { key: 'title',    lang: 'km', ph: 'ខ្សែសាងសង់គ្រួសារ' },
+                    { key: 'label',    lang: 'zh', ph: '家装布电线' },
+                    { key: 'label_en', lang: 'en', ph: 'Household Wiring' } ] },
+        { type: 'text', label: '描述',
+          fields: [ { key: 'desc_km', lang: 'km', ph: 'សំណង់ផ្ទះ/ឆ្លងកាត់បំពង់…' },
+                    { key: 'desc',    lang: 'zh', ph: '住宅明装/穿管布线…' },
+                    { key: 'desc_en', lang: 'en', ph: 'Residential surface / conduit wiring…' } ] }
+    ];
+
     // ---- Product field definitions (字段定义驱动渲染) ----
-    // specs / variants / specsHeaders 为特殊字段，单独渲染为表格/标签编辑器
+    // 多语言文本字段由 PRODUCT_I18N_GROUPS 三栏分组渲染，此处只保留单值字段。
+    // specs / variants / specsHeaders 为特殊字段，仍单独渲染（variants 已并入多语言分组）。
     const PRODUCT_FIELD_DEFS = [
         { key: 'categoryId', label: '所属分类 (categoryId)', type: 'select-dynamic', source: 'categories', displayKey: 'label', valueKey: 'id' },
         { key: 'name',  label: '型号 (name)',  type: 'text', placeholder: 'BVR' },
-        { key: 'label', label: '中文描述 (label)', type: 'text', placeholder: '铜芯PVC绝缘软布电线' },
-        { key: 'label_km', label: 'Khmer 描述 (label_km)', type: 'text', placeholder: 'ខ្សែកុងតាក់ទន់ PVC សម្រាប់សំណង់' },
-        { key: 'label_en', label: '英文描述 (label_en)', type: 'text', placeholder: 'Copper PVC insulated flexible wiring' },
         { key: 'voltage',    label: '电压 (voltage)',    type: 'text', placeholder: '450/750V' },
         { key: 'conductor',  label: '导体 (conductor)',  type: 'text', placeholder: '多股退火铜 / 0.75–70 mm²' },
         { key: 'insulation', label: '绝缘 (insulation)', type: 'text', placeholder: 'PVC' },
@@ -336,30 +344,59 @@
         { key: 'temp',       label: '工作温度 (temp)',   type: 'text', placeholder: '≤70℃' },
         { key: 'install',    label: '安装温度 (install)', type: 'text', placeholder: '≥0℃' },
         { key: 'radius',     label: '弯曲半径 (radius)', type: 'text', placeholder: 'D≤16mm ≥4D；D>16mm ≥6D' },
-        { key: 'usage',      label: '中文用途 (usage)',      type: 'textarea', placeholder: '固定布线…' },
-        { key: 'usage_km',   label: 'Khmer 用途 (usage_km)',  type: 'textarea', placeholder: 'សំណង់ថេរដែលត្រូវការទន់…' },
-        { key: 'usage_en',   label: '英文用途 (usage_en)',    type: 'textarea', placeholder: 'Fixed wiring requiring flexibility…' },
-        { key: 'features',   label: '中文特性 (features)',   type: 'textarea', placeholder: '柔软易弯折…' },
-        { key: 'features_km', label: 'Khmer 特性 (features_km)', type: 'textarea', placeholder: 'ទន់ៗ ងាយ​ពត់…' },
-        { key: 'features_en', label: '英文特性 (features_en)',   type: 'textarea', placeholder: 'Flexible and easy to bend…' },
         { key: 'standard',   label: '标准 (standard)',   type: 'text', placeholder: 'GB/T 5023 / IEC 60502-1' },
-        { key: 'packaging',  label: '中文包装 (packaging)',  type: 'text', placeholder: '100m/200m 成卷' },
-        { key: 'packaging_km', label: 'Khmer 包装 (packaging_km)', type: 'text', placeholder: '100m/200m ក្រឡ' },
-        { key: 'packaging_en', label: '英文包装 (packaging_en)', type: 'text', placeholder: '100m/200m per roll' },
         { key: 'img',        label: '主图 URL (img)',    type: 'url', placeholder: 'assets/images/products/bvr.jpg' },
         { key: 'img2',       label: '备用图 URL (img2)',  type: 'url', placeholder: '（可空）' },
-        { key: 'installation', label: '中文敷设与环境 (installation)', type: 'textarea', placeholder: '环境温度 30℃…' },
-        { key: 'installation_km', label: 'Khmer 敷设与环境 (installation_km)', type: 'textarea', placeholder: 'សីតុណ្ឌភាពបរិស្ថាន 30℃…' },
-        { key: 'installation_en', label: '英文敷设与环境 (installation_en)', type: 'textarea', placeholder: 'Ambient 30°C reference…' },
-        { key: 'selection',  label: '中文选型与施工 (selection)', type: 'textarea', placeholder: '家装照明回路可选 1.5 mm²…' },
-        { key: 'selection_km', label: 'Khmer 选型 (selection_km)', type: 'textarea', placeholder: 'បន្ទប់ភ្លើង 1.5 mm²…' },
-        { key: 'selection_en', label: '英文选型 (selection_en)', type: 'textarea', placeholder: 'Lighting 1.5 mm²…' },
-        { key: 'note',       label: '中文数据说明 (note)',    type: 'textarea', placeholder: '载流量参考值…' },
-        { key: 'note_km', label: 'Khmer 数据说明 (note_km)', type: 'textarea', placeholder: 'តម្លៃឈ្មោះសមត្ថភាព…' },
-        { key: 'note_en', label: '英文数据说明 (note_en)', type: 'textarea', placeholder: 'Ampacity reference value…' },
         { key: 'order',      label: '排序 (order)',       type: 'number', placeholder: '1' }
-        // specs / variants / specsHeaders 在表单下方单独渲染（暂不易同步多语言数组）
     ];
+
+    // ---- Product 多语言分组（三栏：中/柬/英，中文为主字段）----
+    // 主字段 key 与 products.json 一致；_km / _en 为本地化字段，前台 L() 自动取值。
+    // variants 三语均为字符串数组（逗号/换行分隔），与 products.html variants_km/variants_en 读取对齐。
+    const PRODUCT_I18N_GROUPS = [
+        { type: 'text', label: '描述 label',
+          fields: [ { key: 'label',    lang: 'zh', ph: '铜芯PVC绝缘软布电线' },
+                    { key: 'label_km', lang: 'km', ph: 'ខ្សែកុងតាក់ទន់ PVC សម្រាប់សំណង់' },
+                    { key: 'label_en', lang: 'en', ph: 'Copper PVC insulated flexible wiring' } ] },
+        { type: 'textarea', label: '用途 usage', rows: 2,
+          fields: [ { key: 'usage',    lang: 'zh', ph: '固定布线…' },
+                    { key: 'usage_km', lang: 'km', ph: 'សំណង់ថេរដែលត្រូវការទន់…' },
+                    { key: 'usage_en', lang: 'en', ph: 'Fixed wiring requiring flexibility…' } ] },
+        { type: 'textarea', label: '特性 features', rows: 2,
+          fields: [ { key: 'features',    lang: 'zh', ph: '柔软易弯折…' },
+                    { key: 'features_km', lang: 'km', ph: 'ទន់ៗ ងាយ​ពត់…' },
+                    { key: 'features_en', lang: 'en', ph: 'Flexible and easy to bend…' } ] },
+        { type: 'text', label: '包装 packaging',
+          fields: [ { key: 'packaging',    lang: 'zh', ph: '100m/200m 成卷' },
+                    { key: 'packaging_km', lang: 'km', ph: '100m/200m ក្រឡ' },
+                    { key: 'packaging_en', lang: 'en', ph: '100m/200m per roll' } ] },
+        { type: 'textarea', label: '敷设与环境 installation', rows: 2,
+          fields: [ { key: 'installation',    lang: 'zh', ph: '环境温度 30℃…' },
+                    { key: 'installation_km', lang: 'km', ph: 'សីតុណ្ឌភាពបរិស្ថាន 30℃…' },
+                    { key: 'installation_en', lang: 'en', ph: 'Ambient 30°C reference…' } ] },
+        { type: 'textarea', label: '选型与施工 selection', rows: 2,
+          fields: [ { key: 'selection',    lang: 'zh', ph: '家装照明回路可选 1.5 mm²…' },
+                    { key: 'selection_km', lang: 'km', ph: 'បន្ទប់ភ្លើង 1.5 mm²…' },
+                    { key: 'selection_en', lang: 'en', ph: 'Lighting 1.5 mm²…' } ] },
+        { type: 'textarea', label: '数据说明 note', rows: 2,
+          fields: [ { key: 'note',    lang: 'zh', ph: '载流量参考值…' },
+                    { key: 'note_km', lang: 'km', ph: 'តម្លៃឈ្មោះសមត្ថភាព…' },
+                    { key: 'note_en', lang: 'en', ph: 'Ampacity reference value…' } ] }
+    ];
+
+    // variants 多语言三栏（字符串数组，逗号/换行分隔）
+    const PRODUCT_VARIANT_GROUP = [
+        { key: 'variants',    lang: 'zh', label: '中文 (variants)' },
+        { key: 'variants_km', lang: 'km', label: 'កម្ពុជា (variants_km)' },
+        { key: 'variants_en', lang: 'en', label: 'English (variants_en)' }
+    ];
+
+    // 语言徽标（三栏顶部小标签）
+    const LANG_BADGE = {
+        zh: { mark: '中', color: 'bg-rose-500/15 text-rose-300 border-rose-500/25' },
+        km: { mark: 'ក', color: 'bg-amber-500/15 text-amber-300 border-amber-500/25' },
+        en: { mark: 'EN', color: 'bg-sky-500/15 text-sky-300 border-sky-500/25' }
+    };
 
     // ---- Runtime state ----
     let articles = [];
@@ -827,10 +864,43 @@
             </div>`;
     }
 
-    /* ---- Category CRUD (字段定义驱动) ---- */
+    /* ---- 三栏多语言分组渲染器 ----
+       group: { type:'text'|'textarea', label, rows?, fields:[ {key, lang, ph} x3 ] }
+       data: 当前编辑对象（null 表示新建）
+       idPrefix: 'cat' 或 'prod' → input id = `${idPrefix}-field-${key}`
+       返回一段 HTML：标题卡片 + grid grid-cols-3 三列（每列：语言徽标 + 输入框）
+       输入框 id 与扁平 PRODUCT_FIELD_DEFS 约定一致，readXxxForm 无需改动。 */
+    function renderI18nGroup(group, data, idPrefix) {
+        const cols = group.fields.map(f => {
+            const v = data ? (data[f.key] != null ? data[f.key] : '') : '';
+            const id = idPrefix + '-field-' + f.key;
+            const badge = LANG_BADGE[f.lang] || LANG_BADGE.en;
+            let input;
+            if (group.type === 'textarea') {
+                input = `<textarea id="${id}" rows="${group.rows || 2}" placeholder="${escHtml(f.ph || '')}" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-amber-500 outline-none transition-all resize-y">${escHtml(v)}</textarea>`;
+            } else {
+                input = `<input id="${id}" type="text" value="${escHtml(v)}" placeholder="${escHtml(f.ph || '')}" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-amber-500 outline-none transition-all">`;
+            }
+            return `<div class="space-y-1.5">
+                <div class="flex items-center gap-1.5"><span class="inline-flex items-center justify-center min-w-[28px] px-1.5 py-0.5 rounded text-[10px] font-bold border ${badge.color}">${badge.mark}</span><span class="text-[10px] text-slate-500 font-mono">${escHtml(f.key)}</span></div>
+                ${input}
+            </div>`;
+        }).join('');
+        return `<div class="bg-slate-900/40 border border-slate-800 rounded-xl p-3.5 space-y-2">
+            <div class="flex items-center gap-2"><i class="fa-solid fa-language text-amber-400 text-xs"></i><span class="text-xs font-bold text-slate-200">${escHtml(group.label)}</span></div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">${cols}</div>
+        </div>`;
+    }
+
+    /* ---- Category CRUD (字段定义驱动 + 三栏多语言分组) ---- */
     function renderCategoryFormFields(data) {
         const body = document.getElementById('category-modal-body');
-        body.innerHTML = CATEGORY_FIELD_DEFS.map(f => {
+
+        // 1) 三栏多语言分组（标题/标签、描述）置于顶部，便于一次性录入三语
+        const groupsHtml = CATEGORY_I18N_GROUPS.map(g => renderI18nGroup(g, data, 'cat')).join('');
+
+        // 2) 单值字段（color/icon/img/order）
+        const fieldsHtml = CATEGORY_FIELD_DEFS.map(f => {
             const v = data ? (data[f.key] != null ? data[f.key] : '') : '';
             const id = 'cat-field-' + f.key;
             let input;
@@ -842,6 +912,9 @@
             }
             return `<div><label class="block text-xs font-medium text-slate-300 mb-1.5">${escHtml(f.label)}</label>${input}</div>`;
         }).join('');
+
+        body.innerHTML = `<div class="space-y-3">${groupsHtml}</div>
+            <div class="grid grid-cols-2 gap-4 pt-1">${fieldsHtml}</div>`;
     }
     function openNewCategory() {
         editingCategoryId = null;
@@ -860,6 +933,11 @@
     function readCategoryForm() {
         const o = {};
         CATEGORY_FIELD_DEFS.forEach(f => { o[f.key] = document.getElementById('cat-field-' + f.key).value.trim(); });
+        // 多语言分组字段（三栏输入，key 与 categories.json 一致）
+        CATEGORY_I18N_GROUPS.forEach(g => g.fields.forEach(f => {
+            const el = document.getElementById('cat-field-' + f.key);
+            o[f.key] = el ? el.value.trim() : '';
+        }));
         if (o.order) o.order = Number(o.order) || 0;
         return o;
     }
@@ -956,33 +1034,49 @@
         document.getElementById('prod-filter-category')?.addEventListener('change', () => renderProductsView(box));
     }
 
-    /* ---- Product form: 字段定义驱动 + 规格表 + variants 编辑器 ---- */
+    /* ---- Product form: 字段定义驱动(单值) + 三栏多语言分组 + 规格表 + variants 三语 ---- */
     function renderProductFormFields(data) {
         const body = document.getElementById('product-modal-body');
         // 1) build category <select> options
         const catOpts = categories.map(c => `<option value="${escHtml(c.id)}">${escHtml(c.label)}</option>`).join('');
 
-        // 2) render standard fields from PRODUCT_FIELD_DEFS
+        // 2) 单值字段 (categoryId/name/voltage/.../order) — 双列网格
         const fieldsHtml = PRODUCT_FIELD_DEFS.map(f => {
             const v = data ? (data[f.key] != null ? data[f.key] : (f.key === 'categoryId' && categories[0] ? categories[0].id : '')) : (f.key === 'categoryId' && categories[0] ? categories[0].id : '');
             const id = 'prod-field-' + f.key;
             let input;
             if (f.type === 'select-dynamic') {
                 input = `<select id="${id}" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-amber-500 outline-none transition-all">${catOpts.replace(new RegExp('value="' + escHtml(v) + '"'), 'value="' + escHtml(v) + '" selected')}</select>`;
-            } else if (f.type === 'textarea') {
-                input = `<textarea id="${id}" rows="2" placeholder="${escHtml(f.placeholder || '')}" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none transition-all resize-y">${escHtml(v)}</textarea>`;
-            } else if (f.type === 'select') {
-                input = `<select id="${id}" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-amber-500 outline-none transition-all">${f.options.map(o => `<option value="${o.value}" ${o.value === v ? 'selected' : ''}>${o.label}</option>`).join('')}</select>`;
             } else {
                 const inpType = f.type === 'url' ? 'url' : (f.type === 'number' ? 'number' : 'text');
                 input = `<input id="${id}" type="${inpType}" value="${escHtml(v)}" placeholder="${escHtml(f.placeholder || '')}" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none transition-all">`;
             }
-            const wide = ['usage', 'features', 'installation', 'selection', 'note'].indexOf(f.key) > -1;
-            return `<div class="${wide ? 'sm:col-span-2' : ''}"><label class="block text-xs font-medium text-slate-300 mb-1.5">${escHtml(f.label)}</label>${input}</div>`;
+            return `<div><label class="block text-xs font-medium text-slate-300 mb-1.5">${escHtml(f.label)}</label>${input}</div>`;
         }).join('');
+
+        // 3) 三栏多语言分组 (label/usage/features/packaging/installation/selection/note)
+        const groupsHtml = PRODUCT_I18N_GROUPS.map(g => renderI18nGroup(g, data, 'prod')).join('');
+
+        // 4) 派生型号 variants 三语三栏（字符串数组，逗号/换行分隔）
+        const variantsHtml = (function () {
+            const cols = PRODUCT_VARIANT_GROUP.map(vf => {
+                const v = data ? (data[vf.key] && Array.isArray(data[vf.key]) ? data[vf.key].join(', ') : '') : '';
+                const id = 'prod-field-' + vf.key;
+                const badge = LANG_BADGE[vf.lang] || LANG_BADGE.en;
+                return `<div class="space-y-1.5">
+                    <div class="flex items-center gap-1.5"><span class="inline-flex items-center justify-center min-w-[28px] px-1.5 py-0.5 rounded text-[10px] font-bold border ${badge.color}">${badge.mark}</span><span class="text-[10px] text-slate-500 font-mono">${escHtml(vf.label)}</span></div>
+                    <textarea id="${id}" rows="2" placeholder="逗号或换行分隔，如 ZR-BVR 阻燃, WDZ-BVR 低烟无卤" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:border-amber-500 outline-none transition-all resize-y">${escHtml(v)}</textarea>
+                </div>`;
+            }).join('');
+            return `<div class="bg-slate-900/40 border border-slate-800 rounded-xl p-3.5 space-y-2">
+                <div class="flex items-center gap-2"><i class="fa-solid fa-tags text-amber-400 text-xs"></i><span class="text-xs font-bold text-slate-200">派生型号 variants (三项语言分别填)</span></div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">${cols}</div>
+            </div>`;
+        })();
 
         body.innerHTML = `
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">${fieldsHtml}</div>
+            <div class="space-y-3">${groupsHtml}</div>
 
             <!-- 规格表头(可选指定) -->
             <div><label class="block text-xs font-medium text-slate-300 mb-1.5">规格表头(可空→自动 5/6 列)</label>
@@ -998,9 +1092,8 @@
                 <div id="spec-rows" class="space-y-2"></div>
             </div>
 
-            <!-- 派生型号 variants -->
-            <div><label class="block text-xs font-medium text-slate-300 mb-1.5">派生型号 variants (逗号或换行分隔)</label>
-                <textarea id="prod-field-variants" rows="2" placeholder="ZR-BVR 阻燃, WDZ-BVR 低烟无卤, ..." class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:border-amber-500 outline-none transition-all resize-y">${escHtml(data && data.variants ? data.variants.join(', ') : '')}</textarea></div>
+            <!-- 派生型号 variants 三语 -->
+            ${variantsHtml}
         `;
 
         // render spec rows
@@ -1062,14 +1155,24 @@
     function readProductForm() {
         const o = {};
         PRODUCT_FIELD_DEFS.forEach(f => { o[f.key] = document.getElementById('prod-field-' + f.key).value.trim(); });
+        // 多语言分组字段（三栏输入，key 与 products.json 一致）
+        PRODUCT_I18N_GROUPS.forEach(g => g.fields.forEach(f => {
+            const el = document.getElementById('prod-field-' + f.key);
+            o[f.key] = el ? el.value.trim() : '';
+        }));
         o.order = o.order ? Number(o.order) || 0 : 0;
         // specsHeaders
         const hdrRaw = document.getElementById('prod-field-specsHeaders').value.trim();
         o.specsHeaders = hdrRaw ? hdrRaw.split('|').map(s => s.trim()).filter(Boolean) : undefined;
         o.specs = collectSpecRows();
-        // variants
-        const varRaw = document.getElementById('prod-field-variants').value.trim();
-        o.variants = varRaw ? varRaw.split(/[\n,，]/).map(s => s.trim()).filter(Boolean) : [];
+        // variants 三语（逗号/换行分隔 → 字符串数组；空则 []，避免前台渲染未定义长度）
+        const splitVariants = id => {
+            const raw = (document.getElementById(id) || {}).value || '';
+            return raw.trim() ? raw.split(/[\n,，]/).map(s => s.trim()).filter(Boolean) : [];
+        };
+        o.variants    = splitVariants('prod-field-variants');
+        o.variants_km = splitVariants('prod-field-variants_km');
+        o.variants_en = splitVariants('prod-field-variants_en');
         return o;
     }
 
