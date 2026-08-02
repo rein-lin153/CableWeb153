@@ -677,12 +677,13 @@
         // 造价
         bind('btn-cost', calcConstructionCost);
 
-        // 造价档次下拉联动：切换档次时若单价输入为空则填默认值
+        // 造价档次下拉联动：切换档次时单价始终同步为该档次默认值
+        // (用户切档次即代表重新选档，应同步刷新单价；如需自定义可在切档后再次修改)
         const costGradeSel = $('cost-grade');
         if (costGradeSel) {
             costGradeSel.addEventListener('change', () => {
                 const u = $('cost-unit');
-                if (u && u.value === '') u.value = COST_GRADE_DEFAULT[costGradeSel.value] || 350;
+                if (u) u.value = COST_GRADE_DEFAULT[costGradeSel.value] || 350;
             });
         }
 
