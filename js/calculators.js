@@ -390,6 +390,8 @@
     }
 
     // ===================== 8. 照度计算 =====================
+    // 光源光效表 (lm/W) — admin 后台暂不配置，写死近似值即可
+    const LIGHT_EFFICACY = { led: 100, cfl: 60, fluorescent: 70 };
     function calcLighting() {
         const L = num('light-room-l');
         const W = num('light-room-w');
@@ -397,17 +399,20 @@
         const lux = parseInt(val('light-lux'), 10);
         const ledW = num('light-led-w');
         if (L === null || W === null || ledW === null) return setResult('lighting-result', needAll(['长度 m', '宽度 m', 'LED功率 W']));
+        const source = val('light-source') || 'led';
+        const efficacy = LIGHT_EFFICACY[source] != null ? LIGHT_EFFICACY[source] : 100;
         const area = L * W;
-        // LED ~100 lm/W 维修系数 0.8 利用系数 0.7 → 综合系数 0.56
-        const lumens = ledW * 100;
+        // 综合系数 CU×MF = 0.7×0.8 = 0.56
+        const lumens = ledW * efficacy;
         const uf = 0.7, mf = 0.8;
         const fixtures = Math.ceil((lux * area) / (lumens * uf * mf));
         const totalW = fixtures * ledW;
+        const srcName = { led: 'LED', cfl: t('calc.card8.option.source.cfl','节能灯'), fluorescent: t('calc.card8.option.source.fluorescent','荧光灯') }[source] || 'LED';
         setResult('lighting-result', `
             <div class="space-y-1.5">
                 <div>${t('calc.result.room_area','房间面积：')}${hl(area.toFixed(1), ' m²')}（${L}×${W}×高${H || '-' }）</div>
                 <div>${t('calc.result.target_lux','目标照度：')}${hl(lux, ' lux')}</div>
-                <div>${t('calc.result.lumens_per_lamp','单灯流明：')}${hl(lumens, ' lm')}（${ledW}W × 100 lm/W）</div>
+                <div>${t('calc.result.lumens_per_lamp','单灯流明：')}${hl(lumens, ' lm')}（${ledW}W × ${t('calc.result.efficacy','光效')}${hl(efficacy, ' lm/W')} · ${srcName}）</div>
                 <div>${t('calc.result.cu_mf','利用系数 CU=0.7 维护系数 MF=0.8')}</div>
                 <div class="border-t border-slate-200 mt-1 pt-1">${t('calc.result.need_fixtures','需要灯具数：')}${hl(fixtures, ' 盏')}</div>
                 <div>${t('calc.result.total_power','总功率：')}${hl(totalW, ' W')}</div>
