@@ -1,0 +1,1 @@
+{"copperPriceUsdPerKg":9,"edcCommercialRate":920,"edcNotes":"EDC 阶梯近似值，请管理员后台更新为最新电价","edcTiers":[{"upTo":50,"rate":610},{"upTo":100,"rate":770},{"upTo":200,"rate":920},{"upTo":300,"rate":1090},{"upTo":400,"rate":1280},{"upTo":99999,"rate":1480}],"edcUsdRielRate":4100}
