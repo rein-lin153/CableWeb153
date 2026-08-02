@@ -119,7 +119,8 @@
         return DERATING_INSTALL[install] * DERATING_TEMP[ambient];
     }
 
-    /** 按需电流查推荐截面积；opts 可选 {insulation, install, ambient}，默认 pvc/air/30 与旧版一致 */
+    /** 按需电流查满足载流量的最小截面积；
+     *  opts 可选 {insulation, install, ambient}，默认 pvc/air/30 与旧版一致 */
     function recommendSize(current, material, opts) {
         const tbl = ampacityBase(material, (opts && opts.insulation) || 'pvc');
         const factor = deratingFactor(opts);
@@ -127,6 +128,56 @@
             if (tbl[s] * factor >= current) return s;
         }
         return 240;
+    }
+
+    /**
+     * 自增循环校验选线：从最小线径起，逐级递增，找第一个同时满足
+     *   ① 载流量（修正后）≥ 计算电流   ② 电压降 ≤ dropLimitPct
+     * 的标准线径。
+     * @param {number} current  计算电流 A
+     * @param {string} material 'copper' | 'aluminum'
+     * @param {object} p { phase, length, voltage, insulation, install, ambient, dropLimitPct }
+     * @returns {object} { area, baseA, allowA, dV, dVPct, pass, reachedMax }
+     *   - area: 选中线径 mm²；若全部不满足则返回最大档(240)并标记 reachedMax
+     *   - pass: 该线径是否两项均合格
+     */
+    function recommendSizeWithDrop(current, material, p) {
+        p = p || {};
+        const phase = p.phase === 'three' ? 'three' : 'single';
+        const length = p.length || 0;
+        const voltage = p.voltage || (phase === 'three' ? 400 : 230);
+        const insulation = (p.insulation) || 'pvc';
+        const install = p.install || 'air';
+        const ambient = (p.ambient != null ? p.ambient : 30);
+        const dropLimitPct = (p.dropLimitPct != null && isFinite(p.dropLimitPct)) ? p.dropLimitPct : 5;
+
+        const tbl = ampacityBase(material, insulation);
+        const factor = deratingFactor({ insulation, install, ambient });
+        const root3 = Math.sqrt(3);
+        const rho = material === 'aluminum' ? 0.0282 : 0.0175; // Ω·mm²/m
+
+        let chosen = null, reachedMax = false;
+        for (const s of STANDARD_SIZES) {
+            const baseA = tbl[s];
+            const allowA = Math.round(baseA * factor);
+            const dV = phase === 'three' ? (root3 * rho * length * current) / s : (2 * rho * length * current) / s;
+            const dVPct = (dV / voltage) * 100;
+            const ampOk = allowA >= current;
+            const dropOk = dVPct <= dropLimitPct;
+            if (ampOk && dropOk) { chosen = { area: s, baseA, allowA, dV, dVPct, pass: true }; break; }
+        }
+        if (!chosen) {
+            // 全部线径均不能同时满足 → 取最大档如实展示「不合格」
+            reachedMax = true;
+            const s = STANDARD_SIZES[STANDARD_SIZES.length - 1];
+            const baseA = tbl[s];
+            const allowA = Math.round(baseA * factor);
+            const dV = phase === 'three' ? (root3 * rho * length * current) / s : (2 * rho * length * current) / s;
+            const dVPct = (dV / voltage) * 100;
+            chosen = { area: s, baseA, allowA, dV, dVPct, pass: false };
+        }
+        chosen.reachedMax = reachedMax;
+        return chosen;
     }
 
     function calcCableSize() {
@@ -148,21 +199,29 @@
         const root3 = Math.sqrt(3);
         // 计算电流 I = P / (√3·V·pf) 三相 ; P/(V·pf) 单相
         const current = phase === 'three' ? (power * 1000) / (root3 * voltage * pf) : (power * 1000) / (voltage * pf);
-        const cableOpts = { insulation, install, ambient };
-        const area = recommendSize(current, material, cableOpts);
+
+        // 自增循环校验：从最小线径起递增，直到同时满足载流量与压降
+        const r = recommendSizeWithDrop(current, material, {
+            phase, length, voltage, insulation, install, ambient, dropLimitPct: 5
+        });
+        const area = r.area;
         const tbl = ampacityBase(material, insulation);
-        const factor = deratingFactor(cableOpts);
-        const baseA = tbl[area];           // 基准载流量（30℃ 空气中）
+        const factor = deratingFactor({ insulation, install, ambient });
+        const baseA = tbl[area];                 // 基准载流量（30℃ 空气中）
         const allowA = Math.round(baseA * factor); // 修正后载流量
         const rho = material === 'aluminum' ? 0.0282 : 0.0175; // Ω·mm²/m
         // 电压降 ΔU = 2·ρ·L·I / A 单相 ; √3·ρ·L·I / A 三相
         const dV = phase === 'three' ? (root3 * rho * length * current) / area : (2 * rho * length * current) / area;
         const dVPct = (dV / voltage) * 100;
+        const pass = r.pass;
 
         const matName = material === 'aluminum' ? t('calc.card1.option.aluminum','铝 Aluminum') : t('calc.card1.option.copper','铜 Copper');
         const insName = { pvc: 'PVC', xlpe: 'XLPE', rubber: t('calc.card1.option.insulation.rubber','橡胶') }[insulation] || 'PVC';
-        const pass = dVPct <= 5;
         const phaseName = phase === 'three' ? t('calc.card1.option.three','三相 400V') : t('calc.card1.option.single','单相 230V');
+
+        const verdict = pass
+            ? `<i class="fa-solid fa-circle-check mr-1"></i>${t('calc.result.pass','合格（载流量 ≥ 计算电流 且 电压降 ≤ 5%）')}`
+            : `<i class="fa-solid fa-triangle-exclamation mr-1"></i>${t('calc.result.fail','已选最大线径仍不合格：载流量或电压降不达标，建议增大线径、改用铜芯/高压等级，或缩短距离')}`;
 
         setResult('cable-result', `
             <div class="space-y-1.5">
@@ -170,10 +229,7 @@
                 <div>${t('calc.result.calc_current','计算电流：')}${hl(current.toFixed(1), ' A')}（PF=0.85）</div>
                 <div>${t('calc.result.recommend_wire','推荐线径：')}${hl(area, ' mm²')} ｜ ${t('calc.result.ampacity','该规格载流量')} ${hl(baseA, ' A')} → ${t('calc.result.adjusted_ampacity','修正后')}${hl(allowA, ' A')}</div>
                 <div>${t('calc.result.voltage_drop','电压降：')}${hl(dV.toFixed(2), ' V')} (${hl(dVPct.toFixed(2), '%')})</div>
-                <div class="text-xs ${pass ? 'text-emerald-600' : 'text-red-500'} font-bold mt-1">
-                    <i class="fa-solid ${pass ? 'fa-circle-check' : 'fa-triangle-exclamation'} mr-1"></i>
-                    ${pass ? t('calc.result.pass','合格（电压降 ≤ 5%）') : t('calc.result.fail','不合格，电压降 > 5%，建议增大线径或缩短距离')}
-                </div>
+                <div class="text-xs ${pass ? 'text-emerald-600' : 'text-red-500'} font-bold mt-1">${verdict}</div>
             </div>
         `);
     }
