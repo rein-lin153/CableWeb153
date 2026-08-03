@@ -767,6 +767,17 @@ body {
 
     // Initial filter + render
     applyFilters();
+
+    // 深链：首页/产品页点名跳转 articles.html?id=a001 等，加载完自动开窗。
+    // 无 id、或 id 不存在则忽略，不影响正常列表访问。
+    try {
+      var dl = new URLSearchParams(location.search).get('id');
+      if (dl) {
+        var hit = allArticles.find(function (a) { return a.id === dl; }) ||
+                  INLINE_ARTICLES.find(function (a) { return a.id === dl; });
+        if (hit) openArticleModal(dl);
+      }
+    } catch (_) {}
   }
 
   // ---- Apply filters & search ----
@@ -999,6 +1010,10 @@ body {
       modal.classList.remove('flex');
       document.body.style.overflow = '';
     }, 300);
+    // 关闭后清理地址栏 ?id=（不留深链残留，避免刷新又弹窗 / 分享时 url 干净）
+    if (location.search) {
+      try { history.replaceState(null, '', location.pathname + location.hash); } catch (_) {}
+    }
   };
 
   document.getElementById('article-modal')?.addEventListener('click', (e) => {
