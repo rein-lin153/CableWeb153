@@ -86,9 +86,9 @@
     // 基准载流量表 (A) — 环境温度 30℃ / 空气中敷设 / 各绝缘类型
     // (IEC 60502-5 / IEC 60364-5-52 近似估算)
     // pvc  = 现有基准；xlpe ≈ PVC ×1.30；rubber ≈ PVC ×1.15
-    const STANDARD_SIZES = [1.5, 2.5, 4, 6, 10, 16, 25, 35, 50, 70, 95, 120, 150, 185, 240];
-    const _CU_PVC = { 1.5: 19, 2.5: 27, 4: 36, 6: 46, 10: 63, 16: 85, 25: 112, 35: 138, 50: 168, 70: 213, 95: 258, 120: 299, 150: 344, 185: 395, 240: 460 };
-    const _AL_PVC = { 2.5: 21, 4: 28, 6: 36, 10: 49, 16: 67, 25: 88, 35: 110, 50: 134, 70: 171, 95: 207, 120: 239, 150: 276, 185: 316, 240: 370 };
+    const STANDARD_SIZES = [1.5, 2.5, 4, 6, 10, 16, 25, 35, 50, 70, 95, 120, 150, 185, 240, 300, 400, 500];
+    const _CU_PVC = { 1.5: 19, 2.5: 27, 4: 36, 6: 46, 10: 63, 16: 85, 25: 112, 35: 138, 50: 168, 70: 213, 95: 258, 120: 299, 150: 344, 185: 395, 240: 460, 300: 530, 400: 640, 500: 740 };
+    const _AL_PVC = { 2.5: 21, 4: 28, 6: 36, 10: 49, 16: 67, 25: 88, 35: 110, 50: 134, 70: 171, 95: 207, 120: 239, 150: 276, 185: 316, 240: 370, 300: 430, 400: 510, 500: 590 };
     // XLPE / Rubber 按 ×1.30 / ×1.15 近似生成（保留两位）
     const _scale = (tbl, f) => Object.fromEntries(STANDARD_SIZES.map(s => [s, Math.round((tbl[s] || 0) * f)]));
     const AMPACITY_BASE = {
@@ -164,7 +164,7 @@
             const dVPct = (dV / voltage) * 100;
             const ampOk = allowA >= current;
             const dropOk = dVPct <= dropLimitPct;
-            if (ampOk && dropOk) { chosen = { area: s, baseA, allowA, dV, dVPct, pass: true }; break; }
+            if (ampOk && dropOk) { chosen = { area: s, baseA, allowA, dV, dVPct, pass: true, ampOk, dropOk }; break; }
         }
         if (!chosen) {
             // 全部线径均不能同时满足 → 取最大档如实展示「不合格」
@@ -174,7 +174,17 @@
             const allowA = Math.round(baseA * factor);
             const dV = phase === 'three' ? (root3 * rho * length * current) / s : (2 * rho * length * current) / s;
             const dVPct = (dV / voltage) * 100;
-            chosen = { area: s, baseA, allowA, dV, dVPct, pass: false };
+            const ampOk = allowA >= current;
+            const dropOk = dVPct <= dropLimitPct;
+            // 计算并联方案：最小并联根数使总载流量 ≥ 计算电流
+            const parallelN = Math.max(1, Math.ceil(current / Math.max(1, allowA)));
+            const parallelA = parallelN * allowA;
+            // 并联后单根承担电流 = current/parallelN，电压降按等效截面计算 → 用并联总截面
+            const equivArea = s * parallelN;
+            const dVParallel = phase === 'three' ? (root3 * rho * length * current) / equivArea : (2 * rho * length * current) / equivArea;
+            const dVPctParallel = (dVParallel / voltage) * 100;
+            const parallelPass = parallelA >= current && dVPctParallel <= dropLimitPct;
+            chosen = { area: s, baseA, allowA, dV, dVPct, pass: false, ampOk, dropOk, parallel: { n: parallelN, singleArea: s, totalAmp: parallelA, dV: dVParallel, dVPct: dVPctParallel, pass: parallelPass } };
         }
         chosen.reachedMax = reachedMax;
         return chosen;
@@ -221,8 +231,27 @@
 
         const verdict = pass
             ? `<i class="fa-solid fa-circle-check mr-1"></i>${t('calc.result.pass','合格（载流量 ≥ 计算电流 且 电压降 ≤ 5%）')}`
-            : `<i class="fa-solid fa-triangle-exclamation mr-1"></i>${t('calc.result.fail','已选最大线径仍不合格：载流量或电压降不达标，建议增大线径、改用铜芯/高压等级，或缩短距离')}`;
+            : (() => {
+                const reasons = [];
+                if (!r.ampOk) reasons.push(t('calc.result.fail.amp','载流量不达标（电流超过单芯最大载流量）'));
+                if (!r.dropOk) reasons.push(t('calc.result.fail.drop','电压降 > 5%'));
+                const reasonTxt = reasons.join(' + ');
+                return `<i class="fa-solid fa-triangle-exclamation mr-1"></i>${t('calc.result.fail','不合格')}：${reasonTxt}`;
+            })();
 
+        // 不合格时的并联方案提示（工程实际做法）
+        let parallelHint = '';
+        if (!pass && r.parallel) {
+            const p = r.parallel;
+            const pColor = p.pass ? 'text-emerald-600' : 'text-amber-600';
+            parallelHint = `
+                <div class="text-xs ${pColor} mt-1 border-t border-slate-200 pt-1">
+                    <i class="fa-solid fa-diagram-project mr-1"></i>${t('calc.result.parallel_suggestion','建议并联方案')}：
+                    <b>${p.n} × ${p.singleArea} mm²</b> （并联总载流量 ${p.totalAmp} A）
+                    → ${t('calc.result.voltage_drop_after','并联后电压降')} ${p.dV.toFixed(2)} V (${p.dVPct.toFixed(2)}%)
+                    ${p.pass ? `✓ ${t('calc.result.parallel_pass','合格')}` : `⚠ ${t('calc.result.parallel_still_fail','仍不达标，建议改用更大截面/更高电压等级/缩短距离')}`}
+                </div>`;
+        }
         setResult('cable-result', `
             <div class="space-y-1.5">
                 <div>${t('calc.result.system','系统：')}${hl(phaseName)} ｜ ${t('calc.result.material','材质：')}${matName} ｜ ${t('calc.card1.label.insulation','绝缘')}${hl(insName)}</div>
@@ -230,6 +259,7 @@
                 <div>${t('calc.result.recommend_wire','推荐线径：')}${hl(area, ' mm²')} ｜ ${t('calc.result.ampacity','该规格载流量')} ${hl(baseA, ' A')} → ${t('calc.result.adjusted_ampacity','修正后')}${hl(allowA, ' A')}</div>
                 <div>${t('calc.result.voltage_drop','电压降：')}${hl(dV.toFixed(2), ' V')} (${hl(dVPct.toFixed(2), '%')})</div>
                 <div class="text-xs ${pass ? 'text-emerald-600' : 'text-red-500'} font-bold mt-1">${verdict}</div>
+                ${parallelHint}
             </div>
         `);
     }
